@@ -1,0 +1,30 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "yorozu",
+  "compatibility_date": "2026-05-04",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "./workers/app.ts",
+  "workers_dev": false,
+  "assets": {
+    "directory": "./build/client",
+    "binding": "ASSETS",
+    // Route every request through the Worker first so the Basic-auth gate in
+    // workers/app.ts also covers static assets (JS/CSS/images/WASM). Without
+    // this, matching files in build/client are served before the Worker runs.
+    "run_worker_first": true,
+    // SPA モード（ssr:false）。prerender 済みルートは各 HTML を返し、未列挙パスは
+    // クライアント側ルーター（root の ErrorBoundary で 404 表示）に委ねる。
+    "not_found_handling": "single-page-application",
+  },
+  "observability": {
+    "enabled": true,
+  },
+  "env": {
+    "development": {
+      "name": "dev-yorozu",
+    },
+    "production": {
+      "name": "yorozu",
+    },
+  },
+}

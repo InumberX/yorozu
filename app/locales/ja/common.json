@@ -1,0 +1,26 @@
+{
+  "error": {
+    "errorMessageTitle": "エラーメッセージ：",
+    "notFound": {
+      "title": "ページが見つかりません",
+      "lead": "お探しのページは移動または削除された可能性があります。",
+      "back": "トップへ戻る"
+    }
+  },
+  "header": {
+    "brand": "yorozu",
+    "nav": {
+      "home": "ホーム",
+      "image": "画像変換",
+      "video": "動画変換"
+    },
+    "language": {
+      "ja": "日本語",
+      "en": "English"
+    }
+  },
+  "footer": {
+    "note": "ブラウザ完結の便利ツールハブ",
+    "copyright": "© yorozu"
+  }
+}

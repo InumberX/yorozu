@@ -1,0 +1,19 @@
+{
+  "title": {
+    "heading": "yorozu",
+    "lead": "Handy tools for developers and web creators — right in your browser.\nStarting with image and video format conversion, with more tools on the way.\nNothing is uploaded to a server; everything runs on your device."
+  },
+  "tools": {
+    "heading": "Tools",
+    "image": {
+      "name": "Image Converter",
+      "description": "Convert images to WebP / AVIF, entirely in your browser.",
+      "action": "Open"
+    },
+    "video": {
+      "name": "Video Converter",
+      "description": "Convert videos to WebM with no uploads.",
+      "action": "Open"
+    }
+  }
+}

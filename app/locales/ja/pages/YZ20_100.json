@@ -1,0 +1,23 @@
+{
+  "title": {
+    "heading": "画像変換",
+    "lead": "画像を WebP / AVIF に変換します。ファイルはサーバーに送られず、ブラウザ内で処理されます。"
+  },
+  "form": {
+    "dropzone": {
+      "label": "画像ファイルをドラッグ＆ドロップ、またはクリックして選択",
+      "hint": "対応形式: PNG / JPEG / GIF など"
+    },
+    "format": {
+      "label": "出力フォーマット",
+      "webp": "WebP",
+      "avif": "AVIF"
+    },
+    "quality": {
+      "label": "品質"
+    },
+    "submit": "変換する",
+    "converting": "変換中…"
+  },
+  "note": "※ 変換エンジン（jSquash）は今後組み込み予定です。現在は UI の雛形のみです。"
+}

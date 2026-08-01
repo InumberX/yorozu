@@ -1,0 +1,22 @@
+# Cloudflare Workers static assets のレスポンスヘッダ設定。
+#
+# ffmpeg はシングルスレッド版で開始するため、COOP/COEP（cross-origin isolation）は
+# 付与しない。将来マルチスレッド版へ引き上げる場合は、サイト全体ではなく /video
+# ルートのみにスコープして付与すること（例: COEP は credentialless を検討）。
+#   /video
+#     Cross-Origin-Opener-Policy: same-origin
+#     Cross-Origin-Embedder-Policy: credentialless
+
+# 基本セキュリティヘッダ（全ルート）
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+
+# ハッシュ付きビルド資産は長期キャッシュ
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# 自前配信 WASM（ffmpeg core / jSquash）も長期キャッシュ
+/wasm/*
+  Cache-Control: public, max-age=31536000, immutable
