@@ -12,6 +12,9 @@ export type ImageConvertResult = {
 // Worker はブラウザ実行時のみ生成する（prerender / SSR 描画中は生成しない）。
 export const useImageConvert = () => {
   const workerRef = useRef<Worker | null>(null)
+  // 実行中リクエストの id。遅延・古いメッセージで状態が上書きされるのを防ぐため、
+  // onmessage では現在の id と一致するレスポンスのみ反映する。
+  const activeIdRef = useRef<string | null>(null)
   const [status, setStatus] = useState<ImageConvertStatus>('idle')
   const [progress, setProgress] = useState(0)
   const [error, setError] = useState<string | null>(null)
@@ -25,6 +28,11 @@ export const useImageConvert = () => {
 
     worker.onmessage = (event: MessageEvent<ImageConvertResponse>) => {
       const data = event.data
+
+      // 現在アクティブなリクエスト以外（古い / 遅延した）メッセージは無視する。
+      if (data.id !== activeIdRef.current) {
+        return
+      }
 
       switch (data.type) {
         case 'progress':
@@ -55,6 +63,9 @@ export const useImageConvert = () => {
       return
     }
 
+    const id = `${Date.now()}`
+    activeIdRef.current = id
+
     setStatus('converting')
     setProgress(0)
     setError(null)
@@ -62,13 +73,14 @@ export const useImageConvert = () => {
 
     workerRef.current.postMessage({
       type: 'convert',
-      id: `${Date.now()}`,
+      id,
       file,
       options,
     })
   }, [])
 
   const reset = useCallback(() => {
+    activeIdRef.current = null
     setStatus('idle')
     setProgress(0)
     setError(null)
