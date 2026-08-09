@@ -68,6 +68,7 @@ export const VideoConvertPanel = () => {
             value={crf}
             onChange={(event) => setCrf(Number(event.target.value))}
             className={styles.range}
+            aria-label={t('form.quality.label')}
           />
         </div>
       </div>

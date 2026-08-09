@@ -30,14 +30,34 @@ export const dropzone = style({
       border: `2px dashed ${cssVariables.color.border.subDark.hex}`,
       backgroundColor: cssVariables.color.background.subLight.hex,
       textAlign: 'center',
+
+      selectors: {
+        // input を視覚的に隠しつつフォーカス可能にしているため、フォーカス時は
+        // ドロップゾーン自体にフォーカスリングを出す。
+        '&:focus-within': {
+          borderColor: cssVariables.color.border.secondary.hex,
+          outline: `2px solid ${cssVariables.color.border.secondary.hex}`,
+          outlineOffset: '2px',
+        },
+      },
     },
   },
 })
 
+// `display: none` にするとキーボードでフォーカスできずファイル選択ができないため、
+// 視覚的に隠しつつフォーカス可能（タブ順に残る）なスタイルにする。
 export const dropzone_input = style({
   '@layer': {
     [cssLayerComponentPage]: {
-      display: 'none',
+      position: 'absolute',
+      inlineSize: '1px',
+      blockSize: '1px',
+      padding: 0,
+      margin: '-1px',
+      overflow: 'hidden',
+      clip: 'rect(0, 0, 0, 0)',
+      whiteSpace: 'nowrap',
+      borderWidth: 0,
     },
   },
 })

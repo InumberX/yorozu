@@ -68,6 +68,7 @@ export const ImageConvertPanel = () => {
             value={quality}
             onChange={(event) => setQuality(Number(event.target.value))}
             className={styles.range}
+            aria-label={t('form.quality.label')}
           />
         </div>
       </div>

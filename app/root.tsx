@@ -126,11 +126,13 @@ export default function RootRoute({ loaderData }: Route.ComponentProps) {
 
 export function ErrorBoundary() {
   const error = useRouteError()
-  const { t } = useTranslation('common')
+  const { t, i18n } = useTranslation('common')
   const isNotFound = isRouteErrorResponse(error) && error.status === 404
 
   const title = isNotFound ? t('error.notFound.title') : t('error.errorMessageTitle')
   const lead = isNotFound ? t('error.notFound.lead') : ''
+  // 現在のロケールに応じた戻り先。英語ページの 404 から JA トップへ飛ばさない。
+  const backTo = i18n.language === LANG.EN ? '/en' : '/'
 
   return (
     <main className={styles.errorPage}>
@@ -138,7 +140,7 @@ export function ErrorBoundary() {
         {isRouteErrorResponse(error) && <p className={styles.errorPage_status}>{error.status}</p>}
         <h1 className={styles.errorPage_title}>{title}</h1>
         {lead && <p className={styles.errorPage_lead}>{lead}</p>}
-        <Link to="/" className={styles.errorPage_back}>
+        <Link to={backTo} className={styles.errorPage_back}>
           {t('error.notFound.back')}
         </Link>
       </div>
