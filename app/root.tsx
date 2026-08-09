@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   isRouteErrorResponse,
@@ -106,6 +106,9 @@ export default function RootRoute({ loaderData }: Route.ComponentProps) {
   const { lang } = loaderData
   const { i18n } = useTranslation()
   const location = useLocation()
+  // 初回ロードの page_view は Layout 内のインライン gtag('config') が送信済みのため、
+  // 初回の effect 実行はスキップし、以降の SPA 遷移のみを送信する（二重計測の防止）。
+  const isFirstPageview = useRef(true)
 
   useEffect(() => {
     if (i18n.language !== lang) {
@@ -118,6 +121,11 @@ export default function RootRoute({ loaderData }: Route.ComponentProps) {
       return
     }
 
+    if (isFirstPageview.current) {
+      isFirstPageview.current = false
+      return
+    }
+
     gtag.pageview(location.pathname, GOOGLE_ANALYTICS_ID)
   }, [location.pathname])
 
@@ -126,13 +134,17 @@ export default function RootRoute({ loaderData }: Route.ComponentProps) {
 
 export function ErrorBoundary() {
   const error = useRouteError()
-  const { t, i18n } = useTranslation('common')
+  const { t } = useTranslation('common')
+  const location = useLocation()
   const isNotFound = isRouteErrorResponse(error) && error.status === 404
 
-  const title = isNotFound ? t('error.notFound.title') : t('error.errorMessageTitle')
-  const lead = isNotFound ? t('error.notFound.lead') : ''
-  // 現在のロケールに応じた戻り先。英語ページの 404 から JA トップへ飛ばさない。
-  const backTo = i18n.language === LANG.EN ? '/en' : '/'
+  // ロケールは URL を真実とする。未列挙パスは SPA フォールバック（JA シェル）が返るため
+  // i18n.language は 'ja' になりがちだが、/en 配下の 404 は英語で表示し /en へ戻す。
+  const lang = location.pathname === '/en' || location.pathname.startsWith('/en/') ? LANG.EN : LANG.JA
+  const backTo = lang === LANG.EN ? '/en' : '/'
+
+  const title = isNotFound ? t('error.notFound.title', { lng: lang }) : t('error.errorMessageTitle', { lng: lang })
+  const lead = isNotFound ? t('error.notFound.lead', { lng: lang }) : ''
 
   return (
     <main className={styles.errorPage}>
@@ -141,7 +153,7 @@ export function ErrorBoundary() {
         <h1 className={styles.errorPage_title}>{title}</h1>
         {lead && <p className={styles.errorPage_lead}>{lead}</p>}
         <Link to={backTo} className={styles.errorPage_back}>
-          {t('error.notFound.back')}
+          {t('error.notFound.back', { lng: lang })}
         </Link>
       </div>
     </main>

@@ -15,6 +15,8 @@ export const useImageConvert = () => {
   // 実行中リクエストの id。遅延・古いメッセージで状態が上書きされるのを防ぐため、
   // onmessage では現在の id と一致するレスポンスのみ反映する。
   const activeIdRef = useRef<string | null>(null)
+  // 単調増加カウンタ。Date.now() は同一ミリ秒で衝突しうるため id 生成に用いない。
+  const requestSeqRef = useRef(0)
   const [status, setStatus] = useState<ImageConvertStatus>('idle')
   const [progress, setProgress] = useState(0)
   const [error, setError] = useState<string | null>(null)
@@ -63,7 +65,7 @@ export const useImageConvert = () => {
       return
     }
 
-    const id = `${Date.now()}`
+    const id = `${(requestSeqRef.current += 1)}`
     activeIdRef.current = id
 
     setStatus('converting')

@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useLocation } from 'react-router'
 
 import * as styles from './style.css'
 
@@ -13,6 +14,7 @@ type Props = {
 
 export const LayoutHeader = ({ lang }: Props) => {
   const { t } = useTranslation('common')
+  const location = useLocation()
 
   const navItems = useMemo(
     () => [
@@ -22,6 +24,16 @@ export const LayoutHeader = ({ lang }: Props) => {
     ],
     []
   )
+
+  // 言語切り替えは現在のページを保ったまま、対象ロケールの URL へ遷移する。
+  // JA=接頭辞なし / EN=/en。現在パスから /en を剥がして基準（JA）パスを求める。
+  const buildLocaleUrl = (target: string) => {
+    const basePath = location.pathname.replace(/^\/en(?=\/|$)/, '') || '/'
+    if (target === LANG.EN) {
+      return basePath === '/' ? '/en' : `/en${basePath}`
+    }
+    return basePath
+  }
 
   return (
     <header className={styles.layoutHeader}>
@@ -44,7 +56,7 @@ export const LayoutHeader = ({ lang }: Props) => {
 
         <div className={styles.layoutHeaderLang}>
           <PrimitiveButton
-            url={PAGES.YZ10_100.getUrl({ lang: LANG.JA })}
+            url={buildLocaleUrl(LANG.JA)}
             className={[styles.layoutHeaderLang_link, lang === LANG.JA && styles.layoutHeaderLang_link__current]
               .filter(Boolean)
               .join(' ')}
@@ -53,7 +65,7 @@ export const LayoutHeader = ({ lang }: Props) => {
           </PrimitiveButton>
           <span className={styles.layoutHeaderLang_separator}>/</span>
           <PrimitiveButton
-            url={PAGES.YZ10_100.getUrl({ lang: LANG.EN })}
+            url={buildLocaleUrl(LANG.EN)}
             className={[styles.layoutHeaderLang_link, lang === LANG.EN && styles.layoutHeaderLang_link__current]
               .filter(Boolean)
               .join(' ')}

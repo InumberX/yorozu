@@ -51,4 +51,18 @@ describe('LayoutHeader', () => {
       expect(nav?.querySelector('a[href="/en/video"]')).not.toBe(null)
     })
   })
+
+  describe('言語切り替えは現在ページを保つ', () => {
+    test('JA の /image では English が /en/image を指す', () => {
+      result = renderWithProviders(<LayoutHeader lang="ja" />, { route: '/image' })
+      expect(result.getByText('English').getAttribute('href')).toBe('/en/image')
+      expect(result.getByText('日本語').getAttribute('href')).toBe('/image')
+    })
+
+    test('EN の /en/video では 日本語 が /video を指す', () => {
+      result = renderWithProviders(<LayoutHeader lang="en" />, { route: '/en/video' })
+      expect(result.getByText('日本語').getAttribute('href')).toBe('/video')
+      expect(result.getByText('English').getAttribute('href')).toBe('/en/video')
+    })
+  })
 })
