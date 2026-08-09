@@ -1,0 +1,23 @@
+{
+  "title": {
+    "heading": "Image Converter",
+    "lead": "Convert images to WebP / AVIF. Files are never uploaded — everything is processed in your browser."
+  },
+  "form": {
+    "dropzone": {
+      "label": "Drag & drop an image here, or click to choose a file",
+      "hint": "Supported inputs: PNG / JPEG / GIF and more"
+    },
+    "format": {
+      "label": "Output format",
+      "webp": "WebP",
+      "avif": "AVIF"
+    },
+    "quality": {
+      "label": "Quality"
+    },
+    "submit": "Convert",
+    "converting": "Converting…"
+  },
+  "note": "* The conversion engine (jSquash) will be integrated later. This is a UI skeleton for now."
+}

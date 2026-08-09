@@ -1,0 +1,23 @@
+{
+  "title": {
+    "heading": "Video Converter",
+    "lead": "Convert videos to WebM. Everything runs in your browser (Web Worker); files are never uploaded."
+  },
+  "form": {
+    "dropzone": {
+      "label": "Drag & drop a video here, or click to choose a file",
+      "hint": "Mind the size / length limits"
+    },
+    "codec": {
+      "label": "Video codec",
+      "vp9": "VP9",
+      "vp8": "VP8"
+    },
+    "quality": {
+      "label": "Quality (CRF)"
+    },
+    "submit": "Convert",
+    "converting": "Converting…"
+  },
+  "note": "* The conversion engine (ffmpeg.wasm, single-threaded) will be integrated later. This is a UI skeleton for now."
+}

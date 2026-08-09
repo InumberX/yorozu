@@ -1,0 +1,26 @@
+{
+  "error": {
+    "errorMessageTitle": "Error message: ",
+    "notFound": {
+      "title": "Page not found",
+      "lead": "The page you are looking for may have been moved or deleted.",
+      "back": "Back to home"
+    }
+  },
+  "header": {
+    "brand": "yorozu",
+    "nav": {
+      "home": "Home",
+      "image": "Image",
+      "video": "Video"
+    },
+    "language": {
+      "ja": "日本語",
+      "en": "English"
+    }
+  },
+  "footer": {
+    "note": "Browser-based web tool hub",
+    "copyright": "© yorozu"
+  }
+}
