@@ -56,28 +56,25 @@ globalStyle('body', {
       // @ts-ignore
       WebkitOverflowWrap: 'anywhere',
       overflowWrap: 'anywhere',
-      webkitWordBreak: 'normal',
+      WebkitWordBreak: 'normal',
       wordBreak: 'normal',
-      webkitLineBreak: 'strict',
+      WebkitLineBreak: 'strict',
       lineBreak: 'strict',
     },
   },
 })
 
-globalStyle(
-  'article, aside, details, figcaption, include, footer, header, hgroup, main, nav, section, summary, figure',
-  {
-    '@layer': {
-      [cssLayerReset]: {
-        display: 'block',
-        marginBlock: 0,
-        marginInline: 0,
-        paddingBlock: 0,
-        paddingInline: 0,
-      },
+globalStyle('article, aside, details, figcaption, footer, header, hgroup, main, nav, section, summary, figure', {
+  '@layer': {
+    [cssLayerReset]: {
+      display: 'block',
+      marginBlock: 0,
+      marginInline: 0,
+      paddingBlock: 0,
+      paddingInline: 0,
     },
-  }
-)
+  },
+})
 
 globalStyle('h1, h2, h3, h4, h5, h6, dl, dt, dd, p, blockquote, ul, ol, li', {
   '@layer': {

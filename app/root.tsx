@@ -119,7 +119,7 @@ export default function RootRoute({ loaderData }: Route.ComponentProps) {
     }
 
     gtag.pageview(location.pathname, GOOGLE_ANALYTICS_ID)
-  }, [location])
+  }, [location.pathname])
 
   return <Outlet />
 }

@@ -60,19 +60,30 @@ export const PrimitiveButton = ({
   // Button type
   const type = buttonType || 'button'
 
+  // a / Link は disabled 属性を持てないため、無効時はナビゲーションを抑止し、
+  // タブ順から外して aria-disabled を付与する（キーボードでの到達・実行を防ぐ）。
+  const handleAnchorClick: EventTypes['onClickButton'] = (event) => {
+    if (isDisabled) {
+      event.preventDefault()
+      return
+    }
+    onClick?.(event)
+  }
+
   return isExternal || isInternalLink ? (
     <a
       href={url}
       target={target}
       rel={rel}
       className={primitiveButtonClassName}
-      onClick={onClick}
+      onClick={handleAnchorClick}
       title={title}
       role={role}
-      tabIndex={tabIndex}
+      tabIndex={isDisabled ? -1 : tabIndex}
       aria-label={ariaLabel}
       aria-controls={ariaControls}
       aria-selected={ariaSelected}
+      aria-disabled={isDisabled || undefined}
     >
       {children}
     </a>
@@ -82,13 +93,14 @@ export const PrimitiveButton = ({
       target={target}
       rel={rel}
       className={primitiveButtonClassName}
-      onClick={onClick}
+      onClick={handleAnchorClick}
       title={title}
       role={role}
-      tabIndex={tabIndex}
+      tabIndex={isDisabled ? -1 : tabIndex}
       aria-label={ariaLabel}
       aria-controls={ariaControls}
       aria-selected={ariaSelected}
+      aria-disabled={isDisabled || undefined}
     >
       {children}
     </Link>
