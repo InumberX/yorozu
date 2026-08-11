@@ -65,7 +65,7 @@ export default defineConfig(({ mode }) => {
       'import.meta.env.VITE_NO_INDEX': `"${env.NO_INDEX || ''}"`,
       'import.meta.env.VITE_SITE_URL': `"${env.SITE_URL || 'http://localhost:5173'}"`,
       'import.meta.env.VITE_SITE_NAME': `"${env.SITE_NAME || 'yorozu(development)'}"`,
-      'import.meta.env.VITE_GOOGLE_ANALYTICS_ID': `"${env.GOOGLE_ANALYTICS_ID || ''}"`,
+      'import.meta.env.VITE_GOOGLE_ANALYTICS_ID': `"${env.GOOGLE_ANALYTICS_ID || 'G-0WRM57NTKL'}"`,
       'import.meta.env.VITE_CACHE_BUSTER': `"${CACHE_BUSTER}"`,
       'import.meta.env.VITE_LASTMOD': `"${LASTMOD}"`,
     },
