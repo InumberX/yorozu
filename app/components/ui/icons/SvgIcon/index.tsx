@@ -10,13 +10,13 @@ export const SVG_ICON_VARIANT = {
 
 export type SvgIconVariant = (typeof SVG_ICON_VARIANT)[keyof typeof SVG_ICON_VARIANT]
 
-type Props = {
+export type SvgIconProps = {
   className?: string
   variant: SvgIconVariant
   title?: string
 }
 
-export const SvgIcon = ({ className, variant, title }: Props) => {
+export const SvgIcon = ({ className, variant, title }: SvgIconProps) => {
   return (
     <i
       className={[styles.svgIcon, styles[`svgIcon__${variant}`], className].filter(Boolean).join(' ')}
