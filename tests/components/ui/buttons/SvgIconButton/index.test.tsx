@@ -44,7 +44,7 @@ describe('SvgIconButton', () => {
       beforeEach(() => {
         result = render(
           <SvgIconButton
-            icon={{ variant: SVG_ICON_VARIANT.ARROW_FORWARD, title: 'アイコンの説明' }}
+            icon={{ variant: SVG_ICON_VARIANT.CHEVRON_FORWARD, title: 'アイコンの説明' }}
             onClick={() => handleClick()}
           />
         )
@@ -52,7 +52,7 @@ describe('SvgIconButton', () => {
 
       test('variant が SvgIcon に引き渡されている', () => {
         const icon = result.container.querySelector('i')
-        expect(icon?.className).toContain('svgIcon__arrowForward')
+        expect(icon?.className).toContain('svgIcon__chevronForward')
       })
 
       test('title が SvgIcon に引き渡されている', () => {
@@ -213,7 +213,7 @@ describe('SvgIconButton', () => {
       beforeEach(() => {
         result = render(
           <MemoryRouter>
-            <SvgIconButton icon={{ variant: SVG_ICON_VARIANT.ARROW_FORWARD }} url="/internal/path" />
+            <SvgIconButton icon={{ variant: SVG_ICON_VARIANT.CHEVRON_FORWARD }} url="/internal/path" />
           </MemoryRouter>
         )
       })
@@ -269,7 +269,7 @@ describe('SvgIconButton', () => {
       beforeEach(() => {
         result = render(
           <MemoryRouter>
-            <SvgIconButton icon={{ variant: SVG_ICON_VARIANT.ARROW_FORWARD }} url="/internal/path" />
+            <SvgIconButton icon={{ variant: SVG_ICON_VARIANT.CHEVRON_FORWARD }} url="/internal/path" />
           </MemoryRouter>
         )
       })
@@ -285,7 +285,7 @@ describe('SvgIconButton', () => {
       beforeEach(() => {
         result = render(
           <SvgIconButton
-            icon={{ variant: SVG_ICON_VARIANT.ARROW_FORWARD }}
+            icon={{ variant: SVG_ICON_VARIANT.CHEVRON_FORWARD }}
             url="https://example.com"
             target="_blank"
             rel="noopener"

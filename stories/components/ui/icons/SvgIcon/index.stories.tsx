@@ -16,9 +16,9 @@ export const AnimatedImages: Story = {
   },
 }
 
-export const ArrowForward: Story = {
+export const ChevronForward: Story = {
   args: {
-    variant: SVG_ICON_VARIANT.ARROW_FORWARD,
+    variant: SVG_ICON_VARIANT.CHEVRON_FORWARD,
   },
 }
 
@@ -31,11 +31,5 @@ export const Check: Story = {
 export const Filter: Story = {
   args: {
     variant: SVG_ICON_VARIANT.FILTER,
-  },
-}
-
-export const Routine: Story = {
-  args: {
-    variant: SVG_ICON_VARIANT.ROUTINE,
   },
 }

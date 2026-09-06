@@ -90,14 +90,14 @@ describe('SvgIcon', () => {
       })
     })
 
-    describe('arrowForward バリアント', () => {
+    describe('chevronForward バリアント', () => {
       beforeEach(() => {
-        result = render(<SvgIcon variant={SVG_ICON_VARIANT.ARROW_FORWARD} />)
+        result = render(<SvgIcon variant={SVG_ICON_VARIANT.CHEVRON_FORWARD} />)
       })
 
-      test('arrowForward バリアントスタイルが適用されている', () => {
+      test('chevronForward バリアントスタイルが適用されている', () => {
         const icon = result.container.querySelector('i')
-        expect(icon?.className).toContain('svgIcon__arrowForward')
+        expect(icon?.className).toContain('svgIcon__chevronForward')
       })
     })
 
@@ -120,17 +120,6 @@ describe('SvgIcon', () => {
       test('filter バリアントスタイルが適用されている', () => {
         const icon = result.container.querySelector('i')
         expect(icon?.className).toContain('svgIcon__filter')
-      })
-    })
-
-    describe('routine バリアント', () => {
-      beforeEach(() => {
-        result = render(<SvgIcon variant={SVG_ICON_VARIANT.ROUTINE} />)
-      })
-
-      test('routine バリアントスタイルが適用されている', () => {
-        const icon = result.container.querySelector('i')
-        expect(icon?.className).toContain('svgIcon__routine')
       })
     })
 
@@ -182,10 +171,9 @@ describe('SvgIcon', () => {
       test('想定どおりのバリアントが定義されている', () => {
         expect(SVG_ICON_VARIANT).toEqual({
           ANIMATED_IMAGES: 'animatedImages',
-          ARROW_FORWARD: 'arrowForward',
+          CHEVRON_FORWARD: 'chevronForward',
           CHECK: 'check',
           FILTER: 'filter',
-          ROUTINE: 'routine',
         })
       })
 

@@ -1,7 +1,7 @@
 import { style } from '@vanilla-extract/css'
 
 import { cssVariables } from '~/styles/variables/cssVariables.css'
-import { fontCaption, fontMedium, fontMediumBold } from '~/styles/variables/font.css'
+import { fontCaption, fontLabel, fontMedium, fontMono } from '~/styles/variables/font.css'
 import { cssLayerComponentPage } from '~/styles/variables/layers.css'
 
 export const panel = style({
@@ -11,9 +11,9 @@ export const panel = style({
       gap: '24px',
       marginBlockStart: '24px',
       padding: '24px',
-      borderRadius: '16px',
-      backgroundColor: cssVariables.color.background.light.hex,
-      border: `1px solid ${cssVariables.color.border.sub.hex}`,
+      borderRadius: '4px',
+      backgroundColor: cssVariables.color.surface.level1,
+      border: `1px solid ${cssVariables.color.line.level2}`,
     },
   },
 })
@@ -26,17 +26,17 @@ export const dropzone = style({
       justifyItems: 'center',
       paddingBlock: '40px',
       paddingInline: '24px',
-      borderRadius: '12px',
-      border: `2px dashed ${cssVariables.color.border.subDark.hex}`,
-      backgroundColor: cssVariables.color.background.subLight.hex,
+      borderRadius: '4px',
+      border: `1px dashed ${cssVariables.color.line.level3}`,
+      backgroundColor: cssVariables.color.background.darkest.hex,
       textAlign: 'center',
 
       selectors: {
         // input を視覚的に隠しつつフォーカス可能にしているため、フォーカス時は
         // ドロップゾーン自体にフォーカスリングを出す。
         '&:focus-within': {
-          borderColor: cssVariables.color.border.secondary.hex,
-          outline: `2px solid ${cssVariables.color.border.secondary.hex}`,
+          borderColor: cssVariables.color.border.primary.hex,
+          outline: `2px solid ${cssVariables.color.border.primary.hex}`,
           outlineOffset: '2px',
         },
       },
@@ -65,8 +65,8 @@ export const dropzone_input = style({
 export const dropzone_label = style({
   '@layer': {
     [cssLayerComponentPage]: {
-      ...fontMediumBold,
-      color: cssVariables.color.font.base.hex,
+      ...fontLabel,
+      color: cssVariables.color.font.heading.hex,
     },
   },
 })
@@ -101,8 +101,8 @@ export const field = style({
 export const field_label = style({
   '@layer': {
     [cssLayerComponentPage]: {
-      ...fontMediumBold,
-      color: cssVariables.color.font.base.hex,
+      ...fontLabel,
+      color: cssVariables.color.font.heading.hex,
     },
   },
 })
@@ -132,7 +132,7 @@ export const range = style({
     [cssLayerComponentPage]: {
       inlineSize: '100%',
       maxInlineSize: '320px',
-      accentColor: cssVariables.color.background.primary.hex,
+      accentColor: cssVariables.color.font.primary.hex,
     },
   },
 })
@@ -148,8 +148,9 @@ export const actions = style({
 export const progress = style({
   '@layer': {
     [cssLayerComponentPage]: {
-      ...fontMediumBold,
+      ...fontMono,
       color: cssVariables.color.font.primary.hex,
+      textShadow: cssVariables.shadow.text,
     },
   },
 })
@@ -167,7 +168,7 @@ export const note = style({
   '@layer': {
     [cssLayerComponentPage]: {
       ...fontCaption,
-      color: cssVariables.color.font.sub.hex,
+      color: cssVariables.color.font.subDark.hex,
     },
   },
 })

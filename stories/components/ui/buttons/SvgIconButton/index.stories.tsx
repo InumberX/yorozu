@@ -14,7 +14,7 @@ type Story = StoryObj<typeof SvgIconButton>
 export const Default: Story = {
   args: {
     icon: {
-      variant: SVG_ICON_VARIANT.ARROW_FORWARD,
+      variant: SVG_ICON_VARIANT.CHEVRON_FORWARD,
     },
     title: '次へ',
     onClick: () => {},
@@ -24,7 +24,7 @@ export const Default: Story = {
 export const Disabled: Story = {
   args: {
     icon: {
-      variant: SVG_ICON_VARIANT.ARROW_FORWARD,
+      variant: SVG_ICON_VARIANT.CHEVRON_FORWARD,
     },
     title: '次へ',
     isDisabled: true,
@@ -35,7 +35,7 @@ export const Disabled: Story = {
 export const Link: Story = {
   args: {
     icon: {
-      variant: SVG_ICON_VARIANT.ARROW_FORWARD,
+      variant: SVG_ICON_VARIANT.CHEVRON_FORWARD,
     },
     title: '外部サイトへ',
     url: 'https://example.com',

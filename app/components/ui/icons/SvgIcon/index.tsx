@@ -2,10 +2,9 @@ import * as styles from './style.css'
 
 export const SVG_ICON_VARIANT = {
   ANIMATED_IMAGES: 'animatedImages',
-  ARROW_FORWARD: 'arrowForward',
+  CHEVRON_FORWARD: 'chevronForward',
   CHECK: 'check',
   FILTER: 'filter',
-  ROUTINE: 'routine',
 } as const
 
 export type SvgIconVariant = (typeof SVG_ICON_VARIANT)[keyof typeof SVG_ICON_VARIANT]

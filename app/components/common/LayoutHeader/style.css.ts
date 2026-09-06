@@ -2,7 +2,7 @@ import { style } from '@vanilla-extract/css'
 
 import { getMediaQuery } from '~/styles/mixins/mediaQuery.css'
 import { cssVariables } from '~/styles/variables/cssVariables.css'
-import { fontMedium, fontMediumBold } from '~/styles/variables/font.css'
+import { fontLabel, fontLabelLarge } from '~/styles/variables/font.css'
 import { cssLayerComponentCommon } from '~/styles/variables/layers.css'
 
 // ヘッダーの高さ（px）。LayoutPageWrapper が本文の上下余白計算に参照する。
@@ -17,8 +17,8 @@ export const layoutHeader = style({
       position: 'sticky',
       insetBlockStart: 0,
       zIndex: Number(cssVariables.zIndex.header.wrapper),
-      backgroundColor: cssVariables.color.background.light.hex,
-      borderBlockEnd: `1px solid ${cssVariables.color.border.sub.hex}`,
+      backgroundColor: cssVariables.color.background.darkest.hex,
+      borderBlockEnd: `1px solid ${cssVariables.color.line.level2}`,
     },
   },
 })
@@ -47,10 +47,10 @@ export const layoutHeader_container = style({
 export const layoutHeaderBrand = style({
   '@layer': {
     [cssLayerComponentCommon]: {
-      ...fontMediumBold,
+      ...fontLabelLarge,
       fontSize: '20px',
-      color: cssVariables.color.font.base.hex,
-      letterSpacing: '0.04em',
+      color: cssVariables.color.font.heading.hex,
+      textShadow: cssVariables.shadow.text,
     },
   },
 })
@@ -82,8 +82,18 @@ export const layoutHeaderNav_item = style({
 export const layoutHeaderNavLink = style({
   '@layer': {
     [cssLayerComponentCommon]: {
-      ...fontMedium,
-      color: cssVariables.color.font.base.hex,
+      ...fontLabel,
+      color: cssVariables.color.font.sub.hex,
+
+      '@media': {
+        [getMediaQuery('hover')]: {
+          selectors: {
+            '&:hover': {
+              color: cssVariables.color.font.primary.hex,
+            },
+          },
+        },
+      },
     },
   },
 })
@@ -101,8 +111,18 @@ export const layoutHeaderLang = style({
 export const layoutHeaderLang_link = style({
   '@layer': {
     [cssLayerComponentCommon]: {
-      ...fontMedium,
-      color: cssVariables.color.font.sub.hex,
+      ...fontLabel,
+      color: cssVariables.color.font.subDark.hex,
+
+      '@media': {
+        [getMediaQuery('hover')]: {
+          selectors: {
+            '&:hover': {
+              color: cssVariables.color.font.primary.hex,
+            },
+          },
+        },
+      },
     },
   },
 })
@@ -111,7 +131,7 @@ export const layoutHeaderLang_link__current = style({
   '@layer': {
     [cssLayerComponentCommon]: {
       color: cssVariables.color.font.primary.hex,
-      fontWeight: cssVariables.font.weight.bold,
+      textShadow: cssVariables.shadow.text,
     },
   },
 })
@@ -119,7 +139,8 @@ export const layoutHeaderLang_link__current = style({
 export const layoutHeaderLang_separator = style({
   '@layer': {
     [cssLayerComponentCommon]: {
-      color: cssVariables.color.font.sub.hex,
+      ...fontLabel,
+      color: cssVariables.color.font.dim.hex,
     },
   },
 })

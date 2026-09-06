@@ -1,14 +1,15 @@
 import { style } from '@vanilla-extract/css'
 
 import { cssVariables } from '~/styles/variables/cssVariables.css'
-import { fontCaption, fontSmall } from '~/styles/variables/font.css'
+import { fontLabel, fontSmall } from '~/styles/variables/font.css'
 import { cssLayerComponentCommon } from '~/styles/variables/layers.css'
 
 export const layoutFooter = style({
   '@layer': {
     [cssLayerComponentCommon]: {
-      backgroundColor: cssVariables.color.background.primary.hex,
-      color: cssVariables.color.font.light.hex,
+      backgroundColor: cssVariables.color.background.darkest.hex,
+      borderBlockStart: `1px solid ${cssVariables.color.line.level1}`,
+      color: cssVariables.color.font.sub.hex,
     },
   },
 })
@@ -31,7 +32,7 @@ export const layoutFooter_note = style({
   '@layer': {
     [cssLayerComponentCommon]: {
       ...fontSmall,
-      color: cssVariables.color.font.light.hex,
+      color: cssVariables.color.font.sub.hex,
     },
   },
 })
@@ -39,9 +40,8 @@ export const layoutFooter_note = style({
 export const layoutFooter_copyright = style({
   '@layer': {
     [cssLayerComponentCommon]: {
-      ...fontCaption,
-      color: cssVariables.color.font.light.hex,
-      opacity: 0.7,
+      ...fontLabel,
+      color: cssVariables.color.font.subDark.hex,
     },
   },
 })
