@@ -1,8 +1,9 @@
 import { style } from '@vanilla-extract/css'
 
 import { getMediaQuery } from '~/styles/mixins/mediaQuery.css'
+import { getTransition } from '~/styles/mixins/transition.css'
 import { cssVariables } from '~/styles/variables/cssVariables.css'
-import { fontLarge, fontMaximumBold, fontMedium, fontMediumBold } from '~/styles/variables/font.css'
+import { fontHeading2, fontLarge, fontMaximumBold, fontMedium } from '~/styles/variables/font.css'
 import { cssLayerComponentPage } from '~/styles/variables/layers.css'
 
 export const home = style({
@@ -25,8 +26,9 @@ export const homeHero_title = style({
   '@layer': {
     [cssLayerComponentPage]: {
       ...fontMaximumBold,
-      color: cssVariables.color.font.base.hex,
-      letterSpacing: '0.04em',
+      color: cssVariables.color.font.heading.hex,
+      lineHeight: 1.2,
+      textShadow: cssVariables.shadow.text,
     },
   },
 })
@@ -70,9 +72,32 @@ export const homeToolCard = style({
       gap: '12px',
       blockSize: '100%',
       padding: '24px',
-      borderRadius: '16px',
-      backgroundColor: cssVariables.color.background.light.hex,
-      border: `1px solid ${cssVariables.color.border.sub.hex}`,
+      borderRadius: '4px',
+      backgroundColor: cssVariables.color.surface.level2,
+      border: `1px solid ${cssVariables.color.line.level2}`,
+      transition: getTransition([
+        {
+          property: 'border-color',
+        },
+        {
+          property: 'box-shadow',
+        },
+        {
+          property: 'background-color',
+        },
+      ]),
+
+      '@media': {
+        [getMediaQuery('hover')]: {
+          selectors: {
+            '&:hover': {
+              backgroundColor: cssVariables.color.surface.level4,
+              borderColor: cssVariables.color.line.level4,
+              boxShadow: cssVariables.shadow.glow,
+            },
+          },
+        },
+      },
     },
   },
 })
@@ -80,9 +105,8 @@ export const homeToolCard = style({
 export const homeToolCard_title = style({
   '@layer': {
     [cssLayerComponentPage]: {
-      ...fontMediumBold,
-      fontSize: '20px',
-      color: cssVariables.color.font.base.hex,
+      ...fontHeading2,
+      color: cssVariables.color.font.heading.hex,
     },
   },
 })
