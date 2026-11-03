@@ -40,7 +40,7 @@
     "zod": "4.5.4"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^5.20260904.1",
+    "@cloudflare/workers-types": "^5.20261102.1",
     "@react-router/dev": "^8.5.1",
     "@react-router/fs-routes": "^8.5.1",
     "@storybook/addon-docs": "^10.6.5",
