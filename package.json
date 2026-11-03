@@ -51,7 +51,7 @@
     "@testing-library/user-event": "^14.6.8",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
-    "@vanilla-extract/css": "^1.21.2",
+    "@vanilla-extract/css": "^1.21.3",
     "@vanilla-extract/vite-plugin": "^5.2.6",
     "@vitejs/plugin-react": "^6.1.1",
     "cross-env": "^10.1.0",
