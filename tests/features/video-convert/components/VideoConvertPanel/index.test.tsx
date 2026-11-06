@@ -5,7 +5,7 @@ import { renderWithProviders } from '../../../../test-utils'
 
 // Worker を生成する hook はテストではモックする（jsdom に Worker は無いため）。
 const { convertSpy } = vi.hoisted(() => ({ convertSpy: vi.fn() }))
-vi.mock('~/features/video-convert/hooks/useVideoConvert', () => ({
+vi.mock('~/features/video-convert/hooks/use-video-convert', () => ({
   useVideoConvert: () => ({
     status: 'idle',
     progress: 0,

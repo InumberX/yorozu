@@ -1,6 +1,6 @@
 import { style } from '@vanilla-extract/css'
 
-import { cssVariables } from '~/styles/variables/cssVariables.css'
+import { cssVariables } from '~/styles/variables/css-variables.css'
 import { fontMedium } from '~/styles/variables/font.css'
 import { cssLayerComponentPage } from '~/styles/variables/layers.css'
 
