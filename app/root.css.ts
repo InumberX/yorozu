@@ -24,6 +24,7 @@ globalStyle('html', {
     [cssLayerReset]: {
       background: cssVariables.color.background.body.hex,
       color: cssVariables.color.font.base.hex,
+      colorScheme: 'dark',
       blockSize: '100%',
       lineHeight: 1,
       inlineSize: '100%',
@@ -34,14 +35,22 @@ globalStyle('html', {
 globalStyle('body', {
   '@layer': {
     [cssLayerReset]: {
+      backgroundColor: cssVariables.color.background.body.hex,
+      // 上部から落ちる発光と、極薄のグリッド。案A の HUD 的なトーンの下地。
+      backgroundImage: [
+        `radial-gradient(80vmax 60vmax at 50% -12%, ${cssVariables.color.surface.level4}, transparent 70%)`,
+        `linear-gradient(${cssVariables.color.surface.level1} 1px, transparent 1px)`,
+        `linear-gradient(90deg, ${cssVariables.color.surface.level1} 1px, transparent 1px)`,
+      ].join(', '),
       backgroundAttachment: 'fixed',
       backgroundPosition: 'top center',
-      backgroundRepeat: 'no-repeat',
-      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat, repeat, repeat',
+      backgroundSize: 'auto, 64px 64px, 64px 64px',
       borderBlock: 0,
       borderInline: 0,
+      color: cssVariables.color.font.base.hex,
       fontFamily: cssVariables.font.family.main,
-      fontWeight: cssVariables.font.weight.medium,
+      fontWeight: cssVariables.font.weight.regular,
       inlineSize: '100%',
       lineHeight: 1.6,
       marginBlock: 0,
@@ -159,10 +168,20 @@ globalStyle('a:hover, a:active', {
     [cssLayerReset]: {
       '@media': {
         [getMediaQuery('hover')]: {
-          color: cssVariables.color.font.primaryDark.hex,
+          // ダークテーマではホバーで暗くせず、ハイライト側へ寄せて発光させる。
+          color: cssVariables.color.font.primaryLight.hex,
           textDecoration: 'underline',
         },
       },
+    },
+  },
+})
+
+globalStyle('::selection', {
+  '@layer': {
+    [cssLayerReset]: {
+      backgroundColor: cssVariables.color.line.level4,
+      color: cssVariables.color.font.heading.hex,
     },
   },
 })
@@ -172,7 +191,7 @@ globalStyle('button', {
     [cssLayerReset]: {
       cursor: 'pointer',
       fontFamily: cssVariables.font.family.main,
-      fontWeight: cssVariables.font.weight.medium,
+      fontWeight: cssVariables.font.weight.regular,
     },
   },
 })
@@ -295,7 +314,7 @@ globalStyle('pre', {
 globalStyle('code, kbd, pre, samp', {
   '@layer': {
     [cssLayerReset]: {
-      fontFamily: cssVariables.font.family.main,
+      fontFamily: cssVariables.font.family.mono,
       fontSize: getFontSize(10),
       marginBlock: 0,
       marginInline: 0,
@@ -334,7 +353,7 @@ globalStyle('[role="tabpanel"]:target', {
 globalStyle('body, h1, h2, h3, h4, h5, h6, dl, dt, dd, p, blockquote, ul, ol, li', {
   '@layer': {
     [cssLayerReset]: {
-      fontSize: getClampRem(14, 16),
+      fontSize: getClampRem(12.5, 14),
     },
   },
 })
@@ -397,7 +416,7 @@ globalStyle('button, input, optgroup, select, textarea', {
       boxSizing: 'border-box',
       color: cssVariables.color.font.base.hex,
       fontFamily: cssVariables.font.family.main,
-      fontWeight: cssVariables.font.weight.medium,
+      fontWeight: cssVariables.font.weight.regular,
       lineHeight: 1.6,
       marginBlock: 0,
       marginInline: 0,
@@ -920,7 +939,9 @@ export const errorPage_status = style({
     [cssLayerComponentPage]: {
       ...fontMaximumBold,
       color: cssVariables.color.font.primary.hex,
+      fontFamily: cssVariables.font.family.mono,
       lineHeight: 1,
+      textShadow: cssVariables.shadow.text,
     },
   },
 })
@@ -929,7 +950,7 @@ export const errorPage_title = style({
   '@layer': {
     [cssLayerComponentPage]: {
       ...fontHeading2,
-      color: cssVariables.color.font.base.hex,
+      color: cssVariables.color.font.heading.hex,
     },
   },
 })
@@ -954,7 +975,8 @@ export const errorPage_back = style({
       paddingInline: '24px',
       borderRadius: '999px',
       backgroundColor: cssVariables.color.background.primary.hex,
-      color: cssVariables.color.font.light.hex,
+      boxShadow: cssVariables.shadow.glow,
+      color: cssVariables.color.font.dark.hex,
     },
   },
 })

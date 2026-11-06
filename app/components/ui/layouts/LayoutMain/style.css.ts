@@ -24,7 +24,8 @@ export const layoutMain = style({
 export const layoutMain_container = style({
   '@layer': {
     [cssLayerComponentUiLow]: {
-      backgroundColor: cssVariables.color.background.light.hex,
+      // 背景（body）側のグローとグリッドを透過させるため、面は敷かない。
+      backgroundColor: 'transparent',
       flexGrow: 1,
     },
   },

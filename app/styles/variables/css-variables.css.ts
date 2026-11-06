@@ -17,128 +17,198 @@ const changeColorHexToRgb = (hex: string) => {
     .join(', ')
 }
 
-// yorozu ブランドカラー
-// - ベース      : #F4F4F4（背景・下地）
-// - プライマリー : #0F1B2D（文字・主要UI・締めの濃紺）
-// - セカンダリー : #C9A86A（アクセント・リンク・装飾のゴールド）
+// 主色（発光グリーン）の RGB。罫線・面の透明度違いを組み立てるのに使う。
+const PRIMARY_RGB = changeColorHexToRgb('#5cffb1')
+
+const getPrimaryAlpha = (alpha: number) => {
+  return `rgba(${PRIMARY_RGB}, ${alpha})`
+}
+
+// yorozu デザイン案A（ダークテーマ / 発光グリーン）
+// 値の出典は docs/design-guideline.md「デザイン案（検討中）> 案A」。
+// 画面上で確認するための検証用テーマで、まだ確定ではない。
+// 別案へ差し替える場合もこのファイルの値の入れ替えで済むようにしている。
 export const cssVariableColors = {
   font: {
+    // 本文
     base: {
-      hex: '#0f1b2d',
-      rgb: changeColorHexToRgb('#0f1b2d'),
+      hex: '#8fefc4',
+      rgb: changeColorHexToRgb('#8fefc4'),
     },
+    // 見出し
+    heading: {
+      hex: '#e6fff3',
+      rgb: changeColorHexToRgb('#e6fff3'),
+    },
+    // 暗い面の上に置く最も明るい文字
     light: {
-      hex: '#fff',
-      rgb: changeColorHexToRgb('#fff'),
+      hex: '#e6fff3',
+      rgb: changeColorHexToRgb('#e6fff3'),
     },
+    // 発光色の面（塗りボタンなど）の上に置く文字
+    dark: {
+      hex: '#04070a',
+      rgb: changeColorHexToRgb('#04070a'),
+    },
+    // 主色（発光グリーン）
     primary: {
-      hex: '#c9a86a',
-      rgb: changeColorHexToRgb('#c9a86a'),
+      hex: '#5cffb1',
+      rgb: changeColorHexToRgb('#5cffb1'),
     },
+    // グロー
     primaryDark: {
-      hex: '#b0904f',
-      rgb: changeColorHexToRgb('#b0904f'),
+      hex: '#2bff9e',
+      rgb: changeColorHexToRgb('#2bff9e'),
     },
+    // ハイライト
+    primaryLight: {
+      hex: '#c8ffe6',
+      rgb: changeColorHexToRgb('#c8ffe6'),
+    },
+    // 副文
     sub: {
-      hex: '#5b6472',
-      rgb: changeColorHexToRgb('#5b6472'),
+      hex: '#6fbf9b',
+      rgb: changeColorHexToRgb('#6fbf9b'),
     },
+    // ラベル
     subDark: {
-      hex: '#33415a',
-      rgb: changeColorHexToRgb('#33415a'),
+      hex: '#3e8c6c',
+      rgb: changeColorHexToRgb('#3e8c6c'),
+    },
+    // 減光
+    dim: {
+      hex: '#2f6b53',
+      rgb: changeColorHexToRgb('#2f6b53'),
     },
     mark: {
-      hex: '#fff',
-      rgb: changeColorHexToRgb('#fff'),
+      hex: '#04070a',
+      rgb: changeColorHexToRgb('#04070a'),
     },
     placeholder: {
-      hex: '#9aa1ac',
-      rgb: changeColorHexToRgb('#9aa1ac'),
+      hex: '#3e8c6c',
+      rgb: changeColorHexToRgb('#3e8c6c'),
     },
+    // 無効・LOCKED
+    disabled: {
+      hex: '#2a5d49',
+      rgb: changeColorHexToRgb('#2a5d49'),
+    },
+    // 案A に状態色の指定がないため暫定。確定時に差し替える。
     error: {
-      hex: '#f44336',
-      rgb: changeColorHexToRgb('#f44336'),
+      hex: '#ff6b6b',
+      rgb: changeColorHexToRgb('#ff6b6b'),
     },
     required: {
-      hex: '#d42020',
-      rgb: changeColorHexToRgb('#d42020'),
+      hex: '#ff6b6b',
+      rgb: changeColorHexToRgb('#ff6b6b'),
     },
   },
   background: {
+    // 背景
     body: {
-      hex: '#f4f4f4',
-      rgb: changeColorHexToRgb('#f4f4f4'),
+      hex: '#04070a',
+      rgb: changeColorHexToRgb('#04070a'),
     },
+    // パネル（カード面）
     light: {
-      hex: '#fff',
-      rgb: changeColorHexToRgb('#fff'),
+      hex: '#060b0e',
+      rgb: changeColorHexToRgb('#060b0e'),
+    },
+    panel: {
+      hex: '#060b0e',
+      rgb: changeColorHexToRgb('#060b0e'),
+    },
+    // 最暗
+    darkest: {
+      hex: '#050809',
+      rgb: changeColorHexToRgb('#050809'),
     },
     primary: {
-      hex: '#0f1b2d',
-      rgb: changeColorHexToRgb('#0f1b2d'),
+      hex: '#5cffb1',
+      rgb: changeColorHexToRgb('#5cffb1'),
     },
     primaryLight: {
-      hex: '#e6eaf0',
-      rgb: changeColorHexToRgb('#e6eaf0'),
+      hex: '#c8ffe6',
+      rgb: changeColorHexToRgb('#c8ffe6'),
     },
     sub: {
-      hex: '#d8dbe0',
-      rgb: changeColorHexToRgb('#d8dbe0'),
+      hex: '#050809',
+      rgb: changeColorHexToRgb('#050809'),
     },
     subDark: {
-      hex: '#5b6472',
-      rgb: changeColorHexToRgb('#5b6472'),
+      hex: '#17342a',
+      rgb: changeColorHexToRgb('#17342a'),
     },
     subLight: {
-      hex: '#f4f4f4',
-      rgb: changeColorHexToRgb('#f4f4f4'),
+      hex: '#050809',
+      rgb: changeColorHexToRgb('#050809'),
     },
     mark: {
-      hex: '#0f1b2d',
-      rgb: changeColorHexToRgb('#0f1b2d'),
+      hex: '#5cffb1',
+      rgb: changeColorHexToRgb('#5cffb1'),
+    },
+    // 無効・LOCKED
+    disabled: {
+      hex: '#1f4536',
+      rgb: changeColorHexToRgb('#1f4536'),
     },
     success: {
-      hex: '#35c379',
-      rgb: changeColorHexToRgb('#35c379'),
+      hex: '#2bff9e',
+      rgb: changeColorHexToRgb('#2bff9e'),
     },
     successLight: {
-      hex: '#e3f9ed',
-      rgb: changeColorHexToRgb('#e3f9ed'),
+      hex: '#0d2b20',
+      rgb: changeColorHexToRgb('#0d2b20'),
     },
     error: {
-      hex: '#f44336',
-      rgb: changeColorHexToRgb('#f44336'),
+      hex: '#ff6b6b',
+      rgb: changeColorHexToRgb('#ff6b6b'),
     },
     errorLight: {
-      hex: '#f7e3e1',
-      rgb: changeColorHexToRgb('#f7e3e1'),
+      hex: '#2a1113',
+      rgb: changeColorHexToRgb('#2a1113'),
     },
   },
   border: {
     primary: {
-      hex: '#0f1b2d',
-      rgb: changeColorHexToRgb('#0f1b2d'),
+      hex: '#5cffb1',
+      rgb: changeColorHexToRgb('#5cffb1'),
     },
     secondary: {
-      hex: '#c9a86a',
-      rgb: changeColorHexToRgb('#c9a86a'),
+      hex: '#2bff9e',
+      rgb: changeColorHexToRgb('#2bff9e'),
     },
     sub: {
-      hex: '#d8dbe0',
-      rgb: changeColorHexToRgb('#d8dbe0'),
+      hex: '#17342a',
+      rgb: changeColorHexToRgb('#17342a'),
     },
     subDark: {
-      hex: '#9aa1ac',
-      rgb: changeColorHexToRgb('#9aa1ac'),
+      hex: '#22503f',
+      rgb: changeColorHexToRgb('#22503f'),
     },
     error: {
-      hex: '#f44336',
-      rgb: changeColorHexToRgb('#f44336'),
+      hex: '#ff6b6b',
+      rgb: changeColorHexToRgb('#ff6b6b'),
     },
   },
+  // 罫線: rgba(92, 255, 177, 0.14 / 0.22 / 0.28 / 0.35 / 0.4)
+  line: {
+    level1: getPrimaryAlpha(0.14),
+    level2: getPrimaryAlpha(0.22),
+    level3: getPrimaryAlpha(0.28),
+    level4: getPrimaryAlpha(0.35),
+    level5: getPrimaryAlpha(0.4),
+  },
+  // 面: rgba(92, 255, 177, 0.02〜0.05)
+  surface: {
+    level1: getPrimaryAlpha(0.02),
+    level2: getPrimaryAlpha(0.03),
+    level3: getPrimaryAlpha(0.04),
+    level4: getPrimaryAlpha(0.05),
+  },
   gradation: {
-    primary: 'oklch(76% 0.08 85) 0, oklch(84% 0.06 90) 100%',
-    primaryDark: 'oklch(68% 0.09 82) 0, oklch(76% 0.08 88) 100%',
+    primary: '#5cffb1 0, #2bff9e 100%',
+    primaryDark: '#2bff9e 0, #1fd68a 100%',
   },
   // Please use the following sites for key names
   // https://chir.ag/projects/name-that-color/
@@ -150,8 +220,8 @@ export const cssVariableColors = {
   },
   skeleton: {
     sub: {
-      hex: '#e7e7e7',
-      rgb: changeColorHexToRgb('#e7e7e7'),
+      hex: '#0f2a20',
+      rgb: changeColorHexToRgb('#0f2a20'),
     },
   },
 } as const
@@ -159,21 +229,30 @@ export const cssVariableColors = {
 export const cssVariables = createGlobalTheme(':root', {
   // Define colors to be used
   color: cssVariableColors,
-  shadow: {},
+  shadow: {
+    // 発光表現。主色をぼかして面の外側へ光を漏らす。
+    glow: `0 0 24px ${getPrimaryAlpha(0.24)}`,
+    glowStrong: `0 0 32px ${getPrimaryAlpha(0.4)}`,
+    text: `0 0 20px ${getPrimaryAlpha(0.45)}`,
+  },
   font: {
     family: {
-      main: '"游ゴシック Medium", "Yu Gothic", YuGothic, YuGothicMedium, "Hiragino Kaku Gothic ProN", Meiryo, sans-serif',
+      // 和文・見出し
+      main: '"Zen Kaku Gothic New", "游ゴシック Medium", "Yu Gothic", YuGothic, YuGothicMedium, "Hiragino Kaku Gothic ProN", Meiryo, sans-serif',
+      // 英数字・ラベル・数値。Share Tech Mono に和文グリフがないため、
+      // 和文は末尾の Zen Kaku Gothic New へフォールバックさせる。
+      mono: '"Share Tech Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", Meiryo, monospace',
     },
     weight: {
       // thin: '100',
       // extraLight: '200',
       // light: '300',
-      // regular: '400',
+      regular: '400',
       medium: '500',
       // semiBold: '600',
       bold: '700',
       // extraBold: '800',
-      // black: '900',
+      black: '900',
     },
   },
   opacity: {
