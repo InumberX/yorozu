@@ -24,7 +24,7 @@ export const useImageConvert = () => {
 
   useEffect(() => {
     // Vite の Worker 解決のため、new URL には相対パスを渡す（エイリアス不可）。
-    const worker = new Worker(new URL('../worker/imageConvert.worker.ts', import.meta.url), {
+    const worker = new Worker(new URL('../worker/image-convert.worker.ts', import.meta.url), {
       type: 'module',
     })
 

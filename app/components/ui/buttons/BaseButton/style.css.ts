@@ -1,9 +1,9 @@
 import { style } from '@vanilla-extract/css'
 
-import { getMediaQuery } from '~/styles/mixins/mediaQuery.css'
+import { getMediaQuery } from '~/styles/mixins/media-query.css'
 import { getClampPx } from '~/styles/mixins/size.css'
 import { getTransition } from '~/styles/mixins/transition.css'
-import { cssVariables } from '~/styles/variables/cssVariables.css'
+import { cssVariables } from '~/styles/variables/css-variables.css'
 import { fontLargeBold, fontMediumBold, fontSmallBold } from '~/styles/variables/font.css'
 import { cssLayerComponentUiLow } from '~/styles/variables/layers.css'
 

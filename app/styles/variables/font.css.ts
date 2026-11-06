@@ -2,7 +2,7 @@ import { type StyleRule } from '@vanilla-extract/css'
 
 import { getFontSize } from '~/styles/mixins/font.css'
 import { getClampRem } from '~/styles/mixins/size.css'
-import { cssVariables } from '~/styles/variables/cssVariables.css'
+import { cssVariables } from '~/styles/variables/css-variables.css'
 
 export const fontHeading1: StyleRule = {
   fontSize: getClampRem(20, 28),
