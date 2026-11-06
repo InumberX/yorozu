@@ -5,7 +5,7 @@ import { renderWithProviders } from '../../../../test-utils'
 
 // Worker を生成する hook はテストではモックする（jsdom に Worker は無いため）。
 const { convertSpy } = vi.hoisted(() => ({ convertSpy: vi.fn() }))
-vi.mock('~/features/image-convert/hooks/useImageConvert', () => ({
+vi.mock('~/features/image-convert/hooks/use-image-convert', () => ({
   useImageConvert: () => ({
     status: 'idle',
     progress: 0,

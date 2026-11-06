@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import * as styles from './style.css'
 
 import { BaseButton } from '~/components/ui/buttons/BaseButton'
-import { useImageConvert } from '~/features/image-convert/hooks/useImageConvert'
+import { useImageConvert } from '~/features/image-convert/hooks/use-image-convert'
 import { type ImageOutputFormat } from '~/features/image-convert/types'
 
 export const ImageConvertPanel = () => {

@@ -1,6 +1,6 @@
 import { style, createContainer } from '@vanilla-extract/css'
 
-import { cssVariables } from '~/styles/variables/cssVariables.css'
+import { cssVariables } from '~/styles/variables/css-variables.css'
 import { cssLayerComponentUiLow } from '~/styles/variables/layers.css'
 
 export const layoutMainContainer = createContainer()
