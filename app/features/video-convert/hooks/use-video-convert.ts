@@ -24,7 +24,7 @@ export const useVideoConvert = () => {
 
   useEffect(() => {
     // Vite の Worker 解決のため、new URL には相対パスを渡す（エイリアス不可）。
-    const worker = new Worker(new URL('../worker/videoConvert.worker.ts', import.meta.url), {
+    const worker = new Worker(new URL('../worker/video-convert.worker.ts', import.meta.url), {
       type: 'module',
     })
 

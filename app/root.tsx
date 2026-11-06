@@ -20,7 +20,7 @@ import * as styles from './root.css'
 import { LayoutPortal } from '~/components/common/LayoutPortal'
 import { LANG } from '~/config/consts'
 import { GOOGLE_ANALYTICS_ID } from '~/config/env'
-import * as gtag from '~/utils/gtags.client'
+import * as gtag from '~/utils/gtag.client'
 import { getLang } from '~/utils/locale'
 
 export const handle = {

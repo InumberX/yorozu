@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import * as styles from './style.css'
 
 import { BaseButton } from '~/components/ui/buttons/BaseButton'
-import { useVideoConvert } from '~/features/video-convert/hooks/useVideoConvert'
+import { useVideoConvert } from '~/features/video-convert/hooks/use-video-convert'
 import { type VideoCodec } from '~/features/video-convert/types'
 
 export const VideoConvertPanel = () => {

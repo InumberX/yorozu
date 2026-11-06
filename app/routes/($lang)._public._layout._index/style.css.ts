@@ -1,8 +1,8 @@
 import { style } from '@vanilla-extract/css'
 
-import { getMediaQuery } from '~/styles/mixins/mediaQuery.css'
+import { getMediaQuery } from '~/styles/mixins/media-query.css'
 import { getTransition } from '~/styles/mixins/transition.css'
-import { cssVariables } from '~/styles/variables/cssVariables.css'
+import { cssVariables } from '~/styles/variables/css-variables.css'
 import { fontHeading2, fontLarge, fontMaximumBold, fontMedium } from '~/styles/variables/font.css'
 import { cssLayerComponentPage } from '~/styles/variables/layers.css'
 

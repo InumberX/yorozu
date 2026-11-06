@@ -1,10 +1,10 @@
 import { style, globalStyle } from '@vanilla-extract/css'
 
 import { getFontSize } from '~/styles/mixins/font.css'
-import { getMediaQuery, getContainerQuery } from '~/styles/mixins/mediaQuery.css'
+import { getMediaQuery, getContainerQuery } from '~/styles/mixins/media-query.css'
 import { getClampRem } from '~/styles/mixins/size.css'
 import { getTransition } from '~/styles/mixins/transition.css'
-import { cssVariables } from '~/styles/variables/cssVariables.css'
+import { cssVariables } from '~/styles/variables/css-variables.css'
 import { fontHeading2, fontMaximumBold, fontMedium, fontMediumBold } from '~/styles/variables/font.css'
 import { cssLayerReset, cssLayerComponentPage, cssLayerUtils } from '~/styles/variables/layers.css'
 

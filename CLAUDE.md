@@ -38,6 +38,20 @@
 ## 規約
 
 - ファイル名・ディレクトリ名は英語 / ローマ字。ドキュメントの中身・UIコピーは日本語。
+- ファイル・ディレクトリの命名は after_works（`inumberx/after_works-v006` の `.claude/skills/review-pr/rules/style/naming.md`）に揃える。**コンポーネント（ディレクトリ + エントリファイル）だけ PascalCase、それ以外はすべて kebab-case。**
+
+  | 種別 | 形式 | 例 |
+  |---|---|---|
+  | コンポーネント | PascalCase ディレクトリ + `index.tsx` | `ui/buttons/BaseButton/index.tsx` |
+  | コンポーネントのスタイル | `style.css.ts`（Vanilla Extract） | `BaseButton/style.css.ts` |
+  | Provider | PascalCase ディレクトリ + `index.tsx` | `providers/AppProvider/index.tsx` |
+  | UI カテゴリ | 複数形 kebab-case | `buttons/`、`layouts/`、`typographies/` |
+  | hooks | `use-kebab-case.ts` | `features/image-convert/hooks/use-image-convert.ts` |
+  | Web Worker | `kebab-case.worker.ts` | `worker/image-convert.worker.ts` |
+  | styles / utils / config / 型定義 | kebab-case | `media-query.css.ts`、`css-variables.css.ts`、`gtag.client.ts`、`paths.d.ts` |
+  | テスト・ストーリー | `tests/` `stories/` に `app/` の構造をミラーし `index.test.tsx` / `index.stories.tsx` | `tests/components/ui/buttons/BaseButton/index.test.tsx` |
+
+  after_works と違う点は3つ。いずれもフレームワーク由来なので残す: (1) スタイルは CSS Modules ではなく Vanilla Extract の `style.css.ts`。クラスを一つも持たない tsx には作らない。(2) `.server.ts` / `.client.ts` の接尾辞は React Router がバンドルの振り分けに使うので外さない（`i18next.server.ts`、`gtag.client.ts`、`entry.server.tsx`）。(3) `app/routes/` のディレクトリ名（`($lang)._public._layout.image/route.tsx`）は React Router の flat routes 規約に従う。`app/locales/*/pages/YZ10_100.json` は画面 ID（`docs/screens.md`）なので対象外。
 - ブランドカラー: ベース `#F4F4F4` / プライマリー `#0F1B2D` / セカンダリー `#C9A86A`。
 
 ## 未決事項（TBD）

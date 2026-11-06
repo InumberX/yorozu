@@ -2,7 +2,7 @@ import { style } from '@vanilla-extract/css'
 
 import { getTextGradation } from '~/styles/mixins/color.css'
 import { getClampPx } from '~/styles/mixins/size.css'
-import { cssVariables } from '~/styles/variables/cssVariables.css'
+import { cssVariables } from '~/styles/variables/css-variables.css'
 import { fontHeading1 } from '~/styles/variables/font.css'
 import { cssLayerComponentUiLow } from '~/styles/variables/layers.css'
 

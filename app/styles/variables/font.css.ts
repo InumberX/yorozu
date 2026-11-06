@@ -2,7 +2,7 @@ import { type StyleRule } from '@vanilla-extract/css'
 
 import { getFontSize } from '~/styles/mixins/font.css'
 import { getClampRem } from '~/styles/mixins/size.css'
-import { cssVariables } from '~/styles/variables/cssVariables.css'
+import { cssVariables } from '~/styles/variables/css-variables.css'
 
 // デザイン案A のタイポグラフィスケール
 // h1 52px（下層 32px）/ 見出し 20px / 本文 12.5〜14px / ラベル 10〜11.5px
