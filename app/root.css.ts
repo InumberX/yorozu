@@ -353,7 +353,7 @@ globalStyle('[role="tabpanel"]:target', {
 globalStyle('body, h1, h2, h3, h4, h5, h6, dl, dt, dd, p, blockquote, ul, ol, li', {
   '@layer': {
     [cssLayerReset]: {
-      fontSize: getClampRem(12.5, 14),
+      fontSize: getClampRem(13, 14),
     },
   },
 })

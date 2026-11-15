@@ -70,10 +70,14 @@ yorozu 全体で共通のビジュアル規約。ツールが増えても一貫�
 |------|--------|-------------|
 | h1 | 52px（下層ページは 32px） | `fontMaximumBold` / `fontHeading1` |
 | 見出し | 20px | `fontHeading2` |
-| 本文 | 12.5〜14px | `fontMedium` |
-| ラベル | 10〜11.5px | `fontLabel` / `fontLabelLarge` / `fontMono` |
+| 本文 | 13〜14px | `fontMedium` |
+| 小さめの本文 | 12〜13px | `fontSmall` |
+| キャプション | 12px | `fontCaption` |
+| ラベル | 10〜12px（大きめ・数値は 12〜14px） | `fontLabel` / `fontLabelLarge` / `fontMono` |
 
 いずれも `app/styles/variables/font.css.ts` に定義。ビューポート幅に応じて `clamp()` で最小値〜最大値の間を可変にしている（例: h1 は 32px 〜 52px）。
+
+文字サイズは整数の px で指定し、小数点は使わない。
 
 `letter-spacing` は当初 0.12〜0.24em を想定していたが、和文が混在すると読みにくくなるため**実装では入れない方針**とした。
 

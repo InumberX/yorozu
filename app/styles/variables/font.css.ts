@@ -5,7 +5,8 @@ import { getClampRem } from '~/styles/mixins/size.css'
 import { cssVariables } from '~/styles/variables/css-variables.css'
 
 // デザイン案A のタイポグラフィスケール
-// h1 52px（下層 32px）/ 見出し 20px / 本文 12.5〜14px / ラベル 10〜11.5px
+// h1 52px（下層 32px）/ 見出し 20px / 本文 13〜14px / ラベル 10〜14px
+// 文字サイズは整数の px で指定する（小数点は使わない）。
 // 出典: docs/design-guideline.md「デザイン案（検討中）> 案A」
 
 export const fontHeading1: StyleRule = {
@@ -44,32 +45,32 @@ export const fontLargeBold: StyleRule = {
 }
 
 export const fontMedium: StyleRule = {
-  fontSize: getClampRem(12.5, 14),
+  fontSize: getClampRem(13, 14),
   fontWeight: cssVariables.font.weight.regular,
 }
 
 export const fontMediumBold: StyleRule = {
-  fontSize: getClampRem(12.5, 14),
+  fontSize: getClampRem(13, 14),
   fontWeight: cssVariables.font.weight.bold,
 }
 
 export const fontSmall: StyleRule = {
-  fontSize: getClampRem(11.5, 12.5),
+  fontSize: getClampRem(12, 13),
   fontWeight: cssVariables.font.weight.regular,
 }
 
 export const fontSmallBold: StyleRule = {
-  fontSize: getClampRem(11.5, 12.5),
+  fontSize: getClampRem(12, 13),
   fontWeight: cssVariables.font.weight.bold,
 }
 
 export const fontCaption: StyleRule = {
-  fontSize: getFontSize(11.5),
+  fontSize: getFontSize(12),
   fontWeight: cssVariables.font.weight.regular,
 }
 
 export const fontCaptionBold: StyleRule = {
-  fontSize: getFontSize(11.5),
+  fontSize: getFontSize(12),
   fontWeight: cssVariables.font.weight.bold,
 }
 
