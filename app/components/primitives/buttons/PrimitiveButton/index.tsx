@@ -23,6 +23,10 @@ export type PrimitiveButtonProps = {
   ariaLabel?: AriaAttributes['aria-label']
   ariaControls?: AriaAttributes['aria-controls']
   ariaSelected?: AriaAttributes['aria-selected']
+  ariaCurrent?: AriaAttributes['aria-current']
+  ariaExpanded?: AriaAttributes['aria-expanded']
+  lang?: string
+  hrefLang?: string
 }
 
 export const PrimitiveButton = ({
@@ -42,6 +46,10 @@ export const PrimitiveButton = ({
   ariaLabel,
   ariaControls,
   ariaSelected,
+  ariaCurrent,
+  ariaExpanded,
+  lang,
+  hrefLang,
 }: PrimitiveButtonProps) => {
   // 外部リンク判定
   const isExternal: boolean = useMemo(() => {
@@ -83,7 +91,10 @@ export const PrimitiveButton = ({
       aria-label={ariaLabel}
       aria-controls={ariaControls}
       aria-selected={ariaSelected}
+      aria-current={ariaCurrent}
       aria-disabled={isDisabled || undefined}
+      lang={lang}
+      hrefLang={hrefLang}
     >
       {children}
     </a>
@@ -100,7 +111,10 @@ export const PrimitiveButton = ({
       aria-label={ariaLabel}
       aria-controls={ariaControls}
       aria-selected={ariaSelected}
+      aria-current={ariaCurrent}
       aria-disabled={isDisabled || undefined}
+      lang={lang}
+      hrefLang={hrefLang}
     >
       {children}
     </Link>
@@ -118,6 +132,8 @@ export const PrimitiveButton = ({
       aria-label={ariaLabel}
       aria-controls={ariaControls}
       aria-selected={ariaSelected}
+      aria-expanded={ariaExpanded}
+      lang={lang}
     >
       {children}
     </button>

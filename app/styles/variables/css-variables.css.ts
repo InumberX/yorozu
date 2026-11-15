@@ -65,10 +65,30 @@ export const cssVariableColors = {
       hex: '#c8ffe6',
       rgb: changeColorHexToRgb('#c8ffe6'),
     },
+    // 最も明るい文字（ナビの現在地・ホバーなど）
+    white: {
+      hex: '#ffffff',
+      rgb: changeColorHexToRgb('#ffffff'),
+    },
+    // ナビ・リンクの通常色
+    subLight: {
+      hex: '#8fd9b6',
+      rgb: changeColorHexToRgb('#8fd9b6'),
+    },
+    // メニュー項目など、暗い面の上の淡い文字
+    pale: {
+      hex: '#d9ede3',
+      rgb: changeColorHexToRgb('#d9ede3'),
+    },
     // 副文
     sub: {
       hex: '#6fbf9b',
       rgb: changeColorHexToRgb('#6fbf9b'),
+    },
+    // 区切り記号
+    subMedium: {
+      hex: '#4fa07f',
+      rgb: changeColorHexToRgb('#4fa07f'),
     },
     // ラベル
     subDark: {
@@ -104,6 +124,11 @@ export const cssVariableColors = {
     },
   },
   background: {
+    // ヘッダー・メニューの面（半透明で敷くときは rgb を使う）
+    base: {
+      hex: '#05080b',
+      rgb: changeColorHexToRgb('#05080b'),
+    },
     // 背景
     body: {
       hex: '#04070a',

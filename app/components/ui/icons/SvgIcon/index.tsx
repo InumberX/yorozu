@@ -4,7 +4,9 @@ export const SVG_ICON_VARIANT = {
   ANIMATED_IMAGES: 'animatedImages',
   CHEVRON_FORWARD: 'chevronForward',
   CHECK: 'check',
+  CLOSE: 'close',
   FILTER: 'filter',
+  MENU: 'menu',
 } as const
 
 export type SvgIconVariant = (typeof SVG_ICON_VARIANT)[keyof typeof SVG_ICON_VARIANT]

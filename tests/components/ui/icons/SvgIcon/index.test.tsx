@@ -112,6 +112,17 @@ describe('SvgIcon', () => {
       })
     })
 
+    describe('close バリアント', () => {
+      beforeEach(() => {
+        result = render(<SvgIcon variant={SVG_ICON_VARIANT.CLOSE} />)
+      })
+
+      test('close バリアントスタイルが適用されている', () => {
+        const icon = result.container.querySelector('i')
+        expect(icon?.className).toContain('svgIcon__close')
+      })
+    })
+
     describe('filter バリアント', () => {
       beforeEach(() => {
         result = render(<SvgIcon variant={SVG_ICON_VARIANT.FILTER} />)
@@ -120,6 +131,17 @@ describe('SvgIcon', () => {
       test('filter バリアントスタイルが適用されている', () => {
         const icon = result.container.querySelector('i')
         expect(icon?.className).toContain('svgIcon__filter')
+      })
+    })
+
+    describe('menu バリアント', () => {
+      beforeEach(() => {
+        result = render(<SvgIcon variant={SVG_ICON_VARIANT.MENU} />)
+      })
+
+      test('menu バリアントスタイルが適用されている', () => {
+        const icon = result.container.querySelector('i')
+        expect(icon?.className).toContain('svgIcon__menu')
       })
     })
 
@@ -173,7 +195,9 @@ describe('SvgIcon', () => {
           ANIMATED_IMAGES: 'animatedImages',
           CHEVRON_FORWARD: 'chevronForward',
           CHECK: 'check',
+          CLOSE: 'close',
           FILTER: 'filter',
+          MENU: 'menu',
         })
       })
 

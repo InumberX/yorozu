@@ -60,11 +60,29 @@ export const svgIcon__check = style({
   },
 })
 
+export const svgIcon__close = style({
+  '@layer': {
+    [cssLayerComponentUiLow]: {
+      WebkitMaskImage: `url(/assets/img/icon-close.svg?${CACHE_BUSTER})`,
+      maskImage: `url(/assets/img/icon-close.svg?${CACHE_BUSTER})`,
+    },
+  },
+})
+
 export const svgIcon__filter = style({
   '@layer': {
     [cssLayerComponentUiLow]: {
       WebkitMaskImage: `url(/assets/img/icon-filter.svg?${CACHE_BUSTER})`,
       maskImage: `url(/assets/img/icon-filter.svg?${CACHE_BUSTER})`,
+    },
+  },
+})
+
+export const svgIcon__menu = style({
+  '@layer': {
+    [cssLayerComponentUiLow]: {
+      WebkitMaskImage: `url(/assets/img/icon-menu.svg?${CACHE_BUSTER})`,
+      maskImage: `url(/assets/img/icon-menu.svg?${CACHE_BUSTER})`,
     },
   },
 })

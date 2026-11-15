@@ -202,6 +202,56 @@ describe('PrimitiveButton', () => {
           expect(button?.getAttribute('aria-selected')).toEqual('true')
         })
       })
+
+      describe('aria-expanded', () => {
+        beforeEach(() => {
+          result = render(
+            <PrimitiveButton onClick={() => handleClick()} ariaExpanded={false}>
+              Menu
+            </PrimitiveButton>
+          )
+        })
+
+        test('aria-expanded が正常に付与されている', () => {
+          const button = result.container.querySelector('button')
+          expect(button?.getAttribute('aria-expanded')).toEqual('false')
+        })
+      })
+
+      describe('aria-current（内部リンク）', () => {
+        beforeEach(() => {
+          result = render(
+            <MemoryRouter>
+              <PrimitiveButton url="/image" ariaCurrent="page">
+                Image
+              </PrimitiveButton>
+            </MemoryRouter>
+          )
+        })
+
+        test('aria-current が正常に付与されている', () => {
+          const link = result.container.querySelector('a')
+          expect(link?.getAttribute('aria-current')).toEqual('page')
+        })
+      })
+    })
+
+    describe('lang / hreflang 属性', () => {
+      beforeEach(() => {
+        result = render(
+          <MemoryRouter>
+            <PrimitiveButton url="/en" lang="en" hrefLang="en">
+              EN
+            </PrimitiveButton>
+          </MemoryRouter>
+        )
+      })
+
+      test('lang と hreflang が正常に付与されている', () => {
+        const link = result.container.querySelector('a')
+        expect(link?.getAttribute('lang')).toEqual('en')
+        expect(link?.getAttribute('hreflang')).toEqual('en')
+      })
     })
 
     describe('role 属性', () => {
