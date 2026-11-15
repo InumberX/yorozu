@@ -176,7 +176,6 @@ export const layoutHeaderNavLink = style({
       paddingInline: '16px',
       fontSize: getFontSize(15),
       fontWeight: cssVariables.font.weight.medium,
-      letterSpacing: '0.06em',
       color: cssVariables.color.font.pale.hex,
       transition: colorTransition,
 
@@ -193,7 +192,6 @@ export const layoutHeaderNavLink = style({
           paddingInline: 0,
           paddingBlock: '2px 0',
           fontSize: getFontSize(13),
-          letterSpacing: '0.08em',
           color: cssVariables.color.font.subLight.hex,
           borderBlockEnd: '2px solid transparent',
 
@@ -249,7 +247,6 @@ export const layoutHeaderLang = style({
       alignItems: 'center',
       fontFamily: cssVariables.font.family.mono,
       fontSize: getFontSize(12),
-      letterSpacing: '0.16em',
 
       '@media': {
         [getMediaQuery('md')]: {
