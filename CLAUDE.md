@@ -34,6 +34,7 @@
 - 番号プレフィックスは使わない。順序は `docs/README.md` の目次で管理する。
 - ツール個別の詳細が必要になったら `docs/tools/<name>/` に切り出す。
 - 参照: `docs/requirements.md`（要件）, `docs/screens.md`（画面）, `docs/design-guideline.md`（デザイン）。
+- **デザインの正は claude.ai の yorozu アーティファクト**（トップ `yorozu-cyber-net(-sp)` / 画像変換 `yorozu-cyber-net-image(-sp)` / 動画変換 `yorozu-cyber-net-video(-sp)` / `OGP`）。URL とファイルの対応は `docs/design-guideline.md`「デザインの正」。
 
 ## 規約
 
@@ -52,10 +53,10 @@
   | テスト・ストーリー | `tests/` `stories/` に `app/` の構造をミラーし `index.test.tsx` / `index.stories.tsx` | `tests/components/ui/buttons/BaseButton/index.test.tsx` |
 
   after_works と違う点は3つ。いずれもフレームワーク由来なので残す: (1) スタイルは CSS Modules ではなく Vanilla Extract の `style.css.ts`。クラスを一つも持たない tsx には作らない。(2) `.server.ts` / `.client.ts` の接尾辞は React Router がバンドルの振り分けに使うので外さない（`i18next.server.ts`、`gtag.client.ts`、`entry.server.tsx`）。(3) `app/routes/` のディレクトリ名（`($lang)._public._layout.image/route.tsx`）は React Router の flat routes 規約に従う。`app/locales/*/pages/YZ10_100.json` は画面 ID（`docs/screens.md`）なので対象外。
-- ブランドカラー: ベース `#F4F4F4` / プライマリー `#0F1B2D` / セカンダリー `#C9A86A`。
+- CSS に書く数値（px / rem などのサイズ指定）は整数にし、小数点は使わない。出力される rem や `clamp()` の表示サイズが小数になるのは対象外。既存の小数（`root.css.ts` の `sup` / `sub` の em、`css-variables.css.ts` の `4.6vw`）は例外として残す。
+- ブランドカラー（ダークテーマ）: 背景 `#05080B` / 主色 `#5CFFB1` / ハイライト `#C8FFE6` / 差し色 `#FFB454`。詳細と実装上の色は `docs/design-guideline.md`。
 
 ## 未決事項（TBD）
 
 - ffmpeg: シングルスレッド / マルチスレッド。
 - 対応入力形式、品質 / 圧縮オプション、一括変換の要否。
-- ロゴ（デザイナーに依頼予定）。

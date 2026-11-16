@@ -106,7 +106,10 @@ export const baseButton__primary = style({
       selectors: {
         [`&${baseButton__contained}`]: {
           backgroundColor: 'transparent',
-          color: cssVariables.color.font.light.hex,
+          // 発光グリーンの面に載せるため、文字は背景色まで落とす。
+          color: cssVariables.color.font.dark.hex,
+          boxShadow: cssVariables.shadow.glow,
+          fontWeight: cssVariables.font.weight.bold,
         },
 
         [`&${baseButton__contained}:before, &${baseButton__contained}:after`]: {
@@ -122,9 +125,9 @@ export const baseButton__primary = style({
         },
 
         [`&${baseButton__outlined}`]: {
-          backgroundColor: 'transparent',
+          backgroundColor: cssVariables.color.surface.level2,
           color: cssVariables.color.font.primary.hex,
-          borderColor: cssVariables.color.border.primary.hex,
+          borderColor: cssVariables.color.line.level4,
         },
       },
 
@@ -133,7 +136,9 @@ export const baseButton__primary = style({
           selectors: {
             [`&${baseButton__outlined}:hover`]: {
               backgroundColor: cssVariables.color.background.primary.hex,
-              color: cssVariables.color.font.light.hex,
+              borderColor: cssVariables.color.border.primary.hex,
+              boxShadow: cssVariables.shadow.glow,
+              color: cssVariables.color.font.dark.hex,
             },
           },
         },

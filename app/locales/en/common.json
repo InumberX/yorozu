@@ -9,14 +9,20 @@
   },
   "header": {
     "brand": "yorozu",
+    "navLabel": "Main navigation",
     "nav": {
       "home": "Home",
       "image": "Image",
       "video": "Video"
     },
     "language": {
-      "ja": "日本語",
-      "en": "English"
+      "label": "Language",
+      "ja": "JA",
+      "en": "EN"
+    },
+    "menu": {
+      "open": "Open menu",
+      "close": "Close menu"
     }
   },
   "footer": {
