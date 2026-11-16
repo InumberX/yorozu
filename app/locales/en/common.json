@@ -37,6 +37,7 @@
     "links": {
       "label": "Links",
       "title": "LINKS",
+      "request": "REQUEST",
       "github": "GITHUB",
       "afterworks": "AFTERWORKS"
     },

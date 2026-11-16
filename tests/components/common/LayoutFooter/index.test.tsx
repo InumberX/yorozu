@@ -31,6 +31,7 @@ describe('LayoutFooter', () => {
 
     test('関連リンクのナビゲーションが外部サイトを指す', () => {
       const nav = result.getByRole('navigation', { name: '関連リンク' })
+      expect(nav.querySelector('a[href="https://github.com/InumberX/yorozu/issues"]')?.textContent).toBe('REQUEST')
       expect(nav.querySelector('a[href="https://github.com/InumberX"]')?.textContent).toBe('GITHUB')
       expect(nav.querySelector('a[href="https://afterworks.jp"]')?.textContent).toBe('AFTERWORKS')
     })

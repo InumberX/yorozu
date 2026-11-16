@@ -53,6 +53,7 @@ export const LayoutFooter = ({ lang }: Props) => {
     {
       key: 'links',
       items: [
+        { key: 'request', url: 'https://github.com/InumberX/yorozu/issues' },
         { key: 'github', url: 'https://github.com/InumberX' },
         { key: 'afterworks', url: 'https://afterworks.jp' },
       ],
