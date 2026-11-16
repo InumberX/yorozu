@@ -382,6 +382,9 @@ export const layoutHeaderLang_label = style({
 export const layoutHeaderLang_separator = style({
   '@layer': {
     [cssLayerComponentCommon]: {
+      // JA / EN（layoutHeaderLang_link）と同じフォントとサイズにそろえる。
+      fontFamily: cssVariables.font.family.mono,
+      fontSize: getFontSize(12),
       color: cssVariables.color.font.subMedium.hex,
     },
   },
