@@ -11,7 +11,7 @@
     "brand": "yorozu",
     "navLabel": "メインナビゲーション",
     "nav": {
-      "home": "トップ",
+      "home": "ホーム",
       "image": "画像変換",
       "video": "動画変換"
     },

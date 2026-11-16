@@ -17,13 +17,13 @@ describe('LayoutHeader', () => {
       result = renderWithProviders(<LayoutHeader lang="ja" />)
     })
 
-    test('ロゴがブランド名を代替テキストに持ち、トップを指す', () => {
+    test('ロゴがブランド名を代替テキストに持ち、ホームを指す', () => {
       const logo = result.getByAltText('yorozu')
       expect(logo.closest('a')?.getAttribute('href')).toBe('/')
     })
 
-    test('ナビゲーション（トップ / 画像 / 動画）が出力されている', () => {
-      expect(result.getByText('トップ')).not.toBe(null)
+    test('ナビゲーション（ホーム / 画像 / 動画）が出力されている', () => {
+      expect(result.getByText('ホーム')).not.toBe(null)
       expect(result.getByText('画像変換')).not.toBe(null)
       expect(result.getByText('動画変換')).not.toBe(null)
     })
