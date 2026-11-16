@@ -198,7 +198,7 @@ export const layoutHeaderNavLink = style({
       gap: '16px',
       justifyContent: 'space-between',
       blockSize: '52px',
-      paddingInline: '16px',
+      paddingInline: cssVariables.layout.inner.padding.xs,
       fontSize: getFontSize(14),
       fontWeight: cssVariables.font.weight.regular,
       color: cssVariables.color.font.subLight.hex,
