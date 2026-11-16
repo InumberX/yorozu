@@ -105,6 +105,14 @@ describe('LayoutHeader', () => {
       expect(result.getByRole('button', { name: 'メニューを開く' }).getAttribute('aria-expanded')).toBe('false')
     })
 
+    test('メニュー内にフォーカスがあるとき Esc で閉じると、フォーカスが開閉ボタンへ戻る', () => {
+      fireEvent.click(result.getByRole('button', { name: 'メニューを開く' }))
+      const link = result.container.querySelector<HTMLAnchorElement>('nav a[href="/image"]')
+      link?.focus()
+      fireEvent.keyDown(window, { key: 'Escape' })
+      expect(document.activeElement).toBe(result.getByRole('button', { name: 'メニューを開く' }))
+    })
+
     test('Esc で閉じる', () => {
       fireEvent.click(result.getByRole('button', { name: 'メニューを開く' }))
       fireEvent.keyDown(window, { key: 'Escape' })

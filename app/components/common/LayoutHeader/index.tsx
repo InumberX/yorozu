@@ -43,20 +43,25 @@ export const LayoutHeader = ({ lang }: Props) => {
 
   const currentPath = normalizePath(location.pathname)
 
-  // SP メニューは Esc で閉じる。
+  // SP メニューは Esc で閉じる。メニュー内にフォーカスがあった場合は、
+  // 閉じたメニュー（visibility: hidden）にフォーカスが残らないよう、開閉ボタンへ戻す。
   useEffect(() => {
     if (!isMenuOpen) return
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setMenuOpenedPath(null)
+      if (event.key !== 'Escape') return
+
+      const nav = document.getElementById(menuId)
+      if (nav?.contains(document.activeElement)) {
+        document.querySelector<HTMLButtonElement>(`button[aria-controls="${menuId}"]`)?.focus()
       }
+      setMenuOpenedPath(null)
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [isMenuOpen])
+  }, [isMenuOpen, menuId])
 
   // PC / SP が切り替わったら、メニューをアニメーションなしで閉じる。
   useEffect(() => {

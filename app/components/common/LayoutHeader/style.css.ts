@@ -1,7 +1,7 @@
 import { style } from '@vanilla-extract/css'
 
 import { getFontSize } from '~/styles/mixins/font.css'
-import { getMediaQuery } from '~/styles/mixins/media-query.css'
+import { getMediaQuery, getMediaQueryReverse } from '~/styles/mixins/media-query.css'
 import { getTransition } from '~/styles/mixins/transition.css'
 import { cssVariables } from '~/styles/variables/css-variables.css'
 import { cssLayerComponentCommon } from '~/styles/variables/layers.css'
@@ -39,6 +39,14 @@ export const layoutHeader = style({
       backgroundColor: `rgba(${cssVariables.color.background.base.rgb}, 0.92)`,
       backdropFilter: 'blur(8px)',
       borderBlockEnd: `1px solid ${getLineColor(0.3)}`,
+
+      '@media': {
+        // JS が動かない SP ではメニューを常に展開するため、ヘッダーを固定せず本文の流れに置く。
+        // 固定したままだと、展開したメニューがページの見出しに重なる。
+        [`${getMediaQueryReverse('sm')} and ${getMediaQuery('not-scripting')}`]: {
+          position: 'relative',
+        },
+      },
     },
   },
 })
@@ -120,6 +128,12 @@ export const layoutHeaderNav = style({
           visibility: 'visible',
           opacity: 1,
           transform: 'none',
+          position: 'static',
+        },
+        // ヘッダーの流れに置くと LayoutInner の左右の余白の内側に収まるため、余白を打ち消して全幅に広げる。
+        [`${getMediaQueryReverse('sm')} and ${getMediaQuery('not-scripting')}`]: {
+          marginInline: `calc(-1 * ${cssVariables.layout.inner.padding.xs})`,
+          inlineSize: 'auto',
         },
         [getMediaQuery('sm')]: {
           visibility: 'visible',
@@ -414,7 +428,7 @@ export const layoutHeaderMenuButton = style({
 })
 
 // ハンバーガー（三本線）を CSS で描き、開いている間は × へ変形させる。
-// 中央の線を本体、上下の線を ::before / ::after で描く。線の間隔は 4.5px。
+// 中央の線を本体、上下の線を ::before / ::after で描く。線の間隔は 4px。
 const menuIconBar = {
   inlineSize: '16px',
   blockSize: '2px',
