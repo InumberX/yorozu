@@ -26,7 +26,20 @@
     }
   },
   "footer": {
-    "note": "ブラウザ完結の便利ツールハブ",
-    "copyright": "© yorozu"
+    "brand": "yorozu",
+    "tagline": "A VESSEL THAT HOLDS EVERYTHING",
+    "tools": {
+      "label": "ツール一覧",
+      "title": "TOOLS",
+      "image": "画像を変換する",
+      "video": "動画を変換する"
+    },
+    "links": {
+      "label": "関連リンク",
+      "title": "LINKS",
+      "github": "GITHUB",
+      "afterworks": "AFTERWORKS"
+    },
+    "copyright": "© {{year}} NiNE, ALL RIGHTS RESERVED."
   }
 }

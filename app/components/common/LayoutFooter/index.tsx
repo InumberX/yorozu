@@ -1,15 +1,112 @@
+import { useSyncExternalStore } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import * as styles from './style.css'
 
-export const LayoutFooter = () => {
+import { PrimitiveButton } from '~/components/primitives/buttons/PrimitiveButton'
+import { LayoutInner } from '~/components/ui/layouts/LayoutInner'
+import { CACHE_BUSTER, LASTMOD } from '~/config/env'
+import { PAGES } from '~/config/paths'
+
+type Props = {
+  lang: string
+}
+
+const YEAR_IN_JAPAN = new Intl.DateTimeFormat('en', { timeZone: 'Asia/Tokyo', year: 'numeric' })
+
+// 閲覧者の端末の時刻ではなく、日本時間の年を使う（閲覧者の多くは日本にいるため）。
+export const getYearInJapan = (date: Date) => {
+  return Number(YEAR_IN_JAPAN.format(date))
+}
+
+// ページはビルド時に prerender するため、ハイドレーションではビルドした年を使い、
+// その直後に閲覧時点の年へ描き直す（useSyncExternalStore の getServerSnapshot）。
+// 初回から閲覧時点の年にすると、年をまたいだときに prerender した HTML と食い違い、
+// ハイドレーションの不一致になる。
+const BUILD_YEAR = LASTMOD ? Number(LASTMOD.slice(0, 4)) : getYearInJapan(new Date())
+
+// 年の変わり目を購読する必要はない（次のページ遷移・再読み込みで追従すれば足りる）。
+const subscribeYear = () => {
+  return () => {}
+}
+
+const getCurrentYear = () => {
+  return getYearInJapan(new Date())
+}
+
+const getBuildYear = () => {
+  return BUILD_YEAR
+}
+
+export const LayoutFooter = ({ lang }: Props) => {
   const { t } = useTranslation('common')
+  const year = useSyncExternalStore(subscribeYear, getCurrentYear, getBuildYear)
+
+  const navGroups = [
+    {
+      key: 'tools',
+      items: [
+        { key: 'image', url: PAGES.YZ20_100.getUrl({ lang }) },
+        { key: 'video', url: PAGES.YZ30_100.getUrl({ lang }) },
+      ],
+    },
+    {
+      key: 'links',
+      items: [
+        { key: 'github', url: 'https://github.com/InumberX' },
+        { key: 'afterworks', url: 'https://afterworks.jp' },
+      ],
+    },
+  ] as const
 
   return (
     <footer className={styles.layoutFooter}>
-      <div className={styles.layoutFooter_container}>
-        <p className={styles.layoutFooter_note}>{t('footer.note')}</p>
-        <p className={styles.layoutFooter_copyright}>{t('footer.copyright')}</p>
+      <LayoutInner>
+        <div className={styles.layoutFooter_container}>
+          <div className={styles.layoutFooterBrand}>
+            <img
+              src={`/assets/img/img-logo-cyber-medium.svg?${CACHE_BUSTER}`}
+              alt={t('footer.brand')}
+              width={287}
+              height={75}
+              className={styles.layoutFooterBrand_logo}
+            />
+            <p lang="en" translate="no" className={styles.layoutFooterBrand_tagline}>
+              {t('footer.tagline')}
+            </p>
+          </div>
+
+          {navGroups.map(({ key, items }) => (
+            <nav
+              key={key}
+              aria-label={t(`footer.${key}.label`)}
+              className={[styles.layoutFooterNav, styles[`layoutFooterNav__${key}`]].join(' ')}
+            >
+              <p lang="en" translate="no" className={styles.layoutFooterNav_title}>
+                {t(`footer.${key}.title`)}
+              </p>
+              <ul className={styles.layoutFooterNav_items}>
+                {items.map((item) => (
+                  <li key={item.key}>
+                    <PrimitiveButton url={item.url} className={styles.layoutFooterNav_link}>
+                      {t(`footer.${key}.${item.key}`)}
+                    </PrimitiveButton>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
+        </div>
+      </LayoutInner>
+
+      <div className={styles.layoutFooterCopy}>
+        <LayoutInner>
+          <p>
+            <small lang="en" translate="no" className={styles.layoutFooterCopy_text}>
+              {t('footer.copyright', { year })}
+            </small>
+          </p>
+        </LayoutInner>
       </div>
     </footer>
   )
