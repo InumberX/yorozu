@@ -1,5 +1,5 @@
-import { cleanup, fireEvent, type RenderResult } from '@testing-library/react'
-import { afterEach, beforeEach, describe, expect, test } from 'vitest'
+import { act, cleanup, fireEvent, type RenderResult } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 
 import { renderWithProviders } from '../../../test-utils'
 
@@ -114,6 +114,46 @@ describe('LayoutHeader', () => {
     test('メニュー内のリンクでページを移動すると閉じる', () => {
       fireEvent.click(result.getByRole('button', { name: 'メニューを開く' }))
       fireEvent.click(result.getByText('画像変換'))
+      expect(result.getByRole('button', { name: 'メニューを開く' }).getAttribute('aria-expanded')).toBe('false')
+    })
+  })
+
+  describe('SP メニューのアニメーション', () => {
+    let notifyMediaChange: () => void
+
+    beforeEach(() => {
+      const listeners: (() => void)[] = []
+      notifyMediaChange = () => listeners.forEach((listener) => listener())
+      vi.stubGlobal(
+        'matchMedia',
+        vi.fn(() => ({
+          matches: false,
+          addEventListener: (_: string, listener: () => void) => listeners.push(listener),
+          removeEventListener: vi.fn(),
+        }))
+      )
+      result = renderWithProviders(<LayoutHeader lang="ja" />)
+    })
+
+    afterEach(() => {
+      vi.unstubAllGlobals()
+    })
+
+    test('初期状態ではアニメーションをかけない', () => {
+      expect(result.container.querySelector('nav')?.className).not.toContain('layoutHeaderNav__animated')
+    })
+
+    test('ボタンで開閉したときはアニメーションをかける', () => {
+      fireEvent.click(result.getByRole('button', { name: 'メニューを開く' }))
+      expect(result.container.querySelector('nav')?.className).toContain('layoutHeaderNav__animated')
+    })
+
+    test('PC / SP が切り替わったら、アニメーションなしで閉じる', () => {
+      fireEvent.click(result.getByRole('button', { name: 'メニューを開く' }))
+      act(() => notifyMediaChange())
+
+      const nav = result.container.querySelector('nav')
+      expect(nav?.className).not.toContain('layoutHeaderNav__animated')
       expect(result.getByRole('button', { name: 'メニューを開く' }).getAttribute('aria-expanded')).toBe('false')
     })
   })

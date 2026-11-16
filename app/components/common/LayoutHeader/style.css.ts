@@ -103,11 +103,6 @@ export const layoutHeaderNav = style({
       visibility: 'hidden',
       opacity: 0,
       transform: 'translateY(-8px)',
-      transition: getTransition([
-        { property: 'opacity', speed: MENU_TRANSITION_SPEED },
-        { property: 'transform', speed: MENU_TRANSITION_SPEED },
-        { property: 'visibility', speed: MENU_TRANSITION_SPEED },
-      ]),
       backgroundColor: cssVariables.color.background.base.hex,
       borderBlock: `1px solid ${getLineColor(0.3)}`,
       position: 'absolute',
@@ -123,18 +118,36 @@ export const layoutHeaderNav = style({
           opacity: 1,
           transform: 'none',
         },
-        [reducedMotion]: {
-          transition: 'none',
-        },
         [getMediaQuery('sm')]: {
           visibility: 'visible',
           opacity: 1,
           transform: 'none',
-          transition: 'none',
           alignSelf: 'stretch',
           backgroundColor: 'transparent',
           borderBlock: 'none',
           position: 'static',
+        },
+      },
+    },
+  },
+})
+
+// 閲覧者がメニューを開閉したときだけ付ける（PC / SP の切り替えでは付けない）。
+export const layoutHeaderNav__animated = style({
+  '@layer': {
+    [cssLayerComponentCommon]: {
+      transition: getTransition([
+        { property: 'opacity', speed: MENU_TRANSITION_SPEED },
+        { property: 'transform', speed: MENU_TRANSITION_SPEED },
+        { property: 'visibility', speed: MENU_TRANSITION_SPEED },
+      ]),
+
+      '@media': {
+        [reducedMotion]: {
+          transition: 'none',
+        },
+        [getMediaQuery('sm')]: {
+          transition: 'none',
         },
       },
     },
