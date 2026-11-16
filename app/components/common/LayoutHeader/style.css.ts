@@ -215,12 +215,16 @@ export const layoutHeaderNavLink = style({
       fontSize: getFontSize(14),
       fontWeight: cssVariables.font.weight.regular,
       color: cssVariables.color.font.subLight.hex,
+      // SP では下線を出さないが、色だけ PC と同じ値にしておく。指定しないと文字色が使われ、
+      // SP → PC へ幅が変わったときに、その色から透明・主色への transition で下線が一瞬見える。
+      borderBlockEndColor: 'transparent',
       transition: colorTransition,
 
       selectors: {
         '&[aria-current="page"]': {
           color: cssVariables.color.font.white.hex,
           fontWeight: cssVariables.font.weight.bold,
+          borderBlockEndColor: cssVariables.color.border.primary.hex,
         },
       },
 
