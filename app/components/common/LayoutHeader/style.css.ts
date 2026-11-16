@@ -58,6 +58,9 @@ export const layoutHeader_container = style({
         [getMediaQuery('sm')]: {
           gridTemplateAreas: '"brand nav lang"',
           gridTemplateRows: `${layoutHeaderHeight.maximum}px`,
+          columnGap: '16px',
+        },
+        [getMediaQuery('md')]: {
           columnGap: '28px',
         },
       },
@@ -85,7 +88,7 @@ export const layoutHeaderBrand_logo = style({
       inlineSize: 'auto',
 
       '@media': {
-        [getMediaQuery('sm')]: {
+        [getMediaQuery('md')]: {
           blockSize: '24px',
         },
       },
@@ -174,8 +177,11 @@ export const layoutHeaderNav_items = style({
         [getMediaQuery('sm')]: {
           flexDirection: 'row',
           alignItems: 'stretch',
-          gap: '28px',
+          gap: '16px',
           blockSize: '100%',
+        },
+        [getMediaQuery('md')]: {
+          gap: '28px',
         },
       },
     },
@@ -235,6 +241,7 @@ export const layoutHeaderNavLink = style({
           paddingBlock: '2px 0',
           color: cssVariables.color.font.subLight.hex,
           borderBlockEnd: '2px solid transparent',
+          fontSize: getFontSize(12),
 
           selectors: {
             '&[aria-current="page"]': {
@@ -243,6 +250,9 @@ export const layoutHeaderNavLink = style({
               borderBlockEndColor: cssVariables.color.border.primary.hex,
             },
           },
+        },
+        [getMediaQuery('md')]: {
+          fontSize: getFontSize(14),
         },
         [getMediaQuery('hover')]: {
           selectors: {
@@ -282,14 +292,15 @@ export const layoutHeaderLang = style({
       gridArea: 'lang',
       display: 'flex',
       alignItems: 'center',
-      fontFamily: cssVariables.font.family.mono,
-      fontSize: getFontSize(12),
 
       '@media': {
         [getMediaQuery('sm')]: {
           gap: '8px',
-          paddingInlineStart: '24px',
+          paddingInlineStart: '16px',
           borderInlineStart: `1px solid ${getLineColor(0.3)}`,
+        },
+        [getMediaQuery('md')]: {
+          paddingInlineStart: '24px',
         },
       },
     },
@@ -320,6 +331,8 @@ export const layoutHeaderLang_link = style({
       paddingInline: '8px',
       color: cssVariables.color.font.subLight.hex,
       transition: colorTransition,
+      fontFamily: cssVariables.font.family.mono,
+      fontSize: getFontSize(12),
 
       selectors: {
         '&[aria-current="true"]': {
@@ -401,7 +414,7 @@ export const layoutHeaderMenuButton = style({
 // 中央の線を本体、上下の線を ::before / ::after で描く。線の間隔は 4.5px。
 const menuIconBar = {
   inlineSize: '16px',
-  blockSize: '1.5px',
+  blockSize: '2px',
   backgroundColor: 'currentColor',
 } as const
 
@@ -427,10 +440,10 @@ export const layoutHeaderMenuButton_icon = style({
           transition: menuIconTransition,
         },
         '&::before': {
-          transform: 'translateY(-4.5px)',
+          transform: 'translateY(-4px)',
         },
         '&::after': {
-          transform: 'translateY(4.5px)',
+          transform: 'translateY(4px)',
         },
         [`${layoutHeaderMenuButton}[aria-expanded="true"] &`]: {
           backgroundColor: 'transparent',
