@@ -5,7 +5,6 @@ import { useLocation } from 'react-router'
 import * as styles from './style.css'
 
 import { PrimitiveButton } from '~/components/primitives/buttons/PrimitiveButton'
-import { SVG_ICON_VARIANT, SvgIcon } from '~/components/ui/icons/SvgIcon'
 import { LayoutInner } from '~/components/ui/layouts/LayoutInner'
 import { LANG } from '~/config/consts'
 import { CACHE_BUSTER } from '~/config/env'
@@ -136,10 +135,7 @@ export const LayoutHeader = ({ lang }: Props) => {
             ariaExpanded={isMenuOpen}
             className={styles.layoutHeaderMenuButton}
           >
-            <SvgIcon
-              variant={isMenuOpen ? SVG_ICON_VARIANT.CLOSE : SVG_ICON_VARIANT.MENU}
-              className={styles.layoutHeaderMenuButton_icon}
-            />
+            <span aria-hidden="true" className={styles.layoutHeaderMenuButton_icon} />
           </PrimitiveButton>
         </div>
       </LayoutInner>

@@ -75,11 +75,6 @@ export const cssVariableColors = {
       hex: '#8fd9b6',
       rgb: changeColorHexToRgb('#8fd9b6'),
     },
-    // メニュー項目など、暗い面の上の淡い文字
-    pale: {
-      hex: '#d9ede3',
-      rgb: changeColorHexToRgb('#d9ede3'),
-    },
     // 副文
     sub: {
       hex: '#6fbf9b',

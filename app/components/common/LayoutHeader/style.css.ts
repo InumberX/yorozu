@@ -7,7 +7,7 @@ import { cssVariables } from '~/styles/variables/css-variables.css'
 import { cssLayerComponentCommon } from '~/styles/variables/layers.css'
 
 // 出典: yorozu アーティファクト「yorozu-cyber-net」（PC）/「yorozu-cyber-net-sp」（SP）のヘッダー。
-// md 未満を SP（ハンバーガーメニュー）、md 以上を PC（横並びナビ）として扱う。
+// sm 未満を SP（ハンバーガーメニュー）、sm 以上を PC（横並びナビ）として扱う。
 
 // ヘッダーの高さ（px）。SP=56 / PC=60。LayoutPageWrapper が本文の上下余白計算に参照する。
 export const layoutHeaderHeight = {
@@ -21,6 +21,12 @@ const getLineColor = (alpha: number) => {
 }
 
 const colorTransition = getTransition([{ property: 'color' }, { property: 'border-color' }])
+
+// SP メニューの開閉とアイコンの変形にかける時間（秒）
+const MENU_TRANSITION_SPEED = 0.3
+
+// 動きを減らす設定の閲覧者には、開閉を即時に切り替える。
+const reducedMotion = '(prefers-reduced-motion: reduce)'
 
 export const layoutHeader = style({
   '@layer': {
@@ -92,7 +98,16 @@ export const layoutHeaderNav = style({
   '@layer': {
     [cssLayerComponentCommon]: {
       gridArea: 'nav',
-      display: 'none',
+      // 開閉を transition で見せるため、閉じている間も DOM と描画には残し、
+      // visibility で操作と読み上げの対象から外す。
+      visibility: 'hidden',
+      opacity: 0,
+      transform: 'translateY(-8px)',
+      transition: getTransition([
+        { property: 'opacity', speed: MENU_TRANSITION_SPEED },
+        { property: 'transform', speed: MENU_TRANSITION_SPEED },
+        { property: 'visibility', speed: MENU_TRANSITION_SPEED },
+      ]),
       backgroundColor: cssVariables.color.background.base.hex,
       borderBlock: `1px solid ${getLineColor(0.3)}`,
       position: 'absolute',
@@ -104,10 +119,18 @@ export const layoutHeaderNav = style({
       '@media': {
         // JS が動かない環境ではメニューを開けないため、常に展開しておく。
         [getMediaQuery('not-scripting')]: {
-          display: 'block',
+          visibility: 'visible',
+          opacity: 1,
+          transform: 'none',
+        },
+        [reducedMotion]: {
+          transition: 'none',
         },
         [getMediaQuery('sm')]: {
-          display: 'block',
+          visibility: 'visible',
+          opacity: 1,
+          transform: 'none',
+          transition: 'none',
           alignSelf: 'stretch',
           backgroundColor: 'transparent',
           borderBlock: 'none',
@@ -121,7 +144,9 @@ export const layoutHeaderNav = style({
 export const layoutHeaderNav__open = style({
   '@layer': {
     [cssLayerComponentCommon]: {
-      display: 'block',
+      visibility: 'visible',
+      opacity: 1,
+      transform: 'none',
     },
   },
 })
@@ -206,6 +231,9 @@ export const layoutHeaderNavLink = style({
           selectors: {
             '&:hover': {
               color: cssVariables.color.font.white.hex,
+            },
+            // 現在のページの下線は、ホバーしても主色のまま残す。
+            '&:not([aria-current="page"]):hover': {
               borderBlockEndColor: getLineColor(0.5),
             },
           },
@@ -352,10 +380,63 @@ export const layoutHeaderMenuButton = style({
   },
 })
 
+// ハンバーガー（三本線）を CSS で描き、開いている間は × へ変形させる。
+// 中央の線を本体、上下の線を ::before / ::after で描く。線の間隔は 4.5px。
+const menuIconBar = {
+  inlineSize: '16px',
+  blockSize: '1.5px',
+  backgroundColor: 'currentColor',
+} as const
+
+const menuIconTransition = getTransition([
+  { property: 'transform', speed: MENU_TRANSITION_SPEED },
+  { property: 'background-color', speed: MENU_TRANSITION_SPEED },
+])
+
 export const layoutHeaderMenuButton_icon = style({
   '@layer': {
     [cssLayerComponentCommon]: {
-      inlineSize: '22px',
+      ...menuIconBar,
+      position: 'relative',
+      display: 'block',
+      transition: menuIconTransition,
+
+      selectors: {
+        '&::before, &::after': {
+          ...menuIconBar,
+          content: '""',
+          position: 'absolute',
+          insetInlineStart: 0,
+          transition: menuIconTransition,
+        },
+        '&::before': {
+          transform: 'translateY(-4.5px)',
+        },
+        '&::after': {
+          transform: 'translateY(4.5px)',
+        },
+        [`${layoutHeaderMenuButton}[aria-expanded="true"] &`]: {
+          backgroundColor: 'transparent',
+        },
+        [`${layoutHeaderMenuButton}[aria-expanded="true"] &::before`]: {
+          transform: 'rotate(45deg)',
+        },
+        [`${layoutHeaderMenuButton}[aria-expanded="true"] &::after`]: {
+          transform: 'rotate(-45deg)',
+        },
+      },
+
+      '@media': {
+        [reducedMotion]: {
+          transition: 'none',
+
+          selectors: {
+            '&::before, &::after': {
+              transition: 'none',
+            },
+          },
+        },
+      },
     },
   },
 })

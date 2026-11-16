@@ -28,20 +28,8 @@ export const Check: Story = {
   },
 }
 
-export const Close: Story = {
-  args: {
-    variant: SVG_ICON_VARIANT.CLOSE,
-  },
-}
-
 export const Filter: Story = {
   args: {
     variant: SVG_ICON_VARIANT.FILTER,
-  },
-}
-
-export const Menu: Story = {
-  args: {
-    variant: SVG_ICON_VARIANT.MENU,
   },
 }
