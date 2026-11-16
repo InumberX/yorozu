@@ -24,10 +24,10 @@ const getPrimaryAlpha = (alpha: number) => {
   return `rgba(${PRIMARY_RGB}, ${alpha})`
 }
 
-// yorozu デザイン案A（ダークテーマ / 発光グリーン）
-// 値の出典は docs/design-guideline.md「デザイン案（検討中）> 案A」。
-// 画面上で確認するための検証用テーマで、まだ確定ではない。
-// 別案へ差し替える場合もこのファイルの値の入れ替えで済むようにしている。
+// yorozu のカラートークン（ダークテーマ / 発光グリーン）
+// デザインの正は yorozu アーティファクト（docs/design-guideline.md「デザインの正」）。
+// 値は先に検討していた案A を土台にしており、デザインの正にそろえていない値が残っている
+// （docs/design-guideline.md「実装上の色」）。
 export const cssVariableColors = {
   font: {
     // 本文
