@@ -3,7 +3,6 @@ import { style } from '@vanilla-extract/css'
 import { getFontSize } from '~/styles/mixins/font.css'
 import { getMediaQuery } from '~/styles/mixins/media-query.css'
 import { getTransition } from '~/styles/mixins/transition.css'
-import { BREAKPOINTS } from '~/styles/variables/breakpoints.css'
 import { cssVariables } from '~/styles/variables/css-variables.css'
 import { cssLayerComponentCommon } from '~/styles/variables/layers.css'
 
@@ -26,8 +25,10 @@ const colorTransition = getTransition([{ property: 'color' }, { property: 'borde
 export const layoutHeader = style({
   '@layer': {
     [cssLayerComponentCommon]: {
-      position: 'sticky',
+      position: 'fixed',
+      inlineSize: '100%',
       insetBlockStart: 0,
+      insetInlineStart: 0,
       zIndex: cssVariables.zIndex.header.wrapper,
       backgroundColor: `rgba(${cssVariables.color.background.base.rgb}, 0.92)`,
       backdropFilter: 'blur(8px)',
@@ -48,11 +49,10 @@ export const layoutHeader_container = style({
       inlineSize: '100%',
 
       '@media': {
-        [getMediaQuery('md')]: {
+        [getMediaQuery('sm')]: {
           gridTemplateAreas: '"brand nav lang"',
           gridTemplateRows: `${layoutHeaderHeight.maximum}px`,
           columnGap: '28px',
-          paddingInline: '22px',
         },
       },
     },
@@ -67,13 +67,6 @@ export const layoutHeaderBrand = style({
       display: 'flex',
       alignItems: 'center',
       blockSize: '44px',
-      marginInlineStart: '16px',
-
-      '@media': {
-        [getMediaQuery('md')]: {
-          marginInlineStart: 0,
-        },
-      },
     },
   },
 })
@@ -86,7 +79,7 @@ export const layoutHeaderBrand_logo = style({
       inlineSize: 'auto',
 
       '@media': {
-        [getMediaQuery('md')]: {
+        [getMediaQuery('sm')]: {
           blockSize: '24px',
         },
       },
@@ -101,18 +94,24 @@ export const layoutHeaderNav = style({
       gridArea: 'nav',
       display: 'none',
       backgroundColor: cssVariables.color.background.base.hex,
-      borderBlockStart: `1px solid ${getLineColor(0.3)}`,
+      borderBlock: `1px solid ${getLineColor(0.3)}`,
+      position: 'absolute',
+      insetBlockStart: '100%',
+      insetInlineStart: 0,
+      zIndex: cssVariables.zIndex.header.nav,
+      inlineSize: '100%',
 
       '@media': {
         // JS が動かない環境ではメニューを開けないため、常に展開しておく。
         [getMediaQuery('not-scripting')]: {
           display: 'block',
         },
-        [getMediaQuery('md')]: {
+        [getMediaQuery('sm')]: {
           display: 'block',
           alignSelf: 'stretch',
           backgroundColor: 'transparent',
-          borderBlockStart: 'none',
+          borderBlock: 'none',
+          position: 'static',
         },
       },
     },
@@ -134,7 +133,7 @@ export const layoutHeaderNav_items = style({
       flexDirection: 'column',
 
       '@media': {
-        [getMediaQuery('md')]: {
+        [getMediaQuery('sm')]: {
           flexDirection: 'row',
           alignItems: 'stretch',
           gap: '28px',
@@ -157,7 +156,7 @@ export const layoutHeaderNav_item = style({
       },
 
       '@media': {
-        [getMediaQuery('md')]: {
+        [getMediaQuery('sm')]: {
           display: 'flex',
           borderBlockEnd: 'none',
         },
@@ -171,12 +170,13 @@ export const layoutHeaderNavLink = style({
     [cssLayerComponentCommon]: {
       display: 'flex',
       alignItems: 'center',
+      gap: '16px',
       justifyContent: 'space-between',
       blockSize: '52px',
       paddingInline: '16px',
-      fontSize: getFontSize(15),
-      fontWeight: cssVariables.font.weight.medium,
-      color: cssVariables.color.font.pale.hex,
+      fontSize: getFontSize(14),
+      fontWeight: cssVariables.font.weight.regular,
+      color: cssVariables.color.font.subLight.hex,
       transition: colorTransition,
 
       selectors: {
@@ -187,11 +187,10 @@ export const layoutHeaderNavLink = style({
       },
 
       '@media': {
-        [getMediaQuery('md')]: {
+        [getMediaQuery('sm')]: {
           blockSize: 'auto',
           paddingInline: 0,
           paddingBlock: '2px 0',
-          fontSize: getFontSize(13),
           color: cssVariables.color.font.subLight.hex,
           borderBlockEnd: '2px solid transparent',
 
@@ -207,13 +206,6 @@ export const layoutHeaderNavLink = style({
           selectors: {
             '&:hover': {
               color: cssVariables.color.font.white.hex,
-            },
-          },
-        },
-        // PC のみ、ホバーで下線を薄く出す（SP の項目には下線を出さない）。
-        [`screen and (width >= ${BREAKPOINTS.md}px) and (any-hover: hover)`]: {
-          selectors: {
-            '&:not([aria-current="page"]):hover': {
               borderBlockEndColor: getLineColor(0.5),
             },
           },
@@ -231,7 +223,7 @@ export const layoutHeaderNavLink_marker = style({
       backgroundColor: cssVariables.color.background.primary.hex,
 
       '@media': {
-        [getMediaQuery('md')]: {
+        [getMediaQuery('sm')]: {
           display: 'none',
         },
       },
@@ -249,7 +241,7 @@ export const layoutHeaderLang = style({
       fontSize: getFontSize(12),
 
       '@media': {
-        [getMediaQuery('md')]: {
+        [getMediaQuery('sm')]: {
           gap: '8px',
           paddingInlineStart: '24px',
           borderInlineStart: `1px solid ${getLineColor(0.3)}`,
@@ -266,7 +258,7 @@ export const layoutHeaderLang_item = style({
       alignItems: 'center',
 
       '@media': {
-        [getMediaQuery('md')]: {
+        [getMediaQuery('sm')]: {
           gap: '8px',
         },
       },
@@ -291,7 +283,7 @@ export const layoutHeaderLang_link = style({
       },
 
       '@media': {
-        [getMediaQuery('md')]: {
+        [getMediaQuery('sm')]: {
           blockSize: 'auto',
           paddingInline: 0,
         },
@@ -320,7 +312,7 @@ export const layoutHeaderLang_label = style({
       },
 
       '@media': {
-        [getMediaQuery('md')]: {
+        [getMediaQuery('sm')]: {
           paddingBlock: '6px 4px',
           paddingInline: '2px',
         },
@@ -345,15 +337,14 @@ export const layoutHeaderMenuButton = style({
       alignItems: 'center',
       justifyContent: 'center',
       inlineSize: '44px',
-      blockSize: '44px',
-      marginInlineEnd: '4px',
+      aspectRatio: '1 / 1',
       color: cssVariables.color.font.primary.hex,
 
       '@media': {
         [getMediaQuery('not-scripting')]: {
           display: 'none',
         },
-        [getMediaQuery('md')]: {
+        [getMediaQuery('sm')]: {
           display: 'none',
         },
       },

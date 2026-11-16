@@ -307,8 +307,7 @@ export const cssVariables = createGlobalTheme(':root', {
   zIndex: {
     header: {
       wrapper: '10000',
-      global: '10100',
-      bar: '10200',
+      nav: '10100',
     },
   },
 })
