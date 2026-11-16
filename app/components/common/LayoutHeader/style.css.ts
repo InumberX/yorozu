@@ -28,7 +28,7 @@ export const layoutHeader = style({
     [cssLayerComponentCommon]: {
       position: 'sticky',
       insetBlockStart: 0,
-      zIndex: Number(cssVariables.zIndex.header.wrapper),
+      zIndex: cssVariables.zIndex.header.wrapper,
       backgroundColor: `rgba(${cssVariables.color.background.base.rgb}, 0.92)`,
       backdropFilter: 'blur(8px)',
       borderBlockEnd: `1px solid ${getLineColor(0.3)}`,
