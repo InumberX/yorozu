@@ -45,6 +45,12 @@ describe('SvgIcon', () => {
         const icon = result.container.querySelector('i')
         expect(icon?.getAttribute('aria-label')).toEqual('チェック')
       })
+
+      test('画像として読み上げられる（role="img"、aria-hidden なし）', () => {
+        const icon = result.container.querySelector('i')
+        expect(icon?.getAttribute('role')).toEqual('img')
+        expect(icon?.hasAttribute('aria-hidden')).toBe(false)
+      })
     })
 
     describe('title を指定しない場合', () => {
@@ -60,6 +66,12 @@ describe('SvgIcon', () => {
       test('aria-label 属性は付与されていない', () => {
         const icon = result.container.querySelector('i')
         expect(icon?.hasAttribute('aria-label')).toBe(false)
+      })
+
+      test('装飾として読み上げから外れる（aria-hidden="true"、role なし）', () => {
+        const icon = result.container.querySelector('i')
+        expect(icon?.getAttribute('aria-hidden')).toEqual('true')
+        expect(icon?.hasAttribute('role')).toBe(false)
       })
     })
   })
