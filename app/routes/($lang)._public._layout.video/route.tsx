@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { type MetaFunction } from 'react-router'
 
+import type { Route } from './+types/route'
 import * as styles from './style.css'
 
 import { LayoutInner } from '~/components/ui/layouts/LayoutInner'
@@ -9,7 +10,7 @@ import { LayoutSection } from '~/components/ui/layouts/LayoutSection'
 import { PageTitle } from '~/components/ui/typographies/PageTitle'
 import { LANG } from '~/config/consts'
 import { VideoConvertPanel } from '~/features/video-convert/components/VideoConvertPanel'
-import { getPageInfo } from '~/utils/locale'
+import { getLang, getPageInfo, shouldRevalidateOnLangChange } from '~/utils/locale'
 import { getMetadata } from '~/utils/meta'
 
 export const meta: MetaFunction = (args) => {
@@ -19,6 +20,18 @@ export const meta: MetaFunction = (args) => {
     args,
     title: getPageInfo({ lang }).YZ30_100.NAME,
   })
+}
+
+// lang が変わったら再検証する（理由は shouldRevalidateOnLangChange のコメント）。
+export const shouldRevalidate = shouldRevalidateOnLangChange
+
+export async function loader(args: Route.LoaderArgs) {
+  const { params } = args
+  const lang = getLang(params)
+
+  return {
+    lang,
+  }
 }
 
 export default function PageYZ30_100() {
