@@ -26,7 +26,7 @@ export default function LayoutPublicWrapper({ loaderData }: Route.ComponentProps
       <LayoutMain>
         <Outlet />
       </LayoutMain>
-      <LayoutFooter />
+      <LayoutFooter lang={lang} />
     </LayoutWrapper>
   )
 }

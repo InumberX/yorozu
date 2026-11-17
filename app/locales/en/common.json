@@ -26,7 +26,21 @@
     }
   },
   "footer": {
-    "note": "Browser-based web tool hub",
-    "copyright": "© yorozu"
+    "brand": "yorozu",
+    "tagline": "A VESSEL THAT HOLDS EVERYTHING",
+    "tools": {
+      "label": "Tools",
+      "title": "TOOLS",
+      "image": "Convert images",
+      "video": "Convert videos"
+    },
+    "links": {
+      "label": "Links",
+      "title": "LINKS",
+      "request": "REQUEST",
+      "github": "GITHUB",
+      "afterworks": "AFTERWORKS"
+    },
+    "copyright": "© NiNE, ALL RIGHTS RESERVED."
   }
 }

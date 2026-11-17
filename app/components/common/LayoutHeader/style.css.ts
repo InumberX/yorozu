@@ -1,5 +1,6 @@
 import { style } from '@vanilla-extract/css'
 
+import { getLineColor, getRgba } from '~/styles/mixins/color.css'
 import { getFontSize } from '~/styles/mixins/font.css'
 import { getMediaQuery, getMediaQueryReverse } from '~/styles/mixins/media-query.css'
 import { getTransition } from '~/styles/mixins/transition.css'
@@ -13,11 +14,6 @@ import { cssLayerComponentCommon } from '~/styles/variables/layers.css'
 export const layoutHeaderHeight = {
   minimum: 56,
   maximum: 60,
-}
-
-// 主色（発光グリーン）の透明度違い。罫線・ホバー時の下線に使う。
-const getLineColor = (alpha: number) => {
-  return `rgba(${cssVariables.color.border.primary.rgb}, ${alpha})`
 }
 
 const colorTransition = getTransition([{ property: 'color' }, { property: 'border-color' }])
@@ -36,7 +32,7 @@ export const layoutHeader = style({
       insetBlockStart: 0,
       insetInlineStart: 0,
       zIndex: cssVariables.zIndex.header.wrapper,
-      backgroundColor: `rgba(${cssVariables.color.background.base.rgb}, 0.92)`,
+      backgroundColor: getRgba(cssVariables.color.background.base.rgb, 0.92),
       backdropFilter: 'blur(8px)',
       borderBlockEnd: `1px solid ${getLineColor(0.3)}`,
 

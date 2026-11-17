@@ -75,6 +75,11 @@ export const cssVariableColors = {
       hex: '#8fd9b6',
       rgb: changeColorHexToRgb('#8fd9b6'),
     },
+    // 淡い文字（フッターのリンクなど）
+    pale: {
+      hex: '#d9ede3',
+      rgb: changeColorHexToRgb('#d9ede3'),
+    },
     // 副文
     sub: {
       hex: '#6fbf9b',
