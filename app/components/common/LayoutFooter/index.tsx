@@ -25,7 +25,7 @@ export const getYearInJapan = (date: Date) => {
 // ハイドレーションの不一致になる。
 const BUILD_YEAR = LASTMOD ? Number(LASTMOD.slice(0, 4)) : getYearInJapan(new Date())
 
-// 年の変わり目を購読する必要はない（次のページ遷移・再読み込みで追従すれば足りる）。
+// 年の変わり目を購読する必要はない（再読み込みで追従すれば足りる）。
 const subscribeYear = () => {
   return () => {}
 }

@@ -42,7 +42,8 @@ describe('LayoutFooter', () => {
     })
   })
 
-  describe('英語', () => {
+  // テスト用の i18n は日本語に固定しているため、文言は日本語のまま、リンク先だけを確かめる。
+  describe('英語（/en 接頭辞）', () => {
     beforeEach(() => {
       result = renderWithProviders(<LayoutFooter lang="en" />, { route: '/en' })
     })

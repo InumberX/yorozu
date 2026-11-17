@@ -1,5 +1,6 @@
 import { style } from '@vanilla-extract/css'
 
+import { getLineColor } from '~/styles/mixins/color.css'
 import { getFontSize } from '~/styles/mixins/font.css'
 import { getMediaQuery } from '~/styles/mixins/media-query.css'
 import { getTransition } from '~/styles/mixins/transition.css'
@@ -8,11 +9,6 @@ import { cssLayerComponentCommon } from '~/styles/variables/layers.css'
 
 // 出典: yorozu アーティファクト「yorozu-cyber-net」（PC）/「yorozu-cyber-net-sp」（SP）のフッター。
 // ヘッダーにそろえ、sm 未満を SP（ナビ 2 列）、sm 以上を PC（ロゴとナビ 3 列）として扱う。
-
-// 主色（発光グリーン）の透明度違い。罫線に使う。
-const getLineColor = (alpha: number) => {
-  return `rgba(${cssVariables.color.border.primary.rgb}, ${alpha})`
-}
 
 export const layoutFooter = style({
   '@layer': {
