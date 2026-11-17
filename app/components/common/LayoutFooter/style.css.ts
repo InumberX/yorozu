@@ -1,6 +1,6 @@
 import { style } from '@vanilla-extract/css'
 
-import { getLineColor } from '~/styles/mixins/color.css'
+import { getLineColor, getRgba } from '~/styles/mixins/color.css'
 import { getFontSize } from '~/styles/mixins/font.css'
 import { getMediaQuery } from '~/styles/mixins/media-query.css'
 import { getTransition } from '~/styles/mixins/transition.css'
@@ -15,7 +15,7 @@ export const layoutFooter = style({
     [cssLayerComponentCommon]: {
       // LayoutWrapper（縦の flex）の末尾へ押し下げる。
       marginBlockStart: 'auto',
-      backgroundColor: `rgba(${cssVariables.color.background.base.rgb}, 0.92)`,
+      backgroundColor: getRgba(cssVariables.color.background.base.rgb, 0.92),
       borderBlockStart: `1px solid ${getLineColor(0.3)}`,
     },
   },
