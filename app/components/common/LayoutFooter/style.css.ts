@@ -28,18 +28,16 @@ export const layoutFooter_container = style({
       display: 'grid',
       gridTemplateAreas: '"brand brand" "tools links"',
       gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-      columnGap: '24px',
+      columnGap: getClampPx(24, 40),
+      // ロゴとナビの間。PC ではロゴとナビが 1 行に並ぶため効かない。
       rowGap: '28px',
-      paddingBlock: '32px 28px',
+      paddingBlockStart: getClampPx(32, 40),
+      paddingBlockEnd: getClampPx(28, 40),
 
       '@media': {
         [getMediaQuery('sm')]: {
           gridTemplateAreas: '"brand tools links"',
           gridTemplateColumns: 'minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr)',
-          paddingBlock: '40px',
-        },
-        [getMediaQuery('md')]: {
-          columnGap: '40px',
         },
       },
     },
@@ -52,14 +50,8 @@ export const layoutFooterBrand = style({
       gridArea: 'brand',
       display: 'grid',
       justifyItems: 'start',
-      gap: '14px',
-
-      '@media': {
-        [getMediaQuery('sm')]: {
-          alignContent: 'start',
-          gap: '16px',
-        },
-      },
+      alignContent: 'start',
+      gap: getClampPx(14, 16),
     },
   },
 })
@@ -97,13 +89,7 @@ export const layoutFooterNav = style({
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'flex-start',
-      gap: '4px',
-
-      '@media': {
-        [getMediaQuery('sm')]: {
-          gap: '10px',
-        },
-      },
+      gap: getClampPx(4, 10),
     },
   },
 })
@@ -141,6 +127,7 @@ export const layoutFooterNav_items = style({
       flexDirection: 'column',
       alignItems: 'flex-start',
 
+      // SP はリンクの高さ（40px）で間隔を取るため、間隔はリンクの高さを外す sm 以上でだけ付ける。
       '@media': {
         [getMediaQuery('sm')]: {
           gap: '10px',
@@ -165,14 +152,12 @@ export const layoutFooterNav_link = style({
         // LINKS は英字の名前だけを並べるため、英数字用のフォントにする。
         [`${layoutFooterNav__links} &`]: {
           fontFamily: cssVariables.font.family.mono,
-          fontSize: getFontSize(13),
         },
       },
 
       '@media': {
         [getMediaQuery('sm')]: {
           minBlockSize: 'auto',
-          fontSize: getFontSize(13),
         },
         [getMediaQuery('hover')]: {
           selectors: {
