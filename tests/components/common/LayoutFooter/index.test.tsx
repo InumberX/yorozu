@@ -36,9 +36,8 @@ describe('LayoutFooter', () => {
       expect(nav.querySelector('a[href="https://afterworks.jp"]')?.textContent).toBe('AFTERWORKS')
     })
 
-    test('コピーライトが閲覧時点の年で出力されている', () => {
-      const year = new Date().getFullYear()
-      expect(result.getByText(`© ${year} NiNE, ALL RIGHTS RESERVED.`)).not.toBe(null)
+    test('コピーライトが英語として出力されている', () => {
+      expect(result.getByText('© NiNE, ALL RIGHTS RESERVED.').getAttribute('lang')).toBe('en')
     })
   })
 

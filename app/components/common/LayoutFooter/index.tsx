@@ -1,39 +1,18 @@
-import { useSyncExternalStore } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import * as styles from './style.css'
 
 import { PrimitiveButton } from '~/components/primitives/buttons/PrimitiveButton'
 import { LayoutInner } from '~/components/ui/layouts/LayoutInner'
-import { CACHE_BUSTER, LASTMOD } from '~/config/env'
+import { CACHE_BUSTER } from '~/config/env'
 import { PAGES } from '~/config/paths'
 
 type Props = {
   lang: string
 }
 
-// ページはビルド時に prerender するため、ハイドレーションではビルドした年を使い、
-// その直後に閲覧時点の年へ描き直す（useSyncExternalStore の getServerSnapshot）。
-// 初回から閲覧時点の年にすると、年をまたいだときに prerender した HTML と食い違い、
-// ハイドレーションの不一致になる。
-const BUILD_YEAR = LASTMOD ? Number(LASTMOD.slice(0, 4)) : new Date().getFullYear()
-
-// 年の変わり目を購読する必要はない（再読み込みで追従すれば足りる）。
-const subscribeYear = () => {
-  return () => {}
-}
-
-const getCurrentYear = () => {
-  return new Date().getFullYear()
-}
-
-const getBuildYear = () => {
-  return BUILD_YEAR
-}
-
 export const LayoutFooter = ({ lang }: Props) => {
   const { t } = useTranslation('common')
-  const year = useSyncExternalStore(subscribeYear, getCurrentYear, getBuildYear)
 
   const navGroups = [
     {
@@ -97,7 +76,7 @@ export const LayoutFooter = ({ lang }: Props) => {
         <LayoutInner>
           <p>
             <small lang="en" translate="no" className={styles.layoutFooterCopy_text}>
-              {t('footer.copyright', { year })}
+              {t('footer.copyright')}
             </small>
           </p>
         </LayoutInner>
