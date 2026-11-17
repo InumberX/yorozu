@@ -1,6 +1,9 @@
 import { type LoaderFunctionArgs, Outlet } from 'react-router'
 
-import { getLang } from '~/utils/locale'
+import { getLang, shouldRevalidateOnLangChange } from '~/utils/locale'
+
+// lang が変わったら再検証する（理由は shouldRevalidateOnLangChange のコメント）。
+export const shouldRevalidate = shouldRevalidateOnLangChange
 
 export async function loader(args: LoaderFunctionArgs) {
   const { params } = args

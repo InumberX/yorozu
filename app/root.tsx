@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useRef, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   isRouteErrorResponse,
@@ -125,7 +125,10 @@ export default function RootRoute({ loaderData }: Route.ComponentProps) {
   // 初回の effect 実行はスキップし、以降の SPA 遷移のみを送信する（二重計測の防止）。
   const isFirstPageview = useRef(true)
 
-  useEffect(() => {
+  // 言語は描画前（useLayoutEffect）にそろえる。useEffect だと描画後になり、言語を切り替えた直後に
+  // URL・aria-current は新しい言語なのに文言は前の言語、という画面が 1 フレーム見える（計測済み）。
+  // リソースはインラインなので changeLanguage は同期で終わり、その再描画も描画前に反映される。
+  useLayoutEffect(() => {
     if (i18n.language !== lang) {
       i18n.changeLanguage(lang)
     }

@@ -27,6 +27,7 @@
 - 変換はすべてクライアントサイド。サーバー側処理は現状なし（将来足す余地を残すために RR を採用している）。
 - `ssr: false` でもルートはビルド時に一度サーバー描画されるため SSR-safe にする。`window` / `Worker` 等はレンダー中に触らず、`useEffect` やイベントハンドラ内で遅延初期化する。
 - 大きい / 長いファイルにはサイズ・長さのガードと進捗表示を入れる。
+- `ssr: false` では、loader を持つルートは**自分の path に含まれるパラメータ**が変わったときしか再検証されない。`:lang?` を path に持つのは `($lang)._public` だけなので、root・pathless の `_layout`・各ページは `/image` ⇄ `/en/image` の遷移で loaderData の `lang` が古いまま残る。**loader で `getLang` を呼ぶルートは `export const shouldRevalidate = shouldRevalidateOnLangChange`（`app/utils/locale.ts`）を必ず書く。** 漏れは `tests/routes/lang-revalidation.test.ts` が検出する。
 
 ## ドキュメント
 
@@ -51,6 +52,7 @@
   | Web Worker | `kebab-case.worker.ts` | `worker/image-convert.worker.ts` |
   | styles / utils / config / 型定義 | kebab-case | `media-query.css.ts`、`css-variables.css.ts`、`gtag.client.ts`、`paths.d.ts` |
   | テスト・ストーリー | `tests/` `stories/` に `app/` の構造をミラーし `index.test.tsx` / `index.stories.tsx` | `tests/components/ui/buttons/BaseButton/index.test.tsx` |
+  | utils などのテスト | `tests/` に `app/` の構造をミラーし `<ファイル名>.test.ts`（after_works と同じ） | `tests/utils/locale.test.ts` |
 
   after_works と違う点は3つ。いずれもフレームワーク由来なので残す: (1) スタイルは CSS Modules ではなく Vanilla Extract の `style.css.ts`。クラスを一つも持たない tsx には作らない。(2) `.server.ts` / `.client.ts` の接尾辞は React Router がバンドルの振り分けに使うので外さない（`i18next.server.ts`、`gtag.client.ts`、`entry.server.tsx`）。(3) `app/routes/` のディレクトリ名（`($lang)._public._layout.image/route.tsx`）は React Router の flat routes 規約に従う。`app/locales/*/pages/YZ10_100.json` は画面 ID（`docs/screens.md`）なので対象外。
 - CSS に書く数値（px / rem などのサイズ指定）は整数にし、小数点は使わない。出力される rem や `clamp()` の表示サイズが小数になるのは対象外。既存の小数（`root.css.ts` の `sup` / `sub` の em、`css-variables.css.ts` の `4.6vw`）は例外として残す。
