@@ -6,7 +6,10 @@ import { LayoutFooter } from '~/components/common/LayoutFooter'
 import { LayoutHeader } from '~/components/common/LayoutHeader'
 import { LayoutMain } from '~/components/ui/layouts/LayoutMain'
 import { LayoutWrapper } from '~/components/ui/layouts/LayoutWrapper'
-import { getLang } from '~/utils/locale'
+import { getLang, shouldRevalidateOnLangChange } from '~/utils/locale'
+
+// lang が変わったら再検証する（理由は shouldRevalidateOnLangChange のコメント）。
+export const shouldRevalidate = shouldRevalidateOnLangChange
 
 export async function loader(args: Route.LoaderArgs) {
   const { params } = args

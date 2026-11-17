@@ -21,11 +21,14 @@ import { LayoutPortal } from '~/components/common/LayoutPortal'
 import { LANG } from '~/config/consts'
 import { GOOGLE_ANALYTICS_ID } from '~/config/env'
 import * as gtag from '~/utils/gtag.client'
-import { getLang } from '~/utils/locale'
+import { getLang, shouldRevalidateOnLangChange } from '~/utils/locale'
 
 export const handle = {
   i18n: 'common',
 }
+
+// lang が変わったら再検証する（理由は shouldRevalidateOnLangChange のコメント）。
+export const shouldRevalidate = shouldRevalidateOnLangChange
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const lang = getLang(params)

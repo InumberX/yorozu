@@ -11,7 +11,7 @@ import { LayoutSection } from '~/components/ui/layouts/LayoutSection'
 import { PageTitle } from '~/components/ui/typographies/PageTitle'
 import { ReplaceNewLineText } from '~/components/ui/typographies/ReplaceNewLineText'
 import { PAGES } from '~/config/paths'
-import { getLang } from '~/utils/locale'
+import { getLang, shouldRevalidateOnLangChange } from '~/utils/locale'
 import { getMetadata } from '~/utils/meta'
 
 export const meta: MetaFunction = (args) => {
@@ -19,6 +19,9 @@ export const meta: MetaFunction = (args) => {
     args,
   })
 }
+
+// lang が変わったら再検証する（理由は shouldRevalidateOnLangChange のコメント）。
+export const shouldRevalidate = shouldRevalidateOnLangChange
 
 export async function loader(args: Route.LoaderArgs) {
   const { params } = args

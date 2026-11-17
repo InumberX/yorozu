@@ -10,7 +10,7 @@ import { LayoutSection } from '~/components/ui/layouts/LayoutSection'
 import { PageTitle } from '~/components/ui/typographies/PageTitle'
 import { LANG } from '~/config/consts'
 import { ImageConvertPanel } from '~/features/image-convert/components/ImageConvertPanel'
-import { getLang, getPageInfo } from '~/utils/locale'
+import { getLang, getPageInfo, shouldRevalidateOnLangChange } from '~/utils/locale'
 import { getMetadata } from '~/utils/meta'
 
 export const meta: MetaFunction = (args) => {
@@ -21,6 +21,9 @@ export const meta: MetaFunction = (args) => {
     title: getPageInfo({ lang }).YZ20_100.NAME,
   })
 }
+
+// lang が変わったら再検証する（理由は shouldRevalidateOnLangChange のコメント）。
+export const shouldRevalidate = shouldRevalidateOnLangChange
 
 export async function loader(args: Route.LoaderArgs) {
   const { params } = args

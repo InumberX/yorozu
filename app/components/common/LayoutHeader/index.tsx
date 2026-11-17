@@ -85,8 +85,10 @@ export const LayoutHeader = ({ lang }: Props) => {
 
   // 言語切り替えは現在のページを保ったまま、対象ロケールの URL へ遷移する。
   // JA=接頭辞なし / EN=/en。現在パスから /en を剥がして基準（JA）パスを求める。
+  // 本番の静的アセット配信は /video を /video/ へリダイレクトする。末尾スラッシュを残すと遷移先が
+  // /en/video/ になり、React Router が prerender されていない /en/video/_.data を取りに行って失敗するため落とす。
   const buildLocaleUrl = (target: string) => {
-    const basePath = location.pathname.replace(/^\/en(?=\/|$)/, '') || '/'
+    const basePath = currentPath.replace(/^\/en(?=\/|$)/, '') || '/'
     if (target === LANG.EN) {
       return basePath === '/' ? '/en' : `/en${basePath}`
     }

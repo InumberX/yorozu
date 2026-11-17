@@ -82,6 +82,17 @@ describe('LayoutHeader', () => {
       expect(result.getByText('JA').closest('a')?.getAttribute('href')).toBe('/video')
       expect(result.getByText('EN').closest('a')?.getAttribute('href')).toBe('/en/video')
     })
+
+    test('末尾スラッシュ付きの /video/ では EN が /en/video を指す（/en/video/ にしない）', () => {
+      result = renderWithProviders(<LayoutHeader lang="ja" />, { route: '/video/' })
+      expect(result.getByText('EN').closest('a')?.getAttribute('href')).toBe('/en/video')
+      expect(result.getByText('JA').closest('a')?.getAttribute('href')).toBe('/video')
+    })
+
+    test('末尾スラッシュ付きの /en/image/ では JA が /image を指す', () => {
+      result = renderWithProviders(<LayoutHeader lang="en" />, { route: '/en/image/' })
+      expect(result.getByText('JA').closest('a')?.getAttribute('href')).toBe('/image')
+    })
   })
 
   describe('SP メニュー', () => {
