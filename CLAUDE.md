@@ -28,6 +28,7 @@
 - `ssr: false` でもルートはビルド時に一度サーバー描画されるため SSR-safe にする。`window` / `Worker` 等はレンダー中に触らず、`useEffect` やイベントハンドラ内で遅延初期化する。
 - 大きい / 長いファイルにはサイズ・長さのガードと進捗表示を入れる。
 - `ssr: false` では、loader を持つルートは**自分の path に含まれるパラメータ**が変わったときしか再検証されない。`:lang?` を path に持つのは `($lang)._public` だけなので、root・pathless の `_layout`・各ページは `/image` ⇄ `/en/image` の遷移で loaderData の `lang` が古いまま残る。**loader で `getLang` を呼ぶルートは `export const shouldRevalidate = shouldRevalidateOnLangChange`（`app/utils/locale.ts`）を必ず書く。** 漏れは `tests/routes/lang-revalidation.test.ts` が検出する。
+- prerender していないパスは 404 にする。ASSETS は `not_found_handling: "none"` で 404 を返し、Worker（`workers/handler.ts`）がページ遷移には SPA フォールバックを 404 で、`.data` やファイルにはプレーンな 404 を返す。`"single-page-application"` に戻すと未列挙パスに JA ホームが 200 で返り、`/fr` がホームとして表示される。404 ページの表示言語と `<html lang>` は URL から求める（`getLangFromPathname`）。
 
 ## ドキュメント
 

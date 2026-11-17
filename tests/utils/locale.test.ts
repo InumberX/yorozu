@@ -1,7 +1,7 @@
 import { type ShouldRevalidateFunctionArgs } from 'react-router'
 import { describe, expect, test } from 'vitest'
 
-import { shouldRevalidateOnLangChange } from '~/utils/locale'
+import { getLangFromPathname, shouldRevalidateOnLangChange } from '~/utils/locale'
 
 const createArgs = (
   currentLang: string | undefined,
@@ -28,5 +28,19 @@ describe('shouldRevalidateOnLangChange', () => {
   test('lang が同じなら既定の判定に従う', () => {
     expect(shouldRevalidateOnLangChange(createArgs('en', 'en', false))).toBe(false)
     expect(shouldRevalidateOnLangChange(createArgs(undefined, undefined, true))).toBe(true)
+  })
+})
+
+describe('getLangFromPathname', () => {
+  test.each([
+    ['/', 'ja'],
+    ['/image', 'ja'],
+    ['/fr/image', 'ja'],
+    ['/english', 'ja'],
+    ['/en', 'en'],
+    ['/en/', 'en'],
+    ['/en/nope', 'en'],
+  ])('%s は %s', (pathname, lang) => {
+    expect(getLangFromPathname(pathname)).toBe(lang)
   })
 })

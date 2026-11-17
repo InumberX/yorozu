@@ -30,6 +30,12 @@ export const shouldRevalidateOnLangChange = ({
   return currentParams.lang !== nextParams.lang || defaultShouldRevalidate
 }
 
+// URL のパスから言語を求める（JA=接頭辞なし / EN=/en）。prerender されていないパスの 404 では
+// root の loaderData が SPA フォールバック（JA）のものになるため、表示言語は URL を正とする。
+export const getLangFromPathname = (pathname: string) => {
+  return /^\/en(?:\/|$)/.test(pathname) ? LANG.EN : LANG.JA
+}
+
 export const getLangRoute = ({ lang }: { lang?: string }) => {
   const effectiveLang = lang ?? LANG.JA
   return effectiveLang === LANG.JA ? '' : `/${effectiveLang}`
