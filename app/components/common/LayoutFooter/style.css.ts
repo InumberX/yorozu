@@ -3,6 +3,7 @@ import { style } from '@vanilla-extract/css'
 import { getLineColor, getRgba } from '~/styles/mixins/color.css'
 import { getFontSize } from '~/styles/mixins/font.css'
 import { getMediaQuery } from '~/styles/mixins/media-query.css'
+import { getClampPx } from '~/styles/mixins/size.css'
 import { getTransition } from '~/styles/mixins/transition.css'
 import { cssVariables } from '~/styles/variables/css-variables.css'
 import { cssLayerComponentCommon } from '~/styles/variables/layers.css'
@@ -67,14 +68,8 @@ export const layoutFooterBrand_logo = style({
   '@layer': {
     [cssLayerComponentCommon]: {
       display: 'block',
-      blockSize: '22px',
+      blockSize: getClampPx(22, 24),
       inlineSize: 'auto',
-
-      '@media': {
-        [getMediaQuery('sm')]: {
-          blockSize: '24px',
-        },
-      },
     },
   },
 })

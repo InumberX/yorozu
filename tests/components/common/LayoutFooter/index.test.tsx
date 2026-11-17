@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 
 import { renderWithProviders } from '../../../test-utils'
 
-import { getYearInJapan, LayoutFooter } from '~/components/common/LayoutFooter'
+import { LayoutFooter } from '~/components/common/LayoutFooter'
 
 describe('LayoutFooter', () => {
   let result: RenderResult
@@ -36,8 +36,8 @@ describe('LayoutFooter', () => {
       expect(nav.querySelector('a[href="https://afterworks.jp"]')?.textContent).toBe('AFTERWORKS')
     })
 
-    test('コピーライトが閲覧時点の日本時間の年で出力されている', () => {
-      const year = getYearInJapan(new Date())
+    test('コピーライトが閲覧時点の年で出力されている', () => {
+      const year = new Date().getFullYear()
       expect(result.getByText(`© ${year} NiNE, ALL RIGHTS RESERVED.`)).not.toBe(null)
     })
   })
@@ -53,10 +53,5 @@ describe('LayoutFooter', () => {
       expect(nav.querySelector('a[href="/en/image"]')).not.toBe(null)
       expect(nav.querySelector('a[href="/en/video"]')).not.toBe(null)
     })
-  })
-
-  test('日本時間の 0 時で年が変わる（UTC ではまだ前年）', () => {
-    expect(getYearInJapan(new Date('2026-12-31T15:00:00Z'))).toBe(2027)
-    expect(getYearInJapan(new Date('2026-12-31T14:59:59Z'))).toBe(2026)
   })
 })

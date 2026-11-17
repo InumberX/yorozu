@@ -12,18 +12,11 @@ type Props = {
   lang: string
 }
 
-const YEAR_IN_JAPAN = new Intl.DateTimeFormat('en', { timeZone: 'Asia/Tokyo', year: 'numeric' })
-
-// 閲覧者の端末の時刻ではなく、日本時間の年を使う（閲覧者の多くは日本にいるため）。
-export const getYearInJapan = (date: Date) => {
-  return Number(YEAR_IN_JAPAN.format(date))
-}
-
 // ページはビルド時に prerender するため、ハイドレーションではビルドした年を使い、
 // その直後に閲覧時点の年へ描き直す（useSyncExternalStore の getServerSnapshot）。
 // 初回から閲覧時点の年にすると、年をまたいだときに prerender した HTML と食い違い、
 // ハイドレーションの不一致になる。
-const BUILD_YEAR = LASTMOD ? Number(LASTMOD.slice(0, 4)) : getYearInJapan(new Date())
+const BUILD_YEAR = LASTMOD ? Number(LASTMOD.slice(0, 4)) : new Date().getFullYear()
 
 // 年の変わり目を購読する必要はない（再読み込みで追従すれば足りる）。
 const subscribeYear = () => {
@@ -31,7 +24,7 @@ const subscribeYear = () => {
 }
 
 const getCurrentYear = () => {
-  return getYearInJapan(new Date())
+  return new Date().getFullYear()
 }
 
 const getBuildYear = () => {
