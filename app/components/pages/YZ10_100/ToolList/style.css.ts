@@ -19,7 +19,7 @@ export const toolList = style({
     [cssLayerComponentPage]: {
       paddingBlockEnd: getClampPx(40, 64),
       // 固定ヘッダーの下に見出しが隠れないよう、ヘッダーの高さより少し下で止める。
-      scrollMarginTop: getClampPx(72, 84),
+      scrollMarginBlockStart: getClampPx(72, 84),
     },
   },
 })

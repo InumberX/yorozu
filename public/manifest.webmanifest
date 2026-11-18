@@ -1,8 +1,6 @@
 {
   "name": "yorozu",
   "short_name": "yorozu",
-  "description": "開発・web制作の便利ツールを集めた、ブラウザ完結の Webツールハブ",
-  "lang": "ja",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

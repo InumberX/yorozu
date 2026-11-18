@@ -69,6 +69,13 @@ export const PrimitiveButton = ({
   const anchorTarget = target ?? (isExternal ? '_blank' : undefined)
   const anchorRel = rel ?? (isExternal ? 'noopener noreferrer' : undefined)
 
+  // 別タブで開くことを、読み上げソフトにだけ伝える。
+  // aria-label があると中身は読まれないため、そのときは aria-label の末尾に足す。
+  const isNewTab = (isExternal || isInternalLink ? anchorTarget : target) === '_blank'
+  const newTabText = t('a11y.newTab')
+  const linkAriaLabel = ariaLabel && isNewTab ? `${ariaLabel}${newTabText}` : ariaLabel
+  const newTabHint = isNewTab && !ariaLabel ? <span className={styles.primitiveButton_newTab}>{newTabText}</span> : null
+
   const primitiveButtonClassName = useMemo(() => {
     return [styles.primitiveButton, isDisabled && styles.primitiveButton__disabled, className].filter(Boolean).join(' ')
   }, [isDisabled, className])
@@ -96,7 +103,7 @@ export const PrimitiveButton = ({
       title={title}
       role={role}
       tabIndex={isDisabled ? -1 : tabIndex}
-      aria-label={ariaLabel}
+      aria-label={linkAriaLabel}
       aria-controls={ariaControls}
       aria-selected={ariaSelected}
       aria-current={ariaCurrent}
@@ -105,8 +112,7 @@ export const PrimitiveButton = ({
       hrefLang={hrefLang}
     >
       {children}
-      {/* 別タブで開くことを、読み上げソフトにだけ伝える。 */}
-      {anchorTarget === '_blank' && <span className={styles.primitiveButton_newTab}>{t('a11y.newTab')}</span>}
+      {newTabHint}
     </a>
   ) : url ? (
     <Link
@@ -118,7 +124,7 @@ export const PrimitiveButton = ({
       title={title}
       role={role}
       tabIndex={isDisabled ? -1 : tabIndex}
-      aria-label={ariaLabel}
+      aria-label={linkAriaLabel}
       aria-controls={ariaControls}
       aria-selected={ariaSelected}
       aria-current={ariaCurrent}
@@ -127,7 +133,7 @@ export const PrimitiveButton = ({
       hrefLang={hrefLang}
     >
       {children}
-      {target === '_blank' && <span className={styles.primitiveButton_newTab}>{t('a11y.newTab')}</span>}
+      {newTabHint}
     </Link>
   ) : onClick || buttonType ? (
     <button

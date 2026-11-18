@@ -421,6 +421,23 @@ describe('PrimitiveButton', () => {
       })
     })
 
+    describe('aria-label を持つ外部リンク', () => {
+      beforeEach(() => {
+        result = render(
+          <PrimitiveButton url="https://example.com" ariaLabel="GitHub">
+            <span>icon</span>
+          </PrimitiveButton>
+        )
+      })
+
+      test('別タブの補足を aria-label の末尾に足し、中身には足さない', () => {
+        const link = result.container.querySelector('a')
+        // テストでは i18n を読み込まないため、補足はキーのまま出る。
+        expect(link?.getAttribute('aria-label')).toBe('GitHuba11y.newTab')
+        expect(link?.textContent).toBe('icon')
+      })
+    })
+
     describe('ページ内リンク（#）', () => {
       beforeEach(() => {
         result = render(<PrimitiveButton url="#tools">test</PrimitiveButton>)
