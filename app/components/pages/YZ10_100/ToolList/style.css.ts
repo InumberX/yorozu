@@ -9,10 +9,12 @@ import { cssVariables } from '~/styles/variables/css-variables.css'
 import { cssLayerComponentPage } from '~/styles/variables/layers.css'
 
 // 出典: yorozu アーティファクト「yorozu-cyber-net」（PC）/「yorozu-cyber-net-sp」（SP）の SEC.01 ツール一覧。
-// 6 列の表は lg 未満では狭くなるため、lg 以上で表、lg 未満で 1 ツールずつのカードにする。
+// md 以上で 6 列の表、md 未満で 1 ツールずつのカードにする。表の列幅は、lg 以上でデザインの値、md では狭めた値にする。
+// カードでは、OPEN を sm 未満で説明の下、sm 以上で説明と同じ行の右下に置く。
 // 表とカードは同じ要素を grid-template-areas で並べ替えて作る。
 
 const TABLE_COLUMNS = '56px 52px minmax(0, 1fr) 150px 130px 120px'
+const TABLE_COLUMNS_NARROW = '48px 44px minmax(0, 1fr) 100px 100px 96px'
 const TABLE_AREAS = '"number icon body category state action"'
 
 export const toolList = style({
@@ -31,9 +33,9 @@ export const toolListHead = style({
       display: 'none',
 
       '@container': {
-        [getContainerQuery('lg')]: {
+        [getContainerQuery('md')]: {
           display: 'grid',
-          gridTemplateColumns: TABLE_COLUMNS,
+          gridTemplateColumns: TABLE_COLUMNS_NARROW,
           gridTemplateAreas: TABLE_AREAS,
           gap: '16px',
           alignItems: 'center',
@@ -43,6 +45,9 @@ export const toolListHead = style({
           fontFamily: cssVariables.font.family.mono,
           fontSize: getFontSize(12),
           color: cssVariables.color.font.subMedium.hex,
+        },
+        [getContainerQuery('lg')]: {
+          gridTemplateColumns: TABLE_COLUMNS,
         },
       },
     },
@@ -95,7 +100,7 @@ export const toolListItem__request = style({})
 export const toolListItem = style({
   '@layer': {
     [cssLayerComponentPage]: {
-      // SP: 1 行目に番号・カテゴリ・状態、2 行目にアイコンと名前・説明、3 行目に OPEN を置く。
+      // カード: 1 行目に番号・カテゴリ・状態、2 行目にアイコンと名前・説明、3 行目に OPEN を置く（sm 以上は 2 行目の右端）。
       display: 'grid',
       gridTemplateColumns: '36px auto minmax(0, 1fr) auto',
       gridTemplateAreas: '"number category . state" "icon body body body" ". action action action"',
@@ -129,12 +134,18 @@ export const toolListItem = style({
         },
       },
       '@container': {
-        [getContainerQuery('lg')]: {
-          gridTemplateColumns: TABLE_COLUMNS,
+        [getContainerQuery('sm')]: {
+          gridTemplateAreas: '"number category . state" "icon body body action"',
+        },
+        [getContainerQuery('md')]: {
+          gridTemplateColumns: TABLE_COLUMNS_NARROW,
           gridTemplateAreas: TABLE_AREAS,
           gap: '16px',
           paddingBlock: '22px',
           paddingInline: '21px 24px',
+        },
+        [getContainerQuery('lg')]: {
+          gridTemplateColumns: TABLE_COLUMNS,
         },
       },
     },
@@ -161,7 +172,7 @@ export const toolListItem_number = style({
       selectors: accentOnRequest,
 
       '@container': {
-        [getContainerQuery('lg')]: {
+        [getContainerQuery('md')]: {
           marginBlockEnd: 0,
         },
       },
@@ -181,7 +192,7 @@ export const toolListItem_icon = style({
       selectors: accentOnRequest,
 
       '@container': {
-        [getContainerQuery('lg')]: {
+        [getContainerQuery('md')]: {
           alignSelf: 'center',
           inlineSize: '40px',
         },
@@ -196,6 +207,16 @@ export const toolListItem_body = style({
       gridArea: 'body',
       display: 'grid',
       gap: '4px',
+
+      '@container': {
+        // OPEN を説明の最後の行にそろえる。
+        [getContainerQuery('sm')]: {
+          alignSelf: 'last baseline',
+        },
+        [getContainerQuery('md')]: {
+          alignSelf: 'center',
+        },
+      },
     },
   },
 })
@@ -231,7 +252,7 @@ export const toolListItem_category = style({
       color: cssVariables.color.font.subLight.hex,
 
       '@container': {
-        [getContainerQuery('lg')]: {
+        [getContainerQuery('md')]: {
           marginBlockEnd: 0,
         },
       },
@@ -247,7 +268,7 @@ export const toolListItem_category__empty = style({
       color: cssVariables.color.font.subMedium.hex,
 
       '@container': {
-        [getContainerQuery('lg')]: {
+        [getContainerQuery('md')]: {
           visibility: 'visible',
         },
       },
@@ -264,7 +285,7 @@ export const toolListItem_chip = style({
       border: `1px solid ${getLineColor(0.3)}`,
 
       '@container': {
-        [getContainerQuery('lg')]: {
+        [getContainerQuery('md')]: {
           paddingBlock: '4px',
         },
       },
@@ -286,7 +307,7 @@ export const toolListItem_state = style({
       selectors: accentOnRequest,
 
       '@container': {
-        [getContainerQuery('lg')]: {
+        [getContainerQuery('md')]: {
           marginBlockEnd: 0,
         },
       },
@@ -318,9 +339,13 @@ export const toolListItem_action = style({
       selectors: accentOnRequest,
 
       '@container': {
-        [getContainerQuery('lg')]: {
+        [getContainerQuery('sm')]: {
+          alignSelf: 'last baseline',
           justifySelf: 'end',
           marginBlockStart: 0,
+        },
+        [getContainerQuery('md')]: {
+          alignSelf: 'center',
         },
       },
     },
