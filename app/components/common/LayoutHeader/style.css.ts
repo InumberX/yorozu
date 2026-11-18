@@ -10,7 +10,7 @@ import { cssLayerComponentCommon } from '~/styles/variables/layers.css'
 // 出典: yorozu アーティファクト「yorozu-cyber-net」（PC）/「yorozu-cyber-net-sp」（SP）のヘッダー。
 // sm 未満を SP（ハンバーガーメニュー）、sm 以上を PC（横並びナビ）として扱う。
 
-// ヘッダーの高さ（px）。SP=56 / PC=60。LayoutPageWrapper が本文の上下余白計算に参照する。
+// ヘッダーの高さ（px）。SP=56 / PC=60。LayoutPageWrapper が本文の上余白に参照する。
 export const layoutHeaderHeight = {
   minimum: 56,
   maximum: 60,
