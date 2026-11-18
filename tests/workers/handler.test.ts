@@ -5,6 +5,7 @@ import { describe, expect, test, vi } from 'vitest'
 import { createHandleWorkerRequest, SPA_FALLBACK_PATH, type WorkerEnv } from '../../workers/handler'
 
 const FALLBACK_HTML = '<!DOCTYPE html><html lang="ja"><title>fallback</title></html>'
+const FALLBACK_ETAG = '"fallback-etag"'
 const HTML_ACCEPT = 'text/html,application/xhtml+xml,*/*;q=0.8'
 
 // prerender 済みの /image だけを持ち、それ以外は 404 を返す ASSETS（not_found_handling: "none" と同じ）。
@@ -12,7 +13,13 @@ const createEnv = (env: Partial<WorkerEnv> = {}) => {
   const fetch = vi.fn(async (input: RequestInfo | URL) => {
     const { pathname } = new URL(input instanceof Request ? input.url : input)
     if (pathname === SPA_FALLBACK_PATH) {
-      return new Response(FALLBACK_HTML, { headers: { 'Content-Type': 'text/html; charset=utf-8' } })
+      // 実際の ASSETS と同じく ETag を付け、一致する If-None-Match には 304 を返す。
+      if (input instanceof Request && input.headers.get('If-None-Match') === FALLBACK_ETAG) {
+        return new Response(null, { status: 304, headers: { ETag: FALLBACK_ETAG } })
+      }
+      return new Response(FALLBACK_HTML, {
+        headers: { 'Content-Type': 'text/html; charset=utf-8', ETag: FALLBACK_ETAG },
+      })
     }
     if (pathname === '/image/') {
       return new Response('image page', { headers: { 'Content-Type': 'text/html; charset=utf-8' } })
@@ -42,6 +49,33 @@ describe('workers/handler', () => {
       )
       expect(response.status).toBe(404)
       expect(response.headers.get('Content-Type')).toContain('text/html')
+      expect(await response.text()).toBe(FALLBACK_HTML)
+    }
+  )
+
+  test('404 ページに ETag を付けず、条件付きリクエストでも 404 ページを返す', async () => {
+    const { env } = createEnv()
+    const first = await handle(new Request('https://yorozu.test/fr', { headers: { Accept: HTML_ACCEPT } }), env)
+    expect(first.headers.get('ETag')).toBe(null)
+    expect(first.headers.get('Last-Modified')).toBe(null)
+
+    const revisit = await handle(
+      new Request('https://yorozu.test/fr', { headers: { Accept: HTML_ACCEPT, 'If-None-Match': FALLBACK_ETAG } }),
+      env
+    )
+    expect(revisit.status).toBe(404)
+    expect(await revisit.text()).toBe(FALLBACK_HTML)
+  })
+
+  test.each([SPA_FALLBACK_PATH, `${SPA_FALLBACK_PATH}.html`, `${SPA_FALLBACK_PATH}/`])(
+    'SPA フォールバックへの直接アクセス %s も 404 にする',
+    async (path) => {
+      const { env } = createEnv()
+      const response = await handle(
+        new Request(`https://yorozu.test${path}`, { headers: { Accept: HTML_ACCEPT } }),
+        env
+      )
+      expect(response.status).toBe(404)
       expect(await response.text()).toBe(FALLBACK_HTML)
     }
   )
