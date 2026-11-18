@@ -12,9 +12,11 @@
     // workers/app.ts also covers static assets (JS/CSS/images/WASM). Without
     // this, matching files in build/client are served before the Worker runs.
     "run_worker_first": true,
-    // SPA モード（ssr:false）。prerender 済みルートは各 HTML を返し、未列挙パスは
-    // クライアント側ルーター（root の ErrorBoundary で 404 表示）に委ねる。
-    "not_found_handling": "single-page-application",
+    // SPA モード（ssr:false）。prerender 済みルートは各 HTML を返す。未列挙パスは ASSETS では
+    // 404 にし、Worker（workers/handler.ts）が SPA フォールバックを 404 で返して、root の
+    // ErrorBoundary に 404 を表示させる。"single-page-application" にすると未列挙パスへ
+    // JA ホームが 200 で返り、/fr がホームとして表示されてしまう。
+    "not_found_handling": "none",
   },
   "observability": {
     "enabled": true,
