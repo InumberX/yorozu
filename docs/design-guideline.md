@@ -114,4 +114,14 @@ CSS に書く数値（px / rem などのサイズ指定）は整数にし、小�
 | 横組み（ヘッダー・OGP） | `logo-cyber-medium.svg` | `public/assets/img/img-logo-cyber-medium.svg`（ヘッダーで使用） |
 | 縦組み（大） | `logo-cyber.svg` | 未配置 |
 
+### アイコン（`public/` 直下）
+
+| ファイル | サイズ | 形 | 用途 |
+|---|---|---|---|
+| `favicon.svg` | 正方形（`viewBox` 700） | 円 | ブラウザのタブ（SVG に対応したブラウザ） |
+| `favicon.ico` | 16 / 24 / 32 / 48px | 円 | ブラウザのタブ（SVG に対応していないブラウザ） |
+| `apple-icon.png` | 180×180 | 全面を `#05080B` で塗る | iOS のホーム画面。iOS は透明部分を黒で埋め、角丸に切り抜くため |
+| `android-icon-192.png` / `android-icon-512.png` | 192×192 / 512×512 | 円（外は透明） | Web App Manifest（`manifest.webmanifest`）の `any` |
+| `android-icon-maskable-512.png` | 512×512 | 全面を `#05080B` で塗り、絵柄は中央 80% に収める | Web App Manifest の `maskable`。Android が丸や角丸に切り抜く |
+
 余白・最小サイズ・使用禁止例: 【今後追記】

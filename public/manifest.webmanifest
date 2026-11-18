@@ -1,0 +1,31 @@
+{
+  "name": "yorozu",
+  "short_name": "yorozu",
+  "description": "開発・web制作の便利ツールを集めた、ブラウザ完結の Webツールハブ",
+  "lang": "ja",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#05080b",
+  "theme_color": "#05080b",
+  "icons": [
+    {
+      "src": "/android-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/android-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/android-icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
