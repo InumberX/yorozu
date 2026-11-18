@@ -58,6 +58,7 @@
 
   after_works と違う点は2つ。いずれもフレームワーク由来なので残す: (1) スタイルは CSS Modules ではなく Vanilla Extract の `style.css.ts`。クラスを一つも持たない tsx には作らない。(2) `.server.ts` / `.client.ts` の接尾辞は React Router がバンドルの振り分けに使うので外さない（`i18next.server.ts`、`gtag.client.ts`、`entry.server.tsx`）。`app/locales/*/pages/YZ10_100.json`、`app/components/pages/YZ10_100/`、`app/routes/YZ10_100/` は画面 ID（`docs/screens.md`）なので対象外。
 - ルートはファイル名から自動で作らず、`app/routes.ts` に書く（`route()` / `index()`）。ルートのモジュールは `app/routes/<画面 ID>/route.tsx`（レイアウトは `app/routes/layout-public/route.tsx`）に置き、loader・meta とページの組み立てだけを持つ。ページの中身は `app/components/pages/<画面 ID>/` に置く。ページを足すときは `app/routes.ts` と `react-router.config.ts` の `prerender` の両方に足す（足し忘れは `tests/routes/prerender.test.ts` が検出する）。
+- ページの中（`LayoutMain` の中）のレイアウトを画面の幅で切り替えるときは、メディアクエリではなくコンテナクエリ（`'@container'` と `getContainerQuery()`）を使う。`LayoutMain` が `container-type: inline-size` を持つ。メディアクエリを使うのは、`LayoutMain` の外にあるもの（ヘッダー・フッター）、ヘッダーと連動する値（`LayoutPageWrapper` の上の余白）、ヘッダー・フッターでも使う部品（`LayoutInner`）と、`hover`・`prefers-reduced-motion` などの、幅ではないメディア特性だけにする。
 - CSS に書く数値（px / rem などのサイズ指定）は整数にし、小数点は使わない。出力される rem や `clamp()` の表示サイズが小数になるのは対象外。既存の小数（`root.css.ts` の `sup` / `sub` の em、`css-variables.css.ts` の `4.6vw`）は例外として残す。
 - ブランドカラー（ダークテーマ）: 背景 `#05080B` / 主色 `#5CFFB1` / ハイライト `#C8FFE6` / 差し色 `#FFB454`。詳細と実装上の色は `docs/design-guideline.md`。
 

@@ -3,7 +3,7 @@ import { keyframes, style } from '@vanilla-extract/css'
 import { getLineColor } from '~/styles/mixins/color.css'
 import { getCornerMark } from '~/styles/mixins/corner-mark.css'
 import { getFontSize } from '~/styles/mixins/font.css'
-import { getMediaQuery } from '~/styles/mixins/media-query.css'
+import { getContainerQuery, getMediaQuery } from '~/styles/mixins/media-query.css'
 import { getClampPx, getClampRem } from '~/styles/mixins/size.css'
 import { getTransition } from '~/styles/mixins/transition.css'
 import { visuallyHidden } from '~/styles/mixins/visually-hidden.css'
@@ -11,7 +11,7 @@ import { cssVariables } from '~/styles/variables/css-variables.css'
 import { cssLayerComponentPage } from '~/styles/variables/layers.css'
 
 // 出典: yorozu アーティファクト「yorozu-cyber-net」（PC）/「yorozu-cyber-net-sp」（SP）のヒーロー。
-// 下段（CTA と数値）は 4 列に並べると狭くなるため、lg 以上で横 1 列、lg 未満で縦に積む。
+// 画面の幅による切り替えは、LayoutMain を基準にしたコンテナクエリで行う。
 
 const REDUCED_MOTION = getMediaQuery('reduced-motion')
 
@@ -157,8 +157,8 @@ export const mainVisualBand_wide = style({
     [cssLayerComponentPage]: {
       display: 'none',
 
-      '@media': {
-        [getMediaQuery('md')]: {
+      '@container': {
+        [getContainerQuery('md')]: {
           display: 'inline',
         },
       },
@@ -198,11 +198,13 @@ export const mainVisualHeading_title = style({
       animation: `${headingWipe} 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both`,
 
       '@media': {
-        [getMediaQuery('lg')]: {
-          lineHeight: 1.16,
-        },
         [REDUCED_MOTION]: {
           animation: 'none',
+        },
+      },
+      '@container': {
+        [getContainerQuery('lg')]: {
+          lineHeight: 1.16,
         },
       },
     },
@@ -234,8 +236,8 @@ export const mainVisualHeading_line__outline = style({
       color: 'transparent',
       WebkitTextStroke: `1px ${cssVariables.color.font.primary.hex}`,
 
-      '@media': {
-        [getMediaQuery('lg')]: {
+      '@container': {
+        [getContainerQuery('lg')]: {
           WebkitTextStroke: `2px ${cssVariables.color.font.primary.hex}`,
         },
       },
@@ -284,8 +286,8 @@ export const mainVisualLead_text = style({
       lineHeight: 1.9,
       color: cssVariables.color.font.pale.hex,
 
-      '@media': {
-        [getMediaQuery('lg')]: {
+      '@container': {
+        [getContainerQuery('lg')]: {
           lineHeight: 2,
         },
       },
@@ -294,14 +296,16 @@ export const mainVisualLead_text = style({
 })
 
 /* 下段（CTA と数値） ========== */
+// sm 未満: CTA の下に数値を縦に積む。sm 以上: CTA の下に数値を 3 列で並べる。
+// md 以上: CTA と数値を 1 行に並べる。数値の中は、lg 以上で項目名と値を左右に、lg 未満で上下に置く。
 
 export const mainVisualFooter = style({
   '@layer': {
     [cssLayerComponentPage]: {
       position: 'relative',
 
-      '@media': {
-        [getMediaQuery('lg')]: {
+      '@container': {
+        [getContainerQuery('md')]: {
           display: 'grid',
           gridTemplateColumns: 'auto minmax(0, 1fr)',
           blockSize: '88px',
@@ -319,8 +323,8 @@ export const mainVisualAction = style({
       padding: '20px',
       borderBlockEnd: `1px solid ${getLineColor(0.3)}`,
 
-      '@media': {
-        [getMediaQuery('lg')]: {
+      '@container': {
+        [getContainerQuery('md')]: {
           paddingBlock: 0,
           paddingInline: '32px',
           borderBlockEnd: 'none',
@@ -353,12 +357,6 @@ export const mainVisualAction_button = style({
       '::before': getCornerMark({ shape: 'bracket', color: cssVariables.color.border.primary.hex }),
 
       '@media': {
-        [getMediaQuery('lg')]: {
-          display: 'inline-flex',
-          inlineSize: 'auto',
-          minBlockSize: 'auto',
-          fontSize: getFontSize(14),
-        },
         [getMediaQuery('hover')]: {
           selectors: {
             '&:hover': {
@@ -368,6 +366,14 @@ export const mainVisualAction_button = style({
           },
         },
       },
+      '@container': {
+        [getContainerQuery('md')]: {
+          display: 'inline-flex',
+          inlineSize: 'auto',
+          minBlockSize: 'auto',
+          fontSize: getFontSize(14),
+        },
+      },
     },
   },
 })
@@ -375,8 +381,8 @@ export const mainVisualAction_button = style({
 export const mainVisualStats = style({
   '@layer': {
     [cssLayerComponentPage]: {
-      '@media': {
-        [getMediaQuery('lg')]: {
+      '@container': {
+        [getContainerQuery('sm')]: {
           display: 'grid',
           gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
         },
@@ -402,17 +408,38 @@ export const mainVisualStat = style({
         },
       },
 
-      '@media': {
-        [getMediaQuery('lg')]: {
+      '@container': {
+        // 3 列: 項目名の下に値を置く。値の高さが列ごとに違うため、項目名を上、値を下にそろえる。
+        // 区切り線と CTA の下の線が交わる角（2 列目以降）に「＋」を置く。
+        [getContainerQuery('sm')]: {
+          flexDirection: 'column',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          gap: '8px',
           blockSize: 'auto',
-          paddingInline: '28px',
-          '::before': getCornerMark({ shape: 'cross', corners: ['topLeft'] }),
+          paddingBlock: '16px',
           selectors: {
             '&:not(:last-child)': {
               borderBlockEnd: 'none',
               borderInlineEnd: `1px solid ${getLineColor(0.3)}`,
             },
+            '&:not(:first-child)::before': getCornerMark({ shape: 'cross', corners: ['topLeft'] }),
           },
+        },
+        // 1 行: CTA との区切り線にも角があるため、1 列目にも「＋」を置く。
+        [getContainerQuery('md')]: {
+          paddingBlock: '18px',
+          selectors: {
+            '&::before': getCornerMark({ shape: 'cross', corners: ['topLeft'] }),
+          },
+        },
+        // 項目名と値を左右に置く（デザインの PC）。
+        [getContainerQuery('lg')]: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: '16px',
+          paddingBlock: 0,
+          paddingInline: '28px',
         },
       },
     },

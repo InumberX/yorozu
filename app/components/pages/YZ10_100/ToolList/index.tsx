@@ -48,10 +48,10 @@ export const ToolList = ({ lang, id }: Props) => {
                     {toTwoDigits(index + 1)}
                   </span>
                   <SvgIcon variant={TOOL_ICONS[tool.id]} className={styles.toolListItem_icon} />
-                  <span className={styles.toolListItem_body}>
-                    <span className={styles.toolListItem_name}>{t(`tools.items.${tool.id}.name`)}</span>
-                    <span className={styles.toolListItem_description}>{t(`tools.items.${tool.id}.description`)}</span>
-                  </span>
+                  <div className={styles.toolListItem_body}>
+                    <h3 className={styles.toolListItem_name}>{t(`tools.items.${tool.id}.name`)}</h3>
+                    <p className={styles.toolListItem_description}>{t(`tools.items.${tool.id}.description`)}</p>
+                  </div>
                   <span aria-hidden="true" className={styles.toolListItem_category}>
                     <span lang="en" translate="no" className={styles.toolListItem_chip}>
                       {tool.category}
@@ -77,10 +77,10 @@ export const ToolList = ({ lang, id }: Props) => {
                   {toTwoDigits(TOOLS.length + 1)}
                 </span>
                 <SvgIcon variant={SVG_ICON_VARIANT.TOOL_ADD} className={styles.toolListItem_icon} />
-                <span className={styles.toolListItem_body}>
-                  <span className={styles.toolListItem_name}>{t('tools.next.name')}</span>
-                  <span className={styles.toolListItem_description}>{t('tools.next.description')}</span>
-                </span>
+                <div className={styles.toolListItem_body}>
+                  <h3 className={styles.toolListItem_name}>{t('tools.next.name')}</h3>
+                  <p className={styles.toolListItem_description}>{t('tools.next.description')}</p>
+                </div>
                 <span
                   aria-hidden="true"
                   className={[styles.toolListItem_category, styles.toolListItem_category__empty].join(' ')}

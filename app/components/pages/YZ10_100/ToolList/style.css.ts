@@ -3,7 +3,7 @@ import { style } from '@vanilla-extract/css'
 import { layoutHeaderHeight } from '~/components/common/LayoutHeader/style.css'
 import { getLineColor, getRgba } from '~/styles/mixins/color.css'
 import { getFontSize } from '~/styles/mixins/font.css'
-import { getMediaQuery } from '~/styles/mixins/media-query.css'
+import { getContainerQuery, getMediaQuery } from '~/styles/mixins/media-query.css'
 import { getClampPx, getClampRem } from '~/styles/mixins/size.css'
 import { cssVariables } from '~/styles/variables/css-variables.css'
 import { cssLayerComponentPage } from '~/styles/variables/layers.css'
@@ -30,8 +30,8 @@ export const toolListHead = style({
     [cssLayerComponentPage]: {
       display: 'none',
 
-      '@media': {
-        [getMediaQuery('lg')]: {
+      '@container': {
+        [getContainerQuery('lg')]: {
           display: 'grid',
           gridTemplateColumns: TABLE_COLUMNS,
           gridTemplateAreas: TABLE_AREAS,
@@ -117,13 +117,6 @@ export const toolListItem = style({
       },
 
       '@media': {
-        [getMediaQuery('lg')]: {
-          gridTemplateColumns: TABLE_COLUMNS,
-          gridTemplateAreas: TABLE_AREAS,
-          gap: '16px',
-          paddingBlock: '22px',
-          paddingInline: '21px 24px',
-        },
         [getMediaQuery('hover')]: {
           selectors: {
             '&:hover': {
@@ -133,6 +126,15 @@ export const toolListItem = style({
               backgroundColor: getRgba(cssVariables.color.border.accent.rgb, 0.07),
             },
           },
+        },
+      },
+      '@container': {
+        [getContainerQuery('lg')]: {
+          gridTemplateColumns: TABLE_COLUMNS,
+          gridTemplateAreas: TABLE_AREAS,
+          gap: '16px',
+          paddingBlock: '22px',
+          paddingInline: '21px 24px',
         },
       },
     },
@@ -158,8 +160,8 @@ export const toolListItem_number = style({
 
       selectors: accentOnRequest,
 
-      '@media': {
-        [getMediaQuery('lg')]: {
+      '@container': {
+        [getContainerQuery('lg')]: {
           marginBlockEnd: 0,
         },
       },
@@ -178,8 +180,8 @@ export const toolListItem_icon = style({
 
       selectors: accentOnRequest,
 
-      '@media': {
-        [getMediaQuery('lg')]: {
+      '@container': {
+        [getContainerQuery('lg')]: {
           alignSelf: 'center',
           inlineSize: '40px',
         },
@@ -228,8 +230,8 @@ export const toolListItem_category = style({
       lineHeight: 1,
       color: cssVariables.color.font.subLight.hex,
 
-      '@media': {
-        [getMediaQuery('lg')]: {
+      '@container': {
+        [getContainerQuery('lg')]: {
           marginBlockEnd: 0,
         },
       },
@@ -244,8 +246,8 @@ export const toolListItem_category__empty = style({
       visibility: 'hidden',
       color: cssVariables.color.font.subMedium.hex,
 
-      '@media': {
-        [getMediaQuery('lg')]: {
+      '@container': {
+        [getContainerQuery('lg')]: {
           visibility: 'visible',
         },
       },
@@ -261,8 +263,8 @@ export const toolListItem_chip = style({
       paddingInline: '8px',
       border: `1px solid ${getLineColor(0.3)}`,
 
-      '@media': {
-        [getMediaQuery('lg')]: {
+      '@container': {
+        [getContainerQuery('lg')]: {
           paddingBlock: '4px',
         },
       },
@@ -283,8 +285,8 @@ export const toolListItem_state = style({
 
       selectors: accentOnRequest,
 
-      '@media': {
-        [getMediaQuery('lg')]: {
+      '@container': {
+        [getContainerQuery('lg')]: {
           marginBlockEnd: 0,
         },
       },
@@ -315,8 +317,8 @@ export const toolListItem_action = style({
 
       selectors: accentOnRequest,
 
-      '@media': {
-        [getMediaQuery('lg')]: {
+      '@container': {
+        [getContainerQuery('lg')]: {
           justifySelf: 'end',
           marginBlockStart: 0,
         },

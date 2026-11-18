@@ -3,7 +3,7 @@ import { style } from '@vanilla-extract/css'
 import { getLineColor } from '~/styles/mixins/color.css'
 import { getCornerMark } from '~/styles/mixins/corner-mark.css'
 import { getFontSize } from '~/styles/mixins/font.css'
-import { getMediaQuery } from '~/styles/mixins/media-query.css'
+import { getContainerQuery, getMediaQuery } from '~/styles/mixins/media-query.css'
 import { getClampPx, getClampRem } from '~/styles/mixins/size.css'
 import { cssVariables } from '~/styles/variables/css-variables.css'
 import { cssLayerComponentPage } from '~/styles/variables/layers.css'
@@ -16,8 +16,8 @@ export const conceptItems = style({
     [cssLayerComponentPage]: {
       listStyle: 'none',
 
-      '@media': {
-        [getMediaQuery('md')]: {
+      '@container': {
+        [getContainerQuery('md')]: {
           display: 'grid',
           gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
         },
@@ -39,8 +39,8 @@ export const conceptItem = style({
         },
       },
 
-      '@media': {
-        [getMediaQuery('md')]: {
+      '@container': {
+        [getContainerQuery('md')]: {
           selectors: {
             '&:not(:last-child)': {
               borderBlockEnd: 'none',
@@ -74,8 +74,8 @@ export const conceptItem_text = style({
       lineHeight: 1.9,
       color: cssVariables.color.font.pale.hex,
 
-      '@media': {
-        [getMediaQuery('lg')]: {
+      '@container': {
+        [getContainerQuery('lg')]: {
           lineHeight: 1.95,
         },
       },

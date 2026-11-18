@@ -55,4 +55,10 @@ describe('ToolList', () => {
       .join('')
     expect(readable).toBe('画像を変換するPNG / JPEG を WebP・AVIF へ再符号化')
   })
+
+  test('ツールと次のツールの名前が h3 で出力される', () => {
+    const result = renderWithProviders(<ToolList lang="ja" id="tools" />)
+    const headings = result.getAllByRole('heading', { level: 3 }).map((heading) => heading.textContent)
+    expect(headings).toEqual(['画像を変換する', '動画を変換する', '次のツール'])
+  })
 })
