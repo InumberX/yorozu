@@ -13,7 +13,7 @@ import { cssLayerComponentPage } from '~/styles/variables/layers.css'
 // 出典: yorozu アーティファクト「yorozu-cyber-net」（PC）/「yorozu-cyber-net-sp」（SP）のヒーロー。
 // 下段（CTA と数値）は 4 列に並べると狭くなるため、lg 以上で横 1 列、lg 未満で縦に積む。
 
-const REDUCED_MOTION = '(prefers-reduced-motion: reduce)'
+const REDUCED_MOTION = getMediaQuery('reduced-motion')
 
 export const mainVisual = style({
   '@layer': {

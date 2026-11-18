@@ -28,8 +28,3 @@ export const TOOLS = [
 ] as const satisfies readonly ToolConfig[]
 
 export type ToolId = (typeof TOOLS)[number]['id']
-
-// 一覧の番号（01, 02, …）と「稼働ツール」の数は、2 桁でそろえて見せる。
-export const toTwoDigits = (value: number) => {
-  return String(value).padStart(2, '0')
-}

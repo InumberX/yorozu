@@ -22,7 +22,7 @@ const colorTransition = getTransition([{ property: 'color' }, { property: 'borde
 const MENU_TRANSITION_SPEED = 0.3
 
 // 動きを減らす設定の閲覧者には、開閉を即時に切り替える。
-const reducedMotion = '(prefers-reduced-motion: reduce)'
+const reducedMotion = getMediaQuery('reduced-motion')
 
 export const layoutHeader = style({
   '@layer': {

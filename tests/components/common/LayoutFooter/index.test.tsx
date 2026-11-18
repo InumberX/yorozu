@@ -44,6 +44,7 @@ describe('LayoutFooter', () => {
 
     test('関連リンクは別タブで開く', () => {
       const links = result.getByRole('navigation', { name: '関連リンク' }).querySelectorAll('a')
+      expect(links).toHaveLength(3)
       links.forEach((link) => {
         expect(link.getAttribute('target')).toBe('_blank')
         expect(link.getAttribute('rel')).toBe('noopener noreferrer')
@@ -52,6 +53,7 @@ describe('LayoutFooter', () => {
 
     test('ツールのリンクは同じタブで開く', () => {
       const links = result.getByRole('navigation', { name: 'ツール一覧' }).querySelectorAll('a')
+      expect(links).toHaveLength(2)
       links.forEach((link) => {
         expect(link.getAttribute('target')).toBe(null)
       })

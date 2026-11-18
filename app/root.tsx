@@ -69,8 +69,8 @@ export function Layout({ children }: { children: ReactNode }) {
         <meta name="theme-color" content="#05080b" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="twitter:site" content="@InumberX" />
-        {/* どちらを使うかはブラウザが選ぶ。SVG に対応していないブラウザは favicon.ico を使う。 */}
-        <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16 24x24 32x32 48x48" />
+        {/* SVG に対応していないブラウザ向けに favicon.ico も置く。ico の sizes は、SVG と並べるときに広く使われている 32x32 にする。 */}
+        <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="32x32" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-icon.png" type="image/png" sizes="180x180" />
         {/* Android のホーム画面・アプリとしてのインストール用（android-icon-*.png） */}

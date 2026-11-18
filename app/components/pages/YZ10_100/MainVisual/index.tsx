@@ -6,8 +6,9 @@ import { PrimitiveButton } from '~/components/primitives/buttons/PrimitiveButton
 import { LayoutInner } from '~/components/ui/layouts/LayoutInner'
 import { BasePanel } from '~/components/ui/panels/BasePanel'
 import { LANG } from '~/config/consts'
-import { toTwoDigits, TOOLS } from '~/config/tools'
+import { TOOLS } from '~/config/tools'
 import { useDecodeText } from '~/hooks/use-decode-text'
+import { toTwoDigits } from '~/utils/to-two-digits'
 
 type Props = {
   lang: string

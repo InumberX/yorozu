@@ -53,7 +53,7 @@ export const SITE_INFO = {
   },
 } as const
 
-// 外部サイトへのリンク先。フッターとトップで同じ URL を使う。
+// 外部サイトへのリンク先。REQUEST はフッターとトップの両方で使う。
 export const EXTERNAL_LINKS = {
   // ツールの要望は GitHub の issue で受け付ける（docs/design-guideline.md「デザインの正」）。
   REQUEST: 'https://github.com/InumberX/yorozu/issues',

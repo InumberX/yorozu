@@ -7,9 +7,9 @@ import { cssVariables } from '~/styles/variables/css-variables.css'
 // - cross: パネルの角の「＋」。11px の十字の中心を枠線に重ねる。
 // - bracket: 塗りボタンの角の「┌」。11px の L 字を枠の外へ 5px はみ出させる。
 
-export type Corner = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight'
+type Corner = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight'
 
-export const ALL_CORNERS: Corner[] = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight']
+const ALL_CORNERS: Corner[] = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight']
 
 const CORNER_SIDES: Record<Corner, [x: 'left' | 'right', y: 'top' | 'bottom']> = {
   topLeft: ['left', 'top'],

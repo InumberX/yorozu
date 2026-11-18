@@ -1,7 +1,11 @@
 import { type BreakpointsKey, BREAKPOINTS } from '~/styles/variables/breakpoints.css'
+import { REDUCED_MOTION_QUERY } from '~/styles/variables/media-features.css'
 
-export const getMediaQuery = (key: BreakpointsKey | 'hover' | 'print' | 'not-scripting') => {
+export const getMediaQuery = (key: BreakpointsKey | 'hover' | 'print' | 'not-scripting' | 'reduced-motion') => {
   switch (key) {
+    case 'reduced-motion':
+      return REDUCED_MOTION_QUERY
+
     case 'hover':
       return '(any-hover: hover)'
 

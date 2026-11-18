@@ -9,7 +9,8 @@ import { LayoutInner } from '~/components/ui/layouts/LayoutInner'
 import { LayoutSection } from '~/components/ui/layouts/LayoutSection'
 import { BasePanel } from '~/components/ui/panels/BasePanel'
 import { EXTERNAL_LINKS } from '~/config/consts'
-import { type ToolId, toTwoDigits, TOOLS } from '~/config/tools'
+import { type ToolId, TOOLS } from '~/config/tools'
+import { toTwoDigits } from '~/utils/to-two-digits'
 
 type Props = {
   lang: string

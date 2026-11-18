@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 
+import { REDUCED_MOTION_QUERY } from '~/styles/variables/media-features.css'
+
 // 解読中に見せる文字
 const DECODE_GLYPHS = '0123456789ABCDEF#/<>[]'
 // 全文がそろうまでのコマ数と、1 コマの長さ（ms）。30 コマ × 40ms で 1.2 秒。
@@ -27,7 +29,7 @@ export const useDecodeText = (text: string) => {
   const [decoding, setDecoding] = useState<{ source: string; text: string } | null>(null)
 
   useEffect(() => {
-    if (!text || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+    if (!text || window.matchMedia?.(REDUCED_MOTION_QUERY).matches) {
       return
     }
 

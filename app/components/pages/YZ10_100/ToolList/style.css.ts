@@ -19,7 +19,7 @@ export const toolList = style({
   '@layer': {
     [cssLayerComponentPage]: {
       paddingBlockEnd: getClampPx(40, 64),
-      // 固定ヘッダーの下に見出しが隠れないよう、ヘッダーの高さに SP 16px / PC 24px を足した位置で止める。
+      // 固定ヘッダーの下に見出しが隠れないよう、ヘッダーの高さに、画面の幅に応じて 16〜24px を足した位置で止める。
       scrollMarginBlockStart: getClampPx(layoutHeaderHeight.minimum + 16, layoutHeaderHeight.maximum + 24),
     },
   },
@@ -127,7 +127,6 @@ export const toolListItem = style({
           selectors: {
             '&:hover': {
               backgroundColor: getRgba(cssVariables.color.border.primary.rgb, 0.07),
-              color: cssVariables.color.font.pale.hex,
             },
             [`&${toolListItem__request}:hover`]: {
               backgroundColor: getRgba(cssVariables.color.border.accent.rgb, 0.07),
@@ -172,7 +171,8 @@ export const toolListItem_icon = style({
     [cssLayerComponentPage]: {
       gridArea: 'icon',
       alignSelf: 'start',
-      inlineSize: getClampPx(36, 40),
+      // カードでは 1 列目の幅（36px）にそろえ、表では 40px にする。
+      inlineSize: '36px',
       color: cssVariables.color.font.primary.hex,
 
       selectors: accentOnRequest,
@@ -180,6 +180,7 @@ export const toolListItem_icon = style({
       '@media': {
         [getMediaQuery('lg')]: {
           alignSelf: 'center',
+          inlineSize: '40px',
         },
       },
     },
