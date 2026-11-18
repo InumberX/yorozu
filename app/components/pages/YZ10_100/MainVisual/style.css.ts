@@ -6,6 +6,7 @@ import { getFontSize } from '~/styles/mixins/font.css'
 import { getMediaQuery } from '~/styles/mixins/media-query.css'
 import { getClampPx, getClampRem } from '~/styles/mixins/size.css'
 import { getTransition } from '~/styles/mixins/transition.css'
+import { visuallyHidden } from '~/styles/mixins/visually-hidden.css'
 import { cssVariables } from '~/styles/variables/css-variables.css'
 import { cssLayerComponentPage } from '~/styles/variables/layers.css'
 
@@ -254,19 +255,9 @@ export const mainVisualHeading_tagline = style({
 })
 
 // 読み上げ用。見た目からは外し、支援技術には全文を渡す。
-export const visuallyHidden = style({
+export const mainVisualHeading_taglineText = style({
   '@layer': {
-    [cssLayerComponentPage]: {
-      position: 'absolute',
-      inlineSize: '1px',
-      blockSize: '1px',
-      margin: '-1px',
-      padding: 0,
-      overflow: 'hidden',
-      clipPath: 'inset(50%)',
-      whiteSpace: 'nowrap',
-      border: 0,
-    },
+    [cssLayerComponentPage]: visuallyHidden,
   },
 })
 

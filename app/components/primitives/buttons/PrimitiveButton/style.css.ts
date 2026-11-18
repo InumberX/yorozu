@@ -1,6 +1,7 @@
 import { style } from '@vanilla-extract/css'
 
 import { getTransition } from '~/styles/mixins/transition.css'
+import { visuallyHidden } from '~/styles/mixins/visually-hidden.css'
 import { cssVariables } from '~/styles/variables/css-variables.css'
 import { fontSmall } from '~/styles/variables/font.css'
 import { cssLayerComponentUiPrimitive } from '~/styles/variables/layers.css'
@@ -47,5 +48,12 @@ export const primitiveButton = style({
         },
       ]),
     },
+  },
+})
+
+// 別タブで開くことの補足（読み上げ用）
+export const primitiveButton_newTab = style({
+  '@layer': {
+    [cssLayerComponentUiPrimitive]: visuallyHidden,
   },
 })

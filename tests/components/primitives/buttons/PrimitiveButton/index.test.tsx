@@ -414,6 +414,11 @@ describe('PrimitiveButton', () => {
         expect(link?.getAttribute('target')).toEqual('_blank')
         expect(link?.getAttribute('rel')).toEqual('noopener noreferrer')
       })
+
+      test('別タブで開くことを読み上げ用の補足で伝える', () => {
+        const hint = result.container.querySelector('a > span')
+        expect(hint?.className).toContain('primitiveButton_newTab')
+      })
     })
 
     describe('ページ内リンク（#）', () => {
@@ -421,10 +426,11 @@ describe('PrimitiveButton', () => {
         result = render(<PrimitiveButton url="#tools">test</PrimitiveButton>)
       })
 
-      test('同じタブで開く', () => {
+      test('同じタブで開き、別タブの補足を付けない', () => {
         const link = result.container.querySelector('a')
         expect(link?.getAttribute('target')).toBe(null)
         expect(link?.getAttribute('rel')).toBe(null)
+        expect(link?.textContent).toBe('test')
       })
     })
 

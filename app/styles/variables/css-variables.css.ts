@@ -47,8 +47,8 @@ export const cssVariableColors = {
     },
     // 発光色の面（塗りボタンなど）の上に置く文字
     dark: {
-      hex: '#04070a',
-      rgb: changeColorHexToRgb('#04070a'),
+      hex: '#05080b',
+      rgb: changeColorHexToRgb('#05080b'),
     },
     // 主色（発光グリーン）
     primary: {
@@ -106,8 +106,8 @@ export const cssVariableColors = {
       rgb: changeColorHexToRgb('#ffb454'),
     },
     mark: {
-      hex: '#04070a',
-      rgb: changeColorHexToRgb('#04070a'),
+      hex: '#05080b',
+      rgb: changeColorHexToRgb('#05080b'),
     },
     placeholder: {
       hex: '#3e8c6c',
@@ -134,10 +134,10 @@ export const cssVariableColors = {
       hex: '#05080b',
       rgb: changeColorHexToRgb('#05080b'),
     },
-    // 背景
+    // 背景（デザインの正にそろえた値）
     body: {
-      hex: '#04070a',
-      rgb: changeColorHexToRgb('#04070a'),
+      hex: '#05080b',
+      rgb: changeColorHexToRgb('#05080b'),
     },
     // パネル（カード面）
     light: {
@@ -233,6 +233,8 @@ export const cssVariableColors = {
     level3: getPrimaryAlpha(0.28),
     level4: getPrimaryAlpha(0.35),
     level5: getPrimaryAlpha(0.4),
+    // 背景の方眼
+    grid: getPrimaryAlpha(0.06),
   },
   // 面: rgba(92, 255, 177, 0.02〜0.05)
   surface: {

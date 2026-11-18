@@ -31,9 +31,15 @@ describe('LayoutFooter', () => {
 
     test('関連リンクのナビゲーションが外部サイトを指す', () => {
       const nav = result.getByRole('navigation', { name: '関連リンク' })
-      expect(nav.querySelector('a[href="https://github.com/InumberX/yorozu/issues"]')?.textContent).toBe('REQUEST')
-      expect(nav.querySelector('a[href="https://github.com/InumberX"]')?.textContent).toBe('GITHUB')
-      expect(nav.querySelector('a[href="https://afterworks.jp"]')?.textContent).toBe('AFTERWORKS')
+      expect(nav.querySelector('a[href="https://github.com/InumberX/yorozu/issues"]')?.textContent).toBe(
+        'REQUEST（新しいタブで開きます）'
+      )
+      expect(nav.querySelector('a[href="https://github.com/InumberX"]')?.textContent).toBe(
+        'GITHUB（新しいタブで開きます）'
+      )
+      expect(nav.querySelector('a[href="https://afterworks.jp"]')?.textContent).toBe(
+        'AFTERWORKS（新しいタブで開きます）'
+      )
     })
 
     test('関連リンクは別タブで開く', () => {

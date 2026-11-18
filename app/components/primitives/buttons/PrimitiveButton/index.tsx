@@ -1,4 +1,5 @@
 import { type AriaRole, type AriaAttributes, type ReactNode, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
 import * as styles from './style.css'
@@ -51,6 +52,8 @@ export const PrimitiveButton = ({
   lang,
   hrefLang,
 }: PrimitiveButtonProps) => {
+  const { t } = useTranslation('common')
+
   // 外部リンク判定
   const isExternal: boolean = useMemo(() => {
     return url ? url.startsWith('http://') || url.startsWith('https://') : false
@@ -102,6 +105,8 @@ export const PrimitiveButton = ({
       hrefLang={hrefLang}
     >
       {children}
+      {/* 別タブで開くことを、読み上げソフトにだけ伝える。 */}
+      {anchorTarget === '_blank' && <span className={styles.primitiveButton_newTab}>{t('a11y.newTab')}</span>}
     </a>
   ) : url ? (
     <Link
@@ -122,6 +127,7 @@ export const PrimitiveButton = ({
       hrefLang={hrefLang}
     >
       {children}
+      {target === '_blank' && <span className={styles.primitiveButton_newTab}>{t('a11y.newTab')}</span>}
     </Link>
   ) : onClick || buttonType ? (
     <button

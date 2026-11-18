@@ -22,6 +22,8 @@ describe('Concept', () => {
     const link = result.getByText('こちら').closest('a')
     expect(link?.getAttribute('href')).toBe(EXTERNAL_LINKS.REQUEST)
     expect(link?.getAttribute('target')).toBe('_blank')
-    expect(link?.closest('p')?.textContent).toBe('ツールは継続的に追加します。こちらから要望もお送りいただけます。')
+    expect(link?.closest('p')?.textContent).toBe(
+      'ツールは継続的に追加します。こちら（新しいタブで開きます）から要望もお送りいただけます。'
+    )
   })
 })

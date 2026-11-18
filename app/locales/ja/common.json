@@ -42,5 +42,8 @@
       "afterworks": "AFTERWORKS"
     },
     "copyright": "© NiNE, ALL RIGHTS RESERVED."
+  },
+  "a11y": {
+    "newTab": "（新しいタブで開きます）"
   }
 }

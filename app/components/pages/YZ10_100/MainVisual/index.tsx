@@ -60,7 +60,7 @@ export const MainVisual = ({ lang, toolsId }: Props) => {
             </h1>
             {tagline && (
               <p lang="en" translate="no" className={styles.mainVisualHeading_tagline}>
-                <span className={styles.visuallyHidden}>{tagline}</span>
+                <span className={styles.mainVisualHeading_taglineText}>{tagline}</span>
                 <span aria-hidden="true">{decodedTagline}</span>
               </p>
             )}
