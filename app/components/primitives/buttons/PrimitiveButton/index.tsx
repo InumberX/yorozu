@@ -61,6 +61,11 @@ export const PrimitiveButton = ({
     return url ? url.startsWith('#') : false
   }, [url])
 
+  // 外部リンクは、指定がなければ別タブで開く。
+  // 開いた先から window.opener を辿れないよう、rel も合わせて付ける。
+  const anchorTarget = target ?? (isExternal ? '_blank' : undefined)
+  const anchorRel = rel ?? (isExternal ? 'noopener noreferrer' : undefined)
+
   const primitiveButtonClassName = useMemo(() => {
     return [styles.primitiveButton, isDisabled && styles.primitiveButton__disabled, className].filter(Boolean).join(' ')
   }, [isDisabled, className])
@@ -81,8 +86,8 @@ export const PrimitiveButton = ({
   return isExternal || isInternalLink ? (
     <a
       href={url}
-      target={target}
-      rel={rel}
+      target={anchorTarget}
+      rel={anchorRel}
       className={primitiveButtonClassName}
       onClick={handleAnchorClick}
       title={title}

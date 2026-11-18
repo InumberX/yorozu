@@ -408,6 +408,40 @@ describe('PrimitiveButton', () => {
         expect(link).not.toBe(null)
         expect(link?.getAttribute('href')).toEqual('http://example.com')
       })
+
+      test('target と rel を指定しなくても別タブで開く', () => {
+        const link = result.container.querySelector('a')
+        expect(link?.getAttribute('target')).toEqual('_blank')
+        expect(link?.getAttribute('rel')).toEqual('noopener noreferrer')
+      })
+    })
+
+    describe('ページ内リンク（#）', () => {
+      beforeEach(() => {
+        result = render(<PrimitiveButton url="#tools">test</PrimitiveButton>)
+      })
+
+      test('同じタブで開く', () => {
+        const link = result.container.querySelector('a')
+        expect(link?.getAttribute('target')).toBe(null)
+        expect(link?.getAttribute('rel')).toBe(null)
+      })
+    })
+
+    describe('内部リンク', () => {
+      beforeEach(() => {
+        result = render(
+          <MemoryRouter>
+            <PrimitiveButton url="/image">test</PrimitiveButton>
+          </MemoryRouter>
+        )
+      })
+
+      test('同じタブで開く', () => {
+        const link = result.container.querySelector('a')
+        expect(link?.getAttribute('target')).toBe(null)
+        expect(link?.getAttribute('rel')).toBe(null)
+      })
     })
 
     describe('別タブで開く外部リンクボタン', () => {

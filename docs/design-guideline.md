@@ -16,8 +16,11 @@ yorozu 全体で共通のビジュアル規約。ツールが増えても一貫�
 デザインと実装を食い違わせる場合は、その判断をこのガイドラインに書く（例: 下記の `letter-spacing` を入れない方針）。
 
 - ナビの 1 項目めは、デザインでは「トップ」だが、実装では「ホーム」とする。英語版の「Home」とページ情報の名前（`PAGE_INFO`）にそろえるため。
-- フッターの LINKS にある「REQUEST」は、デザインではトップのリクエスト欄（`#request`）を指すが、実装では GitHub の issue ページ（`https://github.com/InumberX/yorozu/issues`）を指す。
+- フッターの LINKS にある「REQUEST」は、デザインではトップのリクエスト欄（`#request`）を指すが、実装では GitHub の issue ページ（`https://github.com/InumberX/yorozu/issues`）を指す。トップの「03 次のツール」の行と、コンセプト欄の「こちら」も同じ issue ページを指す。
+- 外部サイトへのリンク（`http://` / `https://` で始まるもの）は、すべて別タブで開く（`target="_blank" rel="noopener noreferrer"`）。`PrimitiveButton` が既定で付ける。
 - フッターのコピーライトは、デザインでは年（`© 2026 NiNE, …`）を入れているが、実装では年を入れない（`© NiNE, ALL RIGHTS RESERVED.`）。
+- トップの見出しの 2 行目（縁取り文字）の線幅は、デザインでは PC 1.5px / SP 1px だが、実装では lg 以上 2px / lg 未満 1px とする。CSS の数値を整数にするため。
+- トップのヒーローの背景（デザインの `geo-twist-slow.svg`）は、SVG ファイルを置かず HTML と CSS で描く（`components/pages/YZ10_100/MainVisual`）。色をトークンから取り、動きを減らす設定の扱いをほかのアニメーションとそろえるため。線は拡大されず常に 1px になる。
 - 中身の最大幅は、デザインでは 1240px（左右の余白 22px）だが、実装では `LayoutInner` の既定（1400px、左右の余白 32px）とする。ページ・フッターの左端を、すべて同じ `LayoutInner` の幅でそろえるため。
 
 ## カラー
@@ -95,7 +98,11 @@ CSS に書く数値（px / rem などのサイズ指定）は整数にし、小�
 
 ## コンポーネント
 
-【今後追記】（ボタン、フォーム、カード など共通UIの規約）
+- **パネル**（`components/ui/panels/BasePanel`）: 罫線 `rgba(92, 255, 177, 0.3)` の枠と、四隅の「＋」（`#C8FFE6`、11px）で囲んだ面。下地は `default`（背景色の 16%、グリッドを透かす）と `dense`（86%、メインビジュアル）。ページのセクションはこの中に置く。
+- **角の飾り**（`styles/mixins/corner-mark.css.ts`）: パネルの「＋」（`cross`）と、塗りボタンの「┌」（`bracket`）を疑似要素 1 つで描く。列の区切りと罫線が交わる角にも `cross` を置く。
+- **セクションの余白**: セクションどうしの間は、各セクションの下の余白だけで取る（トップは 40〜64px）。最後のセクションの下は `LayoutPageWrapper` の下の余白に任せる。
+
+【今後追記】（ボタン、フォーム など共通UIの規約）
 
 ## ロゴ
 

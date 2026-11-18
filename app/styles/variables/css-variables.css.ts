@@ -100,6 +100,11 @@ export const cssVariableColors = {
       hex: '#2f6b53',
       rgb: changeColorHexToRgb('#2f6b53'),
     },
+    // 差し色（アンバー）。セクション番号・次のツールなど
+    accent: {
+      hex: '#ffb454',
+      rgb: changeColorHexToRgb('#ffb454'),
+    },
     mark: {
       hex: '#04070a',
       rgb: changeColorHexToRgb('#04070a'),
@@ -214,6 +219,11 @@ export const cssVariableColors = {
     error: {
       hex: '#ff6b6b',
       rgb: changeColorHexToRgb('#ff6b6b'),
+    },
+    // 差し色（アンバー）
+    accent: {
+      hex: '#ffb454',
+      rgb: changeColorHexToRgb('#ffb454'),
     },
   },
   // 罫線: rgba(92, 255, 177, 0.14 / 0.22 / 0.28 / 0.35 / 0.4)

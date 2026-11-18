@@ -52,3 +52,11 @@ export const SITE_INFO = {
     BASE_DESCRIPTION: BASE_DESCRIPTION_EN,
   },
 } as const
+
+// 外部サイトへのリンク先。フッターとトップで同じ URL を使う。
+export const EXTERNAL_LINKS = {
+  // ツールの要望は GitHub の issue で受け付ける（docs/design-guideline.md「デザインの正」）。
+  REQUEST: 'https://github.com/InumberX/yorozu/issues',
+  GITHUB: 'https://github.com/InumberX',
+  AFTERWORKS: 'https://afterworks.jp',
+} as const

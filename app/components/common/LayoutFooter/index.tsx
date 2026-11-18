@@ -4,6 +4,7 @@ import * as styles from './style.css'
 
 import { PrimitiveButton } from '~/components/primitives/buttons/PrimitiveButton'
 import { LayoutInner } from '~/components/ui/layouts/LayoutInner'
+import { EXTERNAL_LINKS } from '~/config/consts'
 import { CACHE_BUSTER } from '~/config/env'
 import { PAGES } from '~/config/paths'
 
@@ -25,9 +26,9 @@ export const LayoutFooter = ({ lang }: Props) => {
     {
       key: 'links',
       items: [
-        { key: 'request', url: 'https://github.com/InumberX/yorozu/issues' },
-        { key: 'github', url: 'https://github.com/InumberX' },
-        { key: 'afterworks', url: 'https://afterworks.jp' },
+        { key: 'request', url: EXTERNAL_LINKS.REQUEST },
+        { key: 'github', url: EXTERNAL_LINKS.GITHUB },
+        { key: 'afterworks', url: EXTERNAL_LINKS.AFTERWORKS },
       ],
     },
   ] as const

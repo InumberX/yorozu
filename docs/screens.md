@@ -30,8 +30,9 @@
 
 ### トップ `YZ10_100`（`/`）
 - ツールがショーケース的に並ぶ。ツールが増えても成立するレイアウトにする。
-- ツール一覧は `app/config` のツール登録メタから生成する想定（追加はメタ追記で完結）。
-- 【今後詳細化】
+- ツール一覧と「稼働ツール」の数は、`app/config/tools.ts` のツール登録（`TOOLS`）から作る。ツールを足すときは、`TOOLS` に 1 行足し、名前と説明を `locales/*/pages/YZ10_100.json` の `tools.items` に足す（`tests/config/tools.test.ts` が漏れを検出する）。アイコンは `components/pages/YZ10_100/ToolList` の `TOOL_ICONS` に足す。
+- 構成: メインビジュアル（h1・リード・CTA・数値）→ SEC.01 ツール一覧 → SEC.02 コンセプト。部品は `app/components/pages/YZ10_100/` に置く。
+- ツール一覧の最後に「次のツール」の行を置き、要望の受付（GitHub の issue ページ）へ別タブで案内する。
 
 ### 画像変換 `YZ20_100`（`/image`）
 - 入力: 画像ファイル ／ 出力: WebP・AVIF

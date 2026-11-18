@@ -36,6 +36,21 @@ describe('LayoutFooter', () => {
       expect(nav.querySelector('a[href="https://afterworks.jp"]')?.textContent).toBe('AFTERWORKS')
     })
 
+    test('関連リンクは別タブで開く', () => {
+      const links = result.getByRole('navigation', { name: '関連リンク' }).querySelectorAll('a')
+      links.forEach((link) => {
+        expect(link.getAttribute('target')).toBe('_blank')
+        expect(link.getAttribute('rel')).toBe('noopener noreferrer')
+      })
+    })
+
+    test('ツールのリンクは同じタブで開く', () => {
+      const links = result.getByRole('navigation', { name: 'ツール一覧' }).querySelectorAll('a')
+      links.forEach((link) => {
+        expect(link.getAttribute('target')).toBe(null)
+      })
+    })
+
     test('コピーライトが英語として出力されている', () => {
       expect(result.getByText('© NiNE, ALL RIGHTS RESERVED.').getAttribute('lang')).toBe('en')
     })
