@@ -60,5 +60,18 @@ describe('root', () => {
       )
       expect(html).toMatch(new RegExp(`<html lang="${lang}"`))
     })
+
+    test('アイコンと Web App Manifest を読み込む', () => {
+      const Stub = createRoutesStub([{ path: '*', Component: () => <Layout>{null}</Layout> }])
+      const html = renderToString(
+        <I18nextProvider i18n={testI18n}>
+          <Stub initialEntries={['/']} />
+        </I18nextProvider>
+      )
+      expect(html).toContain('<link rel="icon" href="/favicon.ico"')
+      expect(html).toContain('<link rel="icon" href="/favicon.svg" type="image/svg+xml"/>')
+      expect(html).toContain('<link rel="apple-touch-icon" href="/apple-icon.png"')
+      expect(html).toContain('<link rel="manifest" href="/manifest.webmanifest"/>')
+    })
   })
 })

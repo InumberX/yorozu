@@ -68,3 +68,30 @@ export const svgIcon__filter = style({
     },
   },
 })
+
+export const svgIcon__toolAdd = style({
+  '@layer': {
+    [cssLayerComponentUiLow]: {
+      WebkitMaskImage: `url(/assets/img/icon-tool-add.svg?${CACHE_BUSTER})`,
+      maskImage: `url(/assets/img/icon-tool-add.svg?${CACHE_BUSTER})`,
+    },
+  },
+})
+
+export const svgIcon__toolImage = style({
+  '@layer': {
+    [cssLayerComponentUiLow]: {
+      WebkitMaskImage: `url(/assets/img/icon-tool-image.svg?${CACHE_BUSTER})`,
+      maskImage: `url(/assets/img/icon-tool-image.svg?${CACHE_BUSTER})`,
+    },
+  },
+})
+
+export const svgIcon__toolVideo = style({
+  '@layer': {
+    [cssLayerComponentUiLow]: {
+      WebkitMaskImage: `url(/assets/img/icon-tool-video.svg?${CACHE_BUSTER})`,
+      maskImage: `url(/assets/img/icon-tool-video.svg?${CACHE_BUSTER})`,
+    },
+  },
+})

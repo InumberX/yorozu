@@ -31,9 +31,32 @@ describe('LayoutFooter', () => {
 
     test('関連リンクのナビゲーションが外部サイトを指す', () => {
       const nav = result.getByRole('navigation', { name: '関連リンク' })
-      expect(nav.querySelector('a[href="https://github.com/InumberX/yorozu/issues"]')?.textContent).toBe('REQUEST')
-      expect(nav.querySelector('a[href="https://github.com/InumberX"]')?.textContent).toBe('GITHUB')
-      expect(nav.querySelector('a[href="https://afterworks.jp"]')?.textContent).toBe('AFTERWORKS')
+      expect(nav.querySelector('a[href="https://github.com/InumberX/yorozu/issues"]')?.textContent).toBe(
+        'REQUEST（新しいタブで開きます）'
+      )
+      expect(nav.querySelector('a[href="https://github.com/InumberX"]')?.textContent).toBe(
+        'GITHUB（新しいタブで開きます）'
+      )
+      expect(nav.querySelector('a[href="https://afterworks.jp"]')?.textContent).toBe(
+        'AFTERWORKS（新しいタブで開きます）'
+      )
+    })
+
+    test('関連リンクは別タブで開く', () => {
+      const links = result.getByRole('navigation', { name: '関連リンク' }).querySelectorAll('a')
+      expect(links).toHaveLength(3)
+      links.forEach((link) => {
+        expect(link.getAttribute('target')).toBe('_blank')
+        expect(link.getAttribute('rel')).toBe('noopener')
+      })
+    })
+
+    test('ツールのリンクは同じタブで開く', () => {
+      const links = result.getByRole('navigation', { name: 'ツール一覧' }).querySelectorAll('a')
+      expect(links).toHaveLength(2)
+      links.forEach((link) => {
+        expect(link.getAttribute('target')).toBe(null)
+      })
     })
 
     test('コピーライトが英語として出力されている', () => {

@@ -36,16 +36,19 @@ globalStyle('body', {
   '@layer': {
     [cssLayerReset]: {
       backgroundColor: cssVariables.color.background.body.hex,
-      // 上部から落ちる発光と、極薄のグリッド。案A の HUD 的なトーンの下地。
+      // 方眼のグリッド。デザインの正（yorozu アーティファクト）にそろえ、
+      // 線は主色の 6%、間隔は sm 未満（SP）44px / sm 以上（PC）88px。ページと一緒にスクロールする。
       backgroundImage: [
-        `radial-gradient(80vmax 60vmax at 50% -12%, ${cssVariables.color.surface.level4}, transparent 70%)`,
-        `linear-gradient(${cssVariables.color.surface.level1} 1px, transparent 1px)`,
-        `linear-gradient(90deg, ${cssVariables.color.surface.level1} 1px, transparent 1px)`,
+        `linear-gradient(${cssVariables.color.line.grid} 1px, transparent 1px)`,
+        `linear-gradient(90deg, ${cssVariables.color.line.grid} 1px, transparent 1px)`,
       ].join(', '),
-      backgroundAttachment: 'fixed',
-      backgroundPosition: 'top center',
-      backgroundRepeat: 'no-repeat, repeat, repeat',
-      backgroundSize: 'auto, 64px 64px, 64px 64px',
+      backgroundSize: '44px 44px',
+
+      '@media': {
+        [getMediaQuery('sm')]: {
+          backgroundSize: '88px 88px',
+        },
+      },
       borderBlock: 0,
       borderInline: 0,
       color: cssVariables.color.font.base.hex,

@@ -47,8 +47,8 @@ export const cssVariableColors = {
     },
     // 発光色の面（塗りボタンなど）の上に置く文字
     dark: {
-      hex: '#04070a',
-      rgb: changeColorHexToRgb('#04070a'),
+      hex: '#05080b',
+      rgb: changeColorHexToRgb('#05080b'),
     },
     // 主色（発光グリーン）
     primary: {
@@ -100,9 +100,14 @@ export const cssVariableColors = {
       hex: '#2f6b53',
       rgb: changeColorHexToRgb('#2f6b53'),
     },
+    // 差し色（アンバー）。セクション番号・次のツールなど
+    accent: {
+      hex: '#ffb454',
+      rgb: changeColorHexToRgb('#ffb454'),
+    },
     mark: {
-      hex: '#04070a',
-      rgb: changeColorHexToRgb('#04070a'),
+      hex: '#05080b',
+      rgb: changeColorHexToRgb('#05080b'),
     },
     placeholder: {
       hex: '#3e8c6c',
@@ -129,10 +134,10 @@ export const cssVariableColors = {
       hex: '#05080b',
       rgb: changeColorHexToRgb('#05080b'),
     },
-    // 背景
+    // 背景（デザインの正にそろえた値）
     body: {
-      hex: '#04070a',
-      rgb: changeColorHexToRgb('#04070a'),
+      hex: '#05080b',
+      rgb: changeColorHexToRgb('#05080b'),
     },
     // パネル（カード面）
     light: {
@@ -199,6 +204,11 @@ export const cssVariableColors = {
       hex: '#5cffb1',
       rgb: changeColorHexToRgb('#5cffb1'),
     },
+    // ハイライト。枠の角の飾りなど
+    primaryLight: {
+      hex: '#c8ffe6',
+      rgb: changeColorHexToRgb('#c8ffe6'),
+    },
     secondary: {
       hex: '#2bff9e',
       rgb: changeColorHexToRgb('#2bff9e'),
@@ -215,6 +225,11 @@ export const cssVariableColors = {
       hex: '#ff6b6b',
       rgb: changeColorHexToRgb('#ff6b6b'),
     },
+    // 差し色（アンバー）
+    accent: {
+      hex: '#ffb454',
+      rgb: changeColorHexToRgb('#ffb454'),
+    },
   },
   // 罫線: rgba(92, 255, 177, 0.14 / 0.22 / 0.28 / 0.35 / 0.4)
   line: {
@@ -223,13 +238,14 @@ export const cssVariableColors = {
     level3: getPrimaryAlpha(0.28),
     level4: getPrimaryAlpha(0.35),
     level5: getPrimaryAlpha(0.4),
+    // 背景の方眼
+    grid: getPrimaryAlpha(0.06),
   },
-  // 面: rgba(92, 255, 177, 0.02〜0.05)
+  // 面: rgba(92, 255, 177, 0.02〜0.04)
   surface: {
     level1: getPrimaryAlpha(0.02),
     level2: getPrimaryAlpha(0.03),
     level3: getPrimaryAlpha(0.04),
-    level4: getPrimaryAlpha(0.05),
   },
   gradation: {
     primary: '#5cffb1 0, #2bff9e 100%',

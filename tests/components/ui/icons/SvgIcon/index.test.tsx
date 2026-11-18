@@ -186,6 +186,9 @@ describe('SvgIcon', () => {
           CHEVRON_FORWARD: 'chevronForward',
           CHECK: 'check',
           FILTER: 'filter',
+          TOOL_ADD: 'toolAdd',
+          TOOL_IMAGE: 'toolImage',
+          TOOL_VIDEO: 'toolVideo',
         })
       })
 

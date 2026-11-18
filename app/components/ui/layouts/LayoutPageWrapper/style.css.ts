@@ -20,7 +20,7 @@ export const layoutPageWrapper__bottomNoSpace = style({
 export const layoutPageWrapper = style({
   '@layer': {
     [cssLayerComponentUiLow]: {
-      // 背景（body）側のグローとグリッドを透過させるため、面は敷かない。
+      // 背景（body）の方眼を透過させるため、面は敷かない。
       backgroundColor: 'transparent',
       // 上は固定ヘッダーの高さと同じ（ヘッダーと同じく sm で切り替える）。下は画面幅に応じて 40〜80px。
       paddingBlock: `${layoutHeaderHeight.minimum}px ${getClampPx(40, 80)}`,

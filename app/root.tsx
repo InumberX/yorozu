@@ -66,11 +66,15 @@ export function Layout({ children }: { children: ReactNode }) {
           name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, shrink-to-fit=no, viewport-fit=cover"
         />
-        <meta name="theme-color" content="#04070a" />
+        <meta name="theme-color" content="#05080b" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="twitter:site" content="@InumberX" />
-        <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16" />
+        {/* SVG に対応していないブラウザ向けに favicon.ico も置く。ico の sizes は、SVG と並べるときに広く使われている 32x32 にする。 */}
+        <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="32x32" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-icon.png" type="image/png" sizes="180x180" />
+        {/* Android のホーム画面・アプリとしてのインストール用（android-icon-*.png） */}
+        <link rel="manifest" href="/manifest.webmanifest" />
         {/* デザイン案A のフォント（和文・見出し: Zen Kaku Gothic New / 英数字: Share Tech Mono）。
             将来 COOP/COEP を付与する場合は、自前配信へ切り替える必要がある。 */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />

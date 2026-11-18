@@ -5,6 +5,9 @@ export const SVG_ICON_VARIANT = {
   CHEVRON_FORWARD: 'chevronForward',
   CHECK: 'check',
   FILTER: 'filter',
+  TOOL_ADD: 'toolAdd',
+  TOOL_IMAGE: 'toolImage',
+  TOOL_VIDEO: 'toolVideo',
 } as const
 
 export type SvgIconVariant = (typeof SVG_ICON_VARIANT)[keyof typeof SVG_ICON_VARIANT]

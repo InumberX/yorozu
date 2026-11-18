@@ -5,6 +5,7 @@ import * as styles from './style.css'
 export type LayoutSectionProps = {
   children?: ReactNode
   tag?: keyof JSX.IntrinsicElements
+  id?: string
   className?: string
   color?: 'default'
   topSpace?: 'topSpaceNone' | 'topSpaceSmall' | 'topSpaceMedium'
@@ -14,6 +15,7 @@ export type LayoutSectionProps = {
 export const LayoutSection = ({
   children,
   tag = 'section',
+  id,
   className,
   color = 'default',
   topSpace = 'topSpaceMedium',
@@ -22,6 +24,7 @@ export const LayoutSection = ({
   const Tag = tag
   return (
     <Tag
+      id={id}
       className={[
         styles.layoutSection,
         styles[`layoutSection__${color}`],

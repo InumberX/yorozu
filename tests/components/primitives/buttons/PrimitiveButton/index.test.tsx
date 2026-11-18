@@ -2,6 +2,8 @@ import { render, type RenderResult, cleanup, fireEvent } from '@testing-library/
 import { MemoryRouter } from 'react-router'
 import { describe, vi, beforeEach, afterEach, test, expect } from 'vitest'
 
+import { renderWithProviders } from '../../../../test-utils'
+
 import { PrimitiveButton } from '~/components/primitives/buttons/PrimitiveButton'
 
 describe('PrimitiveButton', () => {
@@ -407,6 +409,88 @@ describe('PrimitiveButton', () => {
         const link = result.container.querySelector('a')
         expect(link).not.toBe(null)
         expect(link?.getAttribute('href')).toEqual('http://example.com')
+      })
+
+      test('target と rel を指定しなくても別タブで開く', () => {
+        const link = result.container.querySelector('a')
+        expect(link?.getAttribute('target')).toEqual('_blank')
+        expect(link?.getAttribute('rel')).toEqual('noopener')
+      })
+
+      test('別タブで開くことを読み上げ用の補足で伝える', () => {
+        const hint = result.container.querySelector('a > span')
+        expect(hint?.className).toContain('primitiveButton_newTab')
+      })
+    })
+
+    describe('aria-label を持つ外部リンク', () => {
+      beforeEach(() => {
+        result = render(
+          <PrimitiveButton url="https://example.com" ariaLabel="GitHub">
+            <span>icon</span>
+          </PrimitiveButton>
+        )
+      })
+
+      test('別タブの補足を aria-label の末尾に足し、中身には足さない', () => {
+        const link = result.container.querySelector('a')
+        expect(link?.getAttribute('aria-label')).toBe('GitHub（新しいタブで開きます）')
+        expect(link?.textContent).toBe('icon')
+      })
+    })
+
+    describe('ページと違う lang の外部リンク', () => {
+      beforeEach(() => {
+        result = renderWithProviders(
+          <PrimitiveButton url="https://example.com" lang="en">
+            English site
+          </PrimitiveButton>
+        )
+      })
+
+      test('補足にページの lang を付け直す', () => {
+        const hint = result.container.querySelector('a > span')
+        expect(hint?.textContent).toBe('（新しいタブで開きます）')
+        expect(hint?.getAttribute('lang')).toBe('ja')
+      })
+    })
+
+    describe('ページと同じ lang の外部リンク', () => {
+      beforeEach(() => {
+        result = renderWithProviders(<PrimitiveButton url="https://example.com">test</PrimitiveButton>)
+      })
+
+      test('補足に lang を付けない', () => {
+        expect(result.container.querySelector('a > span')?.hasAttribute('lang')).toBe(false)
+      })
+    })
+
+    describe('ページ内リンク（#）', () => {
+      beforeEach(() => {
+        result = render(<PrimitiveButton url="#tools">test</PrimitiveButton>)
+      })
+
+      test('同じタブで開き、別タブの補足を付けない', () => {
+        const link = result.container.querySelector('a')
+        expect(link?.getAttribute('target')).toBe(null)
+        expect(link?.getAttribute('rel')).toBe(null)
+        expect(link?.textContent).toBe('test')
+      })
+    })
+
+    describe('内部リンク', () => {
+      beforeEach(() => {
+        result = render(
+          <MemoryRouter>
+            <PrimitiveButton url="/image">test</PrimitiveButton>
+          </MemoryRouter>
+        )
+      })
+
+      test('同じタブで開く', () => {
+        const link = result.container.querySelector('a')
+        expect(link?.getAttribute('target')).toBe(null)
+        expect(link?.getAttribute('rel')).toBe(null)
       })
     })
 
