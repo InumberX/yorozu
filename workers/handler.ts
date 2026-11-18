@@ -1,4 +1,4 @@
-import { createWorkerFetch } from '@inumberx/cloudflare-workers-basic-auth'
+import { type AssetFetcher, createWorkerFetch } from '@inumberx/cloudflare-workers-basic-auth'
 
 // Mirror of bindings declared in `wrangler.jsonc` plus Workers secrets set via
 // `wrangler secret put`. Keep in sync manually whenever `wrangler.jsonc`
@@ -29,7 +29,7 @@ const plainNotFound = () => new Response('Not Found', { status: 404 })
 // - ページの遷移（Accept に text/html）: SPA フォールバックを 404 で返す。クライアントの
 //   React Router が /<path>.data を取りに行き、それが 404 なので root の ErrorBoundary が 404 を出す。
 // - それ以外（`.data`・JS・画像など）: プレーンな 404。HTML を返すと呼び出し側が壊れる。
-export const createNotFoundResponse = async (request: Request, env: WorkerEnv) => {
+const createNotFoundResponse = async (request: Request, env: WorkerEnv) => {
   const url = new URL(request.url)
   const isPageRequest =
     (request.method === 'GET' || request.method === 'HEAD') &&
@@ -68,13 +68,12 @@ export function createHandleWorkerRequest() {
       basicAuth: (workerEnv) => ({ user: workerEnv.BASIC_AUTH_USER, pass: workerEnv.BASIC_AUTH_PASS }),
       // SPA フォールバックへの直接アクセスは ASSETS に無いものとして handler（404）へ回す。
       // Basic 認証より後に判定されるよう、ここで ASSETS を包む。
-      assets: (workerEnv) =>
-        ({
-          fetch: (assetRequest: Request) =>
-            isSpaFallbackPath(new URL(assetRequest.url).pathname)
-              ? Promise.resolve(plainNotFound())
-              : workerEnv.ASSETS.fetch(assetRequest),
-        }) as Fetcher,
+      assets: (workerEnv): AssetFetcher => ({
+        fetch: (assetRequest) =>
+          isSpaFallbackPath(new URL(assetRequest.url).pathname)
+            ? plainNotFound()
+            : workerEnv.ASSETS.fetch(assetRequest),
+      }),
     })
     return workerFetch(request, env)
   }
