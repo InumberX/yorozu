@@ -20,7 +20,7 @@ export const getLang = (params: Params<string>) => {
 
 // `ssr: false` では、loader を持つルートは「自分の path に含まれるパラメータ」が変わったときしか
 // 再検証されない（React Router の getShouldRevalidateFunction）。`:lang?` を path に持つのは
-// `($lang)._public` だけなので、root・pathless の `_layout`・各ページは /image ⇄ /en/image の
+// `layout-public` だけなので、root と各ページは /image ⇄ /en/image の
 // クライアント遷移で loaderData の lang が古いまま残る。lang を loader から読むルートはこれを export する。
 export const shouldRevalidateOnLangChange = ({
   currentParams,

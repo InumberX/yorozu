@@ -21,7 +21,7 @@
     "storybook": "storybook dev --no-open -p 6006 -c .storybook",
     "upgrade": "npx npm-check-updates -u",
     "upgrade-check": "npx npm-check-updates",
-    "upgrade-react-router": "npm uninstall react-router @react-router/dev @react-router/fs-routes && npm install react-router && npm install --save-dev @react-router/dev @react-router/fs-routes",
+    "upgrade-react-router": "npm uninstall react-router @react-router/dev && npm install react-router && npm install --save-dev @react-router/dev",
     "pre-commit": "npm run typecheck && npm run lint-fix && npm run format-fix",
     "react-router-typegen": "react-router typegen",
     "react-router-typegen-watch": "react-router typegen --watch"
@@ -42,7 +42,6 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20261102.1",
     "@react-router/dev": "^8.5.1",
-    "@react-router/fs-routes": "^8.5.1",
     "@storybook/addon-docs": "^10.6.5",
     "@storybook/addon-links": "^10.6.5",
     "@storybook/react-vite": "^10.6.5",
