@@ -188,7 +188,10 @@ export const mainVisualHeading = style({
 export const mainVisualHeading_title = style({
   '@layer': {
     [cssLayerComponentPage]: {
-      fontSize: getClampRem(42, 112),
+      // 1 行目（日本語 7 字）が折り返さないよう、375px（デザインの SP 幅）より狭い画面では、
+      // 使える幅（画面幅 − LayoutInner の左右 4vw − 枠 2px − 左右の余白 20px）から、字形の幅の誤差の分として
+      // さらに 6px を引いた幅の 7 分の 1 を上限にする。
+      fontSize: `min(${getClampRem(42, 112)}, calc((92vi - 48px) / 7))`,
       fontWeight: cssVariables.font.weight.black,
       lineHeight: 1.2,
       color: cssVariables.color.font.white.hex,

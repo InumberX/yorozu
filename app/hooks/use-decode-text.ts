@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { REDUCED_MOTION_QUERY } from '~/styles/variables/media-features.css'
+import { REDUCED_MOTION_QUERY } from '~/styles/variables/media-features'
 
 // 解読中に見せる文字
 const DECODE_GLYPHS = '0123456789ABCDEF#/<>[]'

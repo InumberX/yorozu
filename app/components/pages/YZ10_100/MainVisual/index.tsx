@@ -55,6 +55,8 @@ export const MainVisual = ({ lang, toolsId }: Props) => {
                 .join(' ')}
             >
               <span className={styles.mainVisualHeading_line}>{t('mainVisual.title.line1')}</span>
+              {/* 英語は語の区切りが要るので、2 行の間に空白を入れる（行は block なので見た目は変わらない）。 */}
+              {lang === LANG.EN && ' '}
               <span className={[styles.mainVisualHeading_line, styles.mainVisualHeading_line__outline].join(' ')}>
                 {t('mainVisual.title.line2')}
               </span>

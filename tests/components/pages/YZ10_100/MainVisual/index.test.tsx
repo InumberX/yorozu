@@ -42,4 +42,11 @@ describe('MainVisual', () => {
     expect(geometry?.getAttribute('aria-hidden')).toBe('true')
     expect(geometry?.querySelectorAll('span')).toHaveLength(16)
   })
+
+  // テストの i18n は日本語に固定しているため、文言は日本語のまま、空白の有無だけを確かめる。
+  test('英語では見出しの 2 行の間に空白を入れる', () => {
+    cleanup()
+    const en = renderWithProviders(<MainVisual lang="en" toolsId="tools" />, { route: '/en' })
+    expect(en.getByRole('heading', { level: 1 }).textContent).toBe('あらゆるものが 揃う器。')
+  })
 })

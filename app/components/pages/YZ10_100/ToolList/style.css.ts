@@ -19,7 +19,7 @@ export const toolList = style({
   '@layer': {
     [cssLayerComponentPage]: {
       paddingBlockEnd: getClampPx(40, 64),
-      // 固定ヘッダーの下に見出しが隠れないよう、ヘッダーの高さに、画面の幅に応じて 16〜24px を足した位置で止める。
+      // 固定ヘッダーの下に見出しが隠れないよう、ヘッダーの高さに少し余白を足した位置で止める。
       scrollMarginBlockStart: getClampPx(layoutHeaderHeight.minimum + 16, layoutHeaderHeight.maximum + 24),
     },
   },
@@ -89,6 +89,7 @@ export const toolListItems = style({
   },
 })
 
+// 次のツールの行の目印。スタイルは持たず、toolListItem などのセレクタから参照する。
 export const toolListItem__request = style({})
 
 export const toolListItem = style({

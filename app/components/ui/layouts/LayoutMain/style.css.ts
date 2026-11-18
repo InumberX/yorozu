@@ -20,7 +20,7 @@ export const layoutMain = style({
 export const layoutMain_container = style({
   '@layer': {
     [cssLayerComponentUiLow]: {
-      // 背景（body）側のグローとグリッドを透過させるため、面は敷かない。
+      // 背景（body）の方眼を透過させるため、面は敷かない。
       backgroundColor: 'transparent',
       flexGrow: 1,
     },

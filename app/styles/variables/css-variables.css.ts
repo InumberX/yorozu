@@ -241,12 +241,11 @@ export const cssVariableColors = {
     // 背景の方眼
     grid: getPrimaryAlpha(0.06),
   },
-  // 面: rgba(92, 255, 177, 0.02〜0.05)
+  // 面: rgba(92, 255, 177, 0.02〜0.04)
   surface: {
     level1: getPrimaryAlpha(0.02),
     level2: getPrimaryAlpha(0.03),
     level3: getPrimaryAlpha(0.04),
-    level4: getPrimaryAlpha(0.05),
   },
   gradation: {
     primary: '#5cffb1 0, #2bff9e 100%',
