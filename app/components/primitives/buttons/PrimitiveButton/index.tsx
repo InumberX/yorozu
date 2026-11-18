@@ -52,7 +52,7 @@ export const PrimitiveButton = ({
   lang,
   hrefLang,
 }: PrimitiveButtonProps) => {
-  const { t } = useTranslation('common')
+  const { t, i18n } = useTranslation('common')
 
   // 外部リンク判定
   const isExternal: boolean = useMemo(() => {
@@ -71,10 +71,19 @@ export const PrimitiveButton = ({
 
   // 別タブで開くことを、読み上げソフトにだけ伝える。
   // aria-label があると中身は読まれないため、そのときは aria-label の末尾に足す。
-  const isNewTab = (isExternal || isInternalLink ? anchorTarget : target) === '_blank'
+  // 補足はページの言語の文なので、リンクに別の lang が付いているときは、補足にページの lang を付け直す。
+  // （aria-label の中は言語を分けられないため、そちらはリンクの lang のまま読まれる。）
+  const isNewTab = anchorTarget === '_blank'
   const newTabText = t('a11y.newTab')
+  const pageLang = i18n?.language
+  const newTabLang = lang && pageLang && lang !== pageLang ? pageLang : undefined
   const linkAriaLabel = ariaLabel && isNewTab ? `${ariaLabel}${newTabText}` : ariaLabel
-  const newTabHint = isNewTab && !ariaLabel ? <span className={styles.primitiveButton_newTab}>{newTabText}</span> : null
+  const newTabHint =
+    isNewTab && !ariaLabel ? (
+      <span lang={newTabLang} className={styles.primitiveButton_newTab}>
+        {newTabText}
+      </span>
+    ) : null
 
   const primitiveButtonClassName = useMemo(() => {
     return [styles.primitiveButton, isDisabled && styles.primitiveButton__disabled, className].filter(Boolean).join(' ')

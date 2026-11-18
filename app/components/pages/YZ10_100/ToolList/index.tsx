@@ -38,11 +38,12 @@ export const ToolList = ({ lang, id }: Props) => {
             <span className={styles.toolListHead_state}>STATE</span>
           </div>
 
+          {/* 行全体が 1 つのリンク。読み上げはツールの名前と説明（外部リンクは別タブの補足も）にし、番号・カテゴリ・状態・OPEN は見た目だけにする。 */}
           <ul className={styles.toolListItems}>
             {TOOLS.map((tool, index) => (
               <li key={tool.id}>
                 <PrimitiveButton url={tool.page.getUrl({ lang })} className={styles.toolListItem}>
-                  <span lang="en" translate="no" className={styles.toolListItem_number}>
+                  <span aria-hidden="true" lang="en" translate="no" className={styles.toolListItem_number}>
                     {toTwoDigits(index + 1)}
                   </span>
                   <SvgIcon variant={TOOL_ICONS[tool.id]} className={styles.toolListItem_icon} />
@@ -50,19 +51,17 @@ export const ToolList = ({ lang, id }: Props) => {
                     <span className={styles.toolListItem_name}>{t(`tools.items.${tool.id}.name`)}</span>
                     <span className={styles.toolListItem_description}>{t(`tools.items.${tool.id}.description`)}</span>
                   </span>
-                  <span className={styles.toolListItem_category}>
+                  <span aria-hidden="true" className={styles.toolListItem_category}>
                     <span lang="en" translate="no" className={styles.toolListItem_chip}>
                       {tool.category}
                     </span>
                   </span>
-                  <span lang="en" translate="no" className={styles.toolListItem_state}>
-                    <span aria-hidden="true" className={styles.toolListItem_stateMark}>
-                      ●{' '}
-                    </span>
+                  <span aria-hidden="true" lang="en" translate="no" className={styles.toolListItem_state}>
+                    <span className={styles.toolListItem_stateMark}>● </span>
                     ACTIVE
                   </span>
-                  <span lang="en" translate="no" className={styles.toolListItem_action}>
-                    OPEN<span aria-hidden="true"> →</span>
+                  <span aria-hidden="true" lang="en" translate="no" className={styles.toolListItem_action}>
+                    OPEN →
                   </span>
                 </PrimitiveButton>
               </li>
@@ -73,7 +72,7 @@ export const ToolList = ({ lang, id }: Props) => {
                 url={EXTERNAL_LINKS.REQUEST}
                 className={[styles.toolListItem, styles.toolListItem__request].join(' ')}
               >
-                <span lang="en" translate="no" className={styles.toolListItem_number}>
+                <span aria-hidden="true" lang="en" translate="no" className={styles.toolListItem_number}>
                   {toTwoDigits(TOOLS.length + 1)}
                 </span>
                 <SvgIcon variant={SVG_ICON_VARIANT.TOOL_ADD} className={styles.toolListItem_icon} />
@@ -87,14 +86,12 @@ export const ToolList = ({ lang, id }: Props) => {
                 >
                   —
                 </span>
-                <span lang="en" translate="no" className={styles.toolListItem_state}>
-                  <span aria-hidden="true" className={styles.toolListItem_stateMark}>
-                    ○{' '}
-                  </span>
+                <span aria-hidden="true" lang="en" translate="no" className={styles.toolListItem_state}>
+                  <span className={styles.toolListItem_stateMark}>○ </span>
                   NEXT
                 </span>
-                <span lang="en" translate="no" className={styles.toolListItem_action}>
-                  REQUEST<span aria-hidden="true"> →</span>
+                <span aria-hidden="true" lang="en" translate="no" className={styles.toolListItem_action}>
+                  REQUEST →
                 </span>
               </PrimitiveButton>
             </li>

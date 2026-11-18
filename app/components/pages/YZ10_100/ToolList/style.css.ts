@@ -1,5 +1,6 @@
 import { style } from '@vanilla-extract/css'
 
+import { layoutHeaderHeight } from '~/components/common/LayoutHeader/style.css'
 import { getLineColor, getRgba } from '~/styles/mixins/color.css'
 import { getFontSize } from '~/styles/mixins/font.css'
 import { getMediaQuery } from '~/styles/mixins/media-query.css'
@@ -18,8 +19,8 @@ export const toolList = style({
   '@layer': {
     [cssLayerComponentPage]: {
       paddingBlockEnd: getClampPx(40, 64),
-      // 固定ヘッダーの下に見出しが隠れないよう、ヘッダーの高さより少し下で止める。
-      scrollMarginBlockStart: getClampPx(72, 84),
+      // 固定ヘッダーの下に見出しが隠れないよう、ヘッダーの高さに SP 16px / PC 24px を足した位置で止める。
+      scrollMarginBlockStart: getClampPx(layoutHeaderHeight.minimum + 16, layoutHeaderHeight.maximum + 24),
     },
   },
 })

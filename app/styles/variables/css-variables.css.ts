@@ -204,6 +204,11 @@ export const cssVariableColors = {
       hex: '#5cffb1',
       rgb: changeColorHexToRgb('#5cffb1'),
     },
+    // ハイライト。枠の角の飾りなど
+    primaryLight: {
+      hex: '#c8ffe6',
+      rgb: changeColorHexToRgb('#c8ffe6'),
+    },
     secondary: {
       hex: '#2bff9e',
       rgb: changeColorHexToRgb('#2bff9e'),

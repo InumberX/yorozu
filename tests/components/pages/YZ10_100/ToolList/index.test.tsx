@@ -44,4 +44,15 @@ describe('ToolList', () => {
     expect(request?.getAttribute('target')).toBe('_blank')
     expect(request?.getAttribute('rel')).toBe('noopener noreferrer')
   })
+
+  test('リンクの読み上げは名前と説明だけになる', () => {
+    const result = renderWithProviders(<ToolList lang="ja" id="tools" />)
+    const image = result.getByText('画像を変換する').closest('a')
+    expect(image).not.toBe(null)
+    const readable = Array.from(image?.childNodes ?? [])
+      .filter((node) => !(node instanceof Element && node.getAttribute('aria-hidden') === 'true'))
+      .map((node) => node.textContent)
+      .join('')
+    expect(readable).toBe('画像を変換するPNG / JPEG を WebP・AVIF へ再符号化')
+  })
 })

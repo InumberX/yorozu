@@ -30,7 +30,11 @@
 
 ### トップ `YZ10_100`（`/`）
 - ツールがショーケース的に並ぶ。ツールが増えても成立するレイアウトにする。
-- ツール一覧と「稼働ツール」の数は、`app/config/tools.ts` のツール登録（`TOOLS`）から作る。ツールを足すときは、`TOOLS` に 1 行足し、名前と説明を `locales/*/pages/YZ10_100.json` の `tools.items` に足す（`tests/config/tools.test.ts` が漏れを検出する）。アイコンは `components/pages/YZ10_100/ToolList` の `TOOL_ICONS` に足す。
+- ツール一覧と「稼働ツール」の数は、`app/config/tools.ts` のツール登録（`TOOLS`）から作る。ツールを足すときは、次の 4 つをそろえる。
+  1. `app/config/tools.ts` の `TOOLS` に 1 行足す。
+  2. 名前と説明を `locales/*/pages/YZ10_100.json` の `tools.items` に足す（漏れは `tests/config/tools.test.ts` が検出する）。
+  3. アイコンの SVG を `public/assets/img/icon-tool-<id>.svg` に置き、`components/ui/icons/SvgIcon` の `SVG_ICON_VARIANT` と `svgIcon__*` のスタイルに足す。
+  4. `components/pages/YZ10_100/ToolList` の `TOOL_ICONS` に足す（漏れると型エラーになる）。
 - 構成: メインビジュアル（h1・リード・CTA・数値）→ SEC.01 ツール一覧 → SEC.02 コンセプト。部品は `app/components/pages/YZ10_100/` に置く。
 - ツール一覧の最後に「次のツール」の行を置き、要望の受付（GitHub の issue ページ）へ別タブで案内する。
 

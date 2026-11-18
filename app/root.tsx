@@ -69,8 +69,7 @@ export function Layout({ children }: { children: ReactNode }) {
         <meta name="theme-color" content="#05080b" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="twitter:site" content="@InumberX" />
-        {/* SVG に対応したブラウザは favicon.svg を、それ以外は favicon.ico を使う。
-            ico に sizes を書いておくと、両方に対応したブラウザ（Chrome）が SVG を選ぶ。 */}
+        {/* どちらを使うかはブラウザが選ぶ。SVG に対応していないブラウザは favicon.ico を使う。 */}
         <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16 24x24 32x32 48x48" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-icon.png" type="image/png" sizes="180x180" />

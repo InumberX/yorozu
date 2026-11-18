@@ -44,7 +44,7 @@ type CornerMarkOptions = {
 // 疑似要素（::before / ::after）に当てるスタイル。親は position を持つこと。
 export const getCornerMark = ({
   shape,
-  color = cssVariables.color.font.primaryLight.hex,
+  color = cssVariables.color.border.primaryLight.hex,
   corners = ALL_CORNERS,
 }: CornerMarkOptions): StyleRule => {
   const { size, thickness, offset, inset } = CORNER_MARK_SHAPE[shape]

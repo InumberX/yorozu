@@ -2,6 +2,8 @@ import { render, type RenderResult, cleanup, fireEvent } from '@testing-library/
 import { MemoryRouter } from 'react-router'
 import { describe, vi, beforeEach, afterEach, test, expect } from 'vitest'
 
+import { renderWithProviders } from '../../../../test-utils'
+
 import { PrimitiveButton } from '~/components/primitives/buttons/PrimitiveButton'
 
 describe('PrimitiveButton', () => {
@@ -432,9 +434,34 @@ describe('PrimitiveButton', () => {
 
       test('別タブの補足を aria-label の末尾に足し、中身には足さない', () => {
         const link = result.container.querySelector('a')
-        // テストでは i18n を読み込まないため、補足はキーのまま出る。
-        expect(link?.getAttribute('aria-label')).toBe('GitHuba11y.newTab')
+        expect(link?.getAttribute('aria-label')).toBe('GitHub（新しいタブで開きます）')
         expect(link?.textContent).toBe('icon')
+      })
+    })
+
+    describe('ページと違う lang の外部リンク', () => {
+      beforeEach(() => {
+        result = renderWithProviders(
+          <PrimitiveButton url="https://example.com" lang="en">
+            English site
+          </PrimitiveButton>
+        )
+      })
+
+      test('補足にページの lang を付け直す', () => {
+        const hint = result.container.querySelector('a > span')
+        expect(hint?.textContent).toBe('（新しいタブで開きます）')
+        expect(hint?.getAttribute('lang')).toBe('ja')
+      })
+    })
+
+    describe('ページと同じ lang の外部リンク', () => {
+      beforeEach(() => {
+        result = renderWithProviders(<PrimitiveButton url="https://example.com">test</PrimitiveButton>)
+      })
+
+      test('補足に lang を付けない', () => {
+        expect(result.container.querySelector('a > span')?.hasAttribute('lang')).toBe(false)
       })
     })
 
