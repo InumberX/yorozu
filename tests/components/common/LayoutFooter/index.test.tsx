@@ -47,7 +47,7 @@ describe('LayoutFooter', () => {
       expect(links).toHaveLength(3)
       links.forEach((link) => {
         expect(link.getAttribute('target')).toBe('_blank')
-        expect(link.getAttribute('rel')).toBe('noopener noreferrer')
+        expect(link.getAttribute('rel')).toBe('noopener')
       })
     })
 

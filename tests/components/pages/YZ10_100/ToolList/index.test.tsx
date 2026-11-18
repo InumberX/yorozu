@@ -42,7 +42,7 @@ describe('ToolList', () => {
     const request = result.getByText('次のツール').closest('a')
     expect(request?.getAttribute('href')).toBe(EXTERNAL_LINKS.REQUEST)
     expect(request?.getAttribute('target')).toBe('_blank')
-    expect(request?.getAttribute('rel')).toBe('noopener noreferrer')
+    expect(request?.getAttribute('rel')).toBe('noopener')
   })
 
   test('リンクの読み上げは名前と説明だけになる', () => {

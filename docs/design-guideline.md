@@ -17,7 +17,7 @@ yorozu 全体で共通のビジュアル規約。ツールが増えても一貫�
 
 - ナビの 1 項目めは、デザインでは「トップ」だが、実装では「ホーム」とする。英語版の「Home」とページ情報の名前（`PAGE_INFO`）にそろえるため。
 - フッターの LINKS にある「REQUEST」は、デザインではトップのリクエスト欄（`#request`）を指すが、実装では GitHub の issue ページ（`https://github.com/InumberX/yorozu/issues`）を指す。トップのツール一覧の最後にある「次のツール」の行と、コンセプト欄の「こちら」も同じ issue ページを指す。
-- 外部サイトへのリンク（`http://` / `https://` で始まるもの）は、すべて別タブで開く（`target="_blank" rel="noopener noreferrer"`）。`PrimitiveButton` が既定で付ける。
+- 外部サイトへのリンク（`http://` / `https://` で始まるもの）は、すべて別タブで開く（`target="_blank" rel="noopener"`）。`PrimitiveButton` が既定で付ける。`noreferrer` は付けず、リンク先に参照元（Referer）を渡す。
 - フッターのコピーライトは、デザインでは年（`© 2026 NiNE, …`）を入れているが、実装では年を入れない（`© NiNE, ALL RIGHTS RESERVED.`）。
 - トップの見出しの 2 行目（縁取り文字）の線幅は、デザインでは PC 1.5px / SP 1px だが、実装では lg 以上 2px / lg 未満 1px とする。CSS の数値を整数にするため。
 - トップのヒーローの下段（CTA と 3 つの数値）は、デザインには PC（1 行）と SP（縦に積む）しかない。実装では、sm 以上で数値を 3 列（CTA はその上）、md 以上で CTA と数値を 1 行に並べる。lg 未満の 3 列では、項目名の下に値を置く。

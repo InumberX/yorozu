@@ -65,9 +65,10 @@ export const PrimitiveButton = ({
   }, [url])
 
   // 外部リンクは、指定がなければ別タブで開く。
-  // 開いた先から window.opener を辿れないよう、rel も合わせて付ける。
+  // 開いた先から window.opener を辿れないよう、rel に noopener を付ける。
+  // noreferrer は付けず、リンク先に参照元（Referer）を渡す。
   const anchorTarget = target ?? (isExternal ? '_blank' : undefined)
-  const anchorRel = rel ?? (isExternal ? 'noopener noreferrer' : undefined)
+  const anchorRel = rel ?? (isExternal ? 'noopener' : undefined)
 
   // 別タブで開くことを、読み上げソフトにだけ伝える。
   // aria-label があると中身は読まれないため、そのときは aria-label の末尾に足す。

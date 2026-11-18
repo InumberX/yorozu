@@ -414,7 +414,7 @@ describe('PrimitiveButton', () => {
       test('target と rel を指定しなくても別タブで開く', () => {
         const link = result.container.querySelector('a')
         expect(link?.getAttribute('target')).toEqual('_blank')
-        expect(link?.getAttribute('rel')).toEqual('noopener noreferrer')
+        expect(link?.getAttribute('rel')).toEqual('noopener')
       })
 
       test('別タブで開くことを読み上げ用の補足で伝える', () => {
