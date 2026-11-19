@@ -11,7 +11,7 @@ import {
   WebMOutputFormat,
 } from 'mediabunny'
 
-import { MAX_DURATION_SECONDS } from '~/features/video-convert/limits'
+import { DURATION_TOLERANCE_SECONDS, MAX_DURATION_SECONDS } from '~/features/video-convert/limits'
 import type {
   VideoConvertErrorCode,
   VideoConvertRequest,
@@ -68,7 +68,7 @@ const convert = async (request: VideoConvertRequest): Promise<{ blob: Blob; warn
     }
 
     const duration = await input.computeDuration()
-    if (duration > MAX_DURATION_SECONDS) {
+    if (duration > MAX_DURATION_SECONDS + DURATION_TOLERANCE_SECONDS) {
       throw new ConvertError('TOO_LONG', `duration ${duration}s`)
     }
 

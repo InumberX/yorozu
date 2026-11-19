@@ -1,6 +1,6 @@
 import { getCollectionProps, getFormProps, getInputProps, getSelectProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
-import { useMemo, useState, useSyncExternalStore } from 'react'
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { InputRadioCard } from '~/components/ui/forms/InputRadioCard'
@@ -91,11 +91,30 @@ export const VideoConvertPanel = () => {
     clearDone()
   }
 
-  // 長さがわかったら、ファイルをもう一度検証する（上限を超えていれば、一覧にエラーが出て変換できなくなる）
+  // 長さがわかったら、ファイルをもう一度検証する（上限を超えていれば、一覧にエラーが出て変換できなくなる）。
+  // 長さがわからないとき（NaN・Infinity）は入れず、Worker で確かめる。
+  // 変換中は検証しない。変換中は入力が disabled になり FormData にファイルが入らないため、
+  // 検証すると「ファイルを読み込んでください。」になってしまう。変換が終わってから検証する。
+  const isRevalidatePendingRef = useRef(false)
   const handleLoadMeta = (file: File, meta: VideoThumbnailMeta) => {
+    if (!Number.isFinite(meta.duration)) {
+      return
+    }
     durations.set(file, meta.duration)
+    if (isConverting) {
+      isRevalidatePendingRef.current = true
+      return
+    }
     form.validate({ name: fields.files.name })
   }
+
+  useEffect(() => {
+    if (isConverting || !isRevalidatePendingRef.current) {
+      return
+    }
+    isRevalidatePendingRef.current = false
+    form.validate({ name: fields.files.name })
+  }, [isConverting, form, fields.files.name])
 
   return (
     <>

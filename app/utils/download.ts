@@ -23,8 +23,8 @@ export type ZipEntry = {
 const CHUNK_SIZE = 8 * 1024 * 1024
 
 // ファイルを ZIP にまとめる。画像や動画はすでに圧縮されているので、まとめるだけにする（圧縮しない）。
-// 全ファイルを一度に読み込むと、元の Blob に加えて同じ大きさのコピーがメモリに載る。
-// 1 ファイルずつ、CHUNK_SIZE ごとに読んで ZIP に流し込み、同時に載るコピーを 1 区切り分に抑える。
+// 元の Blob のほかに、ZIP の中身として全ファイル 1 つ分がメモリに載る（できあがった ZIP の Blob になる）。
+// 全ファイルを先に読み込むと、さらにもう 1 つ分載るため、1 ファイルずつ CHUNK_SIZE ごとに読んで流し込む。
 export const createZip = (entries: ZipEntry[]): Promise<Blob> =>
   new Promise<Blob>((resolve, reject) => {
     const parts: Uint8Array[] = []

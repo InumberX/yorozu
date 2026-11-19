@@ -1,7 +1,9 @@
 import { cleanup, fireEvent, type RenderResult, waitFor } from '@testing-library/react'
+import { I18nextProvider } from 'react-i18next'
+import { MemoryRouter } from 'react-router'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 
-import { renderWithProviders } from '../../../../test-utils'
+import { renderWithProviders, testI18n } from '../../../../test-utils'
 
 import type { ConvertResultGroup } from '~/features/file-convert/types'
 import type { VideoConvertOptions } from '~/features/video-convert/types'
@@ -23,9 +25,14 @@ vi.mock('~/features/video-convert/hooks/use-video-convert', () => ({
 }))
 
 // 見本を作る処理は置き換え、長さをテストごとに決める（jsdom は動画を読めないため）
-const { thumbnailDurations } = vi.hoisted(() => ({ thumbnailDurations: new Map<string, number>() }))
+const { thumbnailDurations, thumbnailGate } = vi.hoisted(() => ({
+  thumbnailDurations: new Map<string, number>(),
+  // 見本ができるのを待たせたいテストだけ、ここに Promise を入れる
+  thumbnailGate: { current: Promise.resolve() as Promise<void> },
+}))
 vi.mock('~/features/video-convert/utils/video-thumbnail', () => ({
   loadVideoThumbnail: async (file: File) => {
+    await thumbnailGate.current
     const duration = thumbnailDurations.get(file.name)
     if (duration === undefined) {
       throw new Error('cannot play')
@@ -75,13 +82,16 @@ describe('VideoConvertPanel', () => {
     vi.stubGlobal('VideoEncoder', class {})
     vi.stubGlobal('VideoDecoder', class {})
     // jsdom の FormData は、テストで差し替えた input.files を読まない。
-    // ブラウザと同じく、ファイルの入力の中身を FormData に入れる。
+    // ブラウザと同じく、ファイルの入力の中身を FormData に入れる（disabled の入力は入れない）。
     const OriginalFormData = globalThis.FormData
     class FormDataWithFiles extends OriginalFormData {
       constructor(form?: HTMLFormElement, submitter?: HTMLElement | null) {
         super(form, submitter)
         form?.querySelectorAll<HTMLInputElement>('input[type="file"]').forEach((input) => {
           this.delete(input.name)
+          if (input.disabled) {
+            return
+          }
           for (const file of Array.from(input.files ?? [])) {
             this.append(input.name, file)
           }
@@ -102,6 +112,7 @@ describe('VideoConvertPanel', () => {
     vi.unstubAllGlobals()
     vi.restoreAllMocks()
     thumbnailDurations.clear()
+    thumbnailGate.current = Promise.resolve()
     hookState.status = 'idle'
     hookState.progress = 0
     hookState.groups = []
@@ -200,6 +211,50 @@ describe('VideoConvertPanel', () => {
       fireEvent.click(result.getByRole('button', { name: /変換する/ }))
       await waitFor(() => expect(result.getByText('長さ 2分 までです。')).not.toBe(null))
       expect(hookState.convert).not.toHaveBeenCalled()
+    })
+
+    test('長さがわからない（NaN・Infinity）ときは、エラーにしない', async () => {
+      thumbnailDurations.set('a.mp4', Number.POSITIVE_INFINITY)
+      thumbnailDurations.set('b.mp4', Number.NaN)
+      result = renderWithProviders(<VideoConvertPanel />)
+      pickFiles([createFile('a.mp4'), createFile('b.mp4')])
+
+      await waitFor(() => expect(result.getAllByText('1920×1080 · 1B')).toHaveLength(2))
+      expect(result.queryByText('長さ 2分 までです。')).toBe(null)
+    })
+
+    test('変換中に長さがわかったときは、変換が終わってから検証する', async () => {
+      let openGate: () => void = () => undefined
+      thumbnailGate.current = new Promise((resolve) => {
+        openGate = resolve
+      })
+      thumbnailDurations.set('long.mp4', 130)
+      // フックの状態を変えたら、同じツリーで描き直す（renderWithProviders の rerender はプロバイダーを含まない）
+      const renderTree = () => (
+        <I18nextProvider i18n={testI18n}>
+          <MemoryRouter>
+            <VideoConvertPanel />
+          </MemoryRouter>
+        </I18nextProvider>
+      )
+      result = renderWithProviders(<VideoConvertPanel />)
+      pickFiles([createFile('long.mp4')])
+
+      // 変換が始まってから、見本ができて長さがわかる
+      hookState.status = 'converting'
+      result.rerender(renderTree())
+      openGate()
+      await waitFor(() => expect(result.getByText('1920×1080 · 02:10 · 1B')).not.toBe(null))
+
+      // 変換中は入力が disabled なので、検証すると「ファイルを読み込んでください。」になってしまう
+      expect(result.queryByText('ファイルを読み込んでください。')).toBe(null)
+      expect(result.queryByText('長さ 2分 までです。')).toBe(null)
+
+      // 変換が終わったら検証し、長すぎることを知らせる
+      hookState.status = 'done'
+      result.rerender(renderTree())
+      await waitFor(() => expect(result.getByText('長さ 2分 までです。')).not.toBe(null))
+      expect(result.queryByText('ファイルを読み込んでください。')).toBe(null)
     })
 
     test('MP4・MOV 以外のファイルは読み込まない', () => {
