@@ -48,9 +48,14 @@ export const InputFileDrop = ({
   // input に書き戻したことを知らせるイベントを、自分の変更として扱わないための目印
   const isSyncingRef = useRef(false)
   const [isDragOver, setIsDragOver] = useState(false)
-  const [rejectedNames, setRejectedNames] = useState<string[]>([])
+  // 読み込まなかったファイルの名前と、そのときの一覧。
+  // 呼び出し元が一覧を変えたら（削除・リセット）、古い知らせなので出さない。
+  const [rejected, setRejected] = useState<{ names: string[]; files: File[] }>({ names: [], files: [] })
+  const pickButtonRef = useRef<HTMLButtonElement>(null)
+  const addButtonRef = useRef<HTMLButtonElement>(null)
 
   const hasFiles = files.length > 0
+  const rejectedNames = rejected.files === files ? rejected.names : []
   const hasErrors = !!errors?.length || rejectedNames.length > 0
   const displayErrors = [
     ...(errors ?? []),
@@ -79,7 +84,6 @@ export const InputFileDrop = ({
   // 呼び出し元が一覧を変えたとき（削除・リセット）も、input をそろえる。
   useEffect(() => {
     syncInput(files)
-    // syncInput は files しか読まない
   }, [files])
 
   // 読み込んだファイルを一覧に足し、足したあとの一覧を返す。
@@ -90,16 +94,21 @@ export const InputFileDrop = ({
     }
 
     const accepted = added.filter((file) => isAcceptedFile(file, accept))
-    setRejectedNames(added.filter((file) => !accepted.includes(file)).map((file) => file.name))
-
     const next = mergeFiles(files, accepted)
-    if (next.length !== files.length) {
-      onChangeFiles(next)
+    // 一覧が変わらないときは、今の一覧をそのまま持つ（同じ配列なら知らせを出し続ける）
+    const nextFiles = next.length !== files.length ? next : files
+    setRejected({
+      names: added.filter((file) => !accepted.includes(file)).map((file) => file.name),
+      files: nextFiles,
+    })
+
+    if (nextFiles !== files) {
+      onChangeFiles(nextFiles)
     }
-    return next
+    return nextFiles
   }
 
-  const openFileDialog = () => {
+  const handleClickPickButton = () => {
     inputRef.current?.click()
   }
 
@@ -143,8 +152,12 @@ export const InputFileDrop = ({
         multiple
         className={styles.inputFileDrop_input}
         // 操作は見えているボタンで受ける。input はフォームの値を持つためだけに置く。
+        // Conform が送信時のエラーで input にフォーカスを移したときは、見えているボタンへ渡す。
         tabIndex={-1}
         aria-hidden="true"
+        onFocus={() => {
+          ;(hasFiles ? addButtonRef : pickButtonRef).current?.focus()
+        }}
         aria-invalid={hasErrors || undefined}
         aria-describedby={describedBy}
         disabled={isDisabled}
@@ -175,11 +188,12 @@ export const InputFileDrop = ({
           <>
             {children}
             <button
+              ref={addButtonRef}
               type="button"
               className={styles.inputFileDrop_addButton}
               aria-describedby={describedBy}
               disabled={isDisabled}
-              onClick={openFileDialog}
+              onClick={handleClickPickButton}
             >
               <span aria-hidden="true" className={styles.inputFileDrop_addIcon}>
                 +
@@ -204,11 +218,12 @@ export const InputFileDrop = ({
             <span className={styles.inputFileDrop_dropTitle}>{t('form.inputFileDrop.dropTitle')}</span>
             <span className={styles.inputFileDrop_dropOr}>{t('form.inputFileDrop.dropOr')}</span>
             <button
+              ref={pickButtonRef}
               type="button"
               className={styles.inputFileDrop_pickButton}
               aria-describedby={describedBy}
               disabled={isDisabled}
-              onClick={openFileDialog}
+              onClick={handleClickPickButton}
             >
               {t('form.inputFileDrop.pick')}
             </button>

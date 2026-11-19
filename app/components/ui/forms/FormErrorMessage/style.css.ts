@@ -10,12 +10,6 @@ export const formErrorMessage = style({
       ...fontSmall,
       lineHeight: 1.8,
       color: cssVariables.color.font.error.hex,
-
-      selectors: {
-        '&:empty': {
-          display: 'none',
-        },
-      },
     },
   },
 })

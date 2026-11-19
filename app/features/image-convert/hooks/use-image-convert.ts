@@ -52,11 +52,22 @@ export const toOutputFileName = (sourceName: string, format: ImageOutputFormat, 
   return name
 }
 
+// 1 ファイルの変換の結果。Worker ごと落ちたとき（読み込めない・メモリが足りないなど）は isCrashed。
+type ConvertFileResult = {
+  blob: Blob | null
+  isCrashed: boolean
+}
+
 type PendingRequest = {
   id: string
-  resolve: (blob: Blob | null) => void
+  resolve: (result: ConvertFileResult) => void
   onProgress: (progress: number) => void
 }
+
+// Worker が続けて落ちたら、残りのファイルは変換しない。
+// 2 回続くのは、Worker のスクリプト自体が読めない（新しい版がデプロイされて古いファイルが消えた、通信が切れた）ときで、
+// 何度作り直しても同じ結果になるため。1 回だけなら、そのファイルが重すぎただけとみなして次へ進む。
+const MAX_CONSECUTIVE_CRASHES = 2
 
 const createWorker = () =>
   // Vite が Worker を解決できるよう、new URL には相対パスを渡す（エイリアスは使えない）。
@@ -65,25 +76,38 @@ const createWorker = () =>
   })
 
 // 複数のファイルを 1 つずつ Worker で変換する。
-// Worker はブラウザで動くときだけ作る（prerender の描画中には作らない）。
+// Worker は変換を始めるときに作り、終わったら止める（prerender の描画中には作らない）。
 export const useImageConvert = () => {
   const workerRef = useRef<Worker | null>(null)
   const pendingRef = useRef<PendingRequest | null>(null)
   // 単調増加の番号。Date.now() は同じミリ秒でぶつかりうるため ID に使わない。
   const sequenceRef = useRef(0)
-  // 中止したかどうか。変換の途中で中止されたら、残りのファイルを変換しない。
+  // 何回目の変換か。中止や画面を離れたときに番号を進め、前の変換の結果を捨てる目印にする。
   const runRef = useRef(0)
   const groupsRef = useRef<ImageConvertResultGroup[]>([])
   const [status, setStatus] = useState<ImageConvertStatus>('idle')
   const [progress, setProgress] = useState(0)
   const [groups, setGroups] = useState<ImageConvertResultGroup[]>([])
 
-  const nextId = () => {
+  const nextId = useCallback(() => {
     sequenceRef.current = sequenceRef.current + 1
     return `${sequenceRef.current}`
-  }
+  }, [])
 
-  const setupWorker = useCallback(() => {
+  // Worker を止める。待っている依頼があれば、変換できなかったものとして終わらせる。
+  const stopWorker = useCallback((isCrashed: boolean) => {
+    workerRef.current?.terminate()
+    workerRef.current = null
+    const pending = pendingRef.current
+    pendingRef.current = null
+    pending?.resolve({ blob: null, isCrashed })
+  }, [])
+
+  const getWorker = useCallback(() => {
+    if (workerRef.current) {
+      return workerRef.current
+    }
+
     const worker = createWorker()
 
     worker.onmessage = (event: MessageEvent<ImageConvertResponse>) => {
@@ -101,55 +125,62 @@ export const useImageConvert = () => {
           break
         case 'done':
           pendingRef.current = null
-          pending.resolve(data.blob)
+          pending.resolve({ blob: data.blob, isCrashed: false })
           break
         case 'error':
           pendingRef.current = null
           console.error(`[image-convert] ${data.code}: ${data.message}`)
-          pending.resolve(null)
+          pending.resolve({ blob: null, isCrashed: false })
           break
       }
     }
 
+    // Worker のスクリプトが読めない、Worker の中で捕まえられない例外が起きた、返事を受け取れない、のいずれか。
+    // 待っている依頼が永遠に終わらなくなるため、Worker ごと捨てて、次のファイルでは作り直す。
+    const handleCrash = (event: Event) => {
+      event.preventDefault()
+      console.error('[image-convert] worker crashed', event)
+      stopWorker(true)
+    }
+    worker.onerror = handleCrash
+    worker.onmessageerror = handleCrash
+
     workerRef.current = worker
-  }, [])
+    return worker
+  }, [stopWorker])
 
   useEffect(() => {
-    setupWorker()
-
     return () => {
-      workerRef.current?.terminate()
-      workerRef.current = null
+      // 画面を離れたら、変換を打ち切り、保存用の URL を手放す
+      runRef.current = runRef.current + 1
+      stopWorker(false)
       for (const group of groupsRef.current) {
         for (const item of group.items) {
           URL.revokeObjectURL(item.url)
         }
       }
     }
-  }, [setupWorker])
+  }, [stopWorker])
 
-  const updateGroups = (update: (current: ImageConvertResultGroup[]) => ImageConvertResultGroup[]) => {
+  const updateGroups = useCallback((update: (current: ImageConvertResultGroup[]) => ImageConvertResultGroup[]) => {
     groupsRef.current = update(groupsRef.current)
     setGroups(groupsRef.current)
-  }
+  }, [])
 
-  const convertFile = (file: File, options: ImageConvertOptions, onProgress: (progress: number) => void) =>
-    new Promise<Blob | null>((resolve) => {
-      const worker = workerRef.current
-      if (!worker) {
-        resolve(null)
-        return
-      }
-
-      const id = nextId()
-      pendingRef.current = { id, resolve, onProgress }
-      const request: ImageConvertRequest = { type: 'convert', id, file, options }
-      worker.postMessage(request)
-    })
+  const convertFile = useCallback(
+    (file: File, options: ImageConvertOptions, onProgress: (progress: number) => void) =>
+      new Promise<ConvertFileResult>((resolve) => {
+        const id = nextId()
+        pendingRef.current = { id, resolve, onProgress }
+        const request: ImageConvertRequest = { type: 'convert', id, file, options }
+        getWorker().postMessage(request)
+      }),
+    [getWorker, nextId]
+  )
 
   const convert = useCallback(
     async (files: File[], options: ImageConvertOptions) => {
-      if (files.length === 0 || !workerRef.current) {
+      if (files.length === 0) {
         return
       }
 
@@ -158,12 +189,13 @@ export const useImageConvert = () => {
       const items: ImageConvertResultItem[] = []
       const failedNames: string[] = []
       const usedNames = new Set<string>()
+      let consecutiveCrashes = 0
 
       setStatus('converting')
       setProgress(0)
 
       for (const [index, file] of files.entries()) {
-        const blob = await convertFile(file, options, (fileProgress) => {
+        const { blob, isCrashed } = await convertFile(file, options, (fileProgress) => {
           if (runRef.current === run) {
             setProgress(Math.floor(((index + fileProgress / 100) / files.length) * 100))
           }
@@ -191,47 +223,48 @@ export const useImageConvert = () => {
           failedNames.push(file.name)
         }
 
+        consecutiveCrashes = isCrashed ? consecutiveCrashes + 1 : 0
+        if (consecutiveCrashes >= MAX_CONSECUTIVE_CRASHES) {
+          failedNames.push(...files.slice(index + 1).map((rest) => rest.name))
+          break
+        }
+
         setProgress(Math.floor(((index + 1) / files.length) * 100))
       }
 
+      // エンコーダー（WASM）が使うメモリは、大きい画像のあとも縮まない。
+      // 変換が終わるたびに Worker を止めて、そのメモリを手放す（次の変換で作り直す）。
+      stopWorker(false)
+
       updateGroups((current) => [{ id: nextId(), convertedAt: new Date(), options, items, failedNames }, ...current])
       setStatus('done')
-
-      // エンコーダー（WASM）が使うメモリは、大きい画像のあとも縮まない。
-      // 変換が終わるたびに Worker を作り直して、そのメモリを手放す。
-      // 次の変換で WASM を読み込み直すが、ブラウザのキャッシュから読むので待ちはわずか。
-      workerRef.current?.terminate()
-      setupWorker()
-      // convertFile と updateGroups は ref しか読まない
     },
-    [setupWorker]
+    [convertFile, nextId, stopWorker, updateGroups]
   )
 
-  // 変換を中止する。Worker の計算は止められないため、Worker ごと作り直す。
+  // 変換を中止する。Worker の計算は止められないため、Worker ごと止める。
   const cancel = useCallback(() => {
     runRef.current = runRef.current + 1
-    const pending = pendingRef.current
-    pendingRef.current = null
-    workerRef.current?.terminate()
-    setupWorker()
-    pending?.resolve(null)
+    stopWorker(false)
     setStatus('idle')
     setProgress(0)
-  }, [setupWorker])
+  }, [stopWorker])
 
   // 「変換が完了しました」の表示を消す（ファイルや設定を変えたとき）
   const clearDone = useCallback(() => {
     setStatus((current) => (current === 'done' ? 'idle' : current))
   }, [])
 
-  const removeGroup = useCallback((groupId: string) => {
-    const target = groupsRef.current.find((group) => group.id === groupId)
-    for (const item of target?.items ?? []) {
-      URL.revokeObjectURL(item.url)
-    }
-    updateGroups((current) => current.filter((group) => group.id !== groupId))
-    // updateGroups は ref しか読まない
-  }, [])
+  const removeGroup = useCallback(
+    (groupId: string) => {
+      const target = groupsRef.current.find((group) => group.id === groupId)
+      for (const item of target?.items ?? []) {
+        URL.revokeObjectURL(item.url)
+      }
+      updateGroups((current) => current.filter((group) => group.id !== groupId))
+    },
+    [updateGroups]
+  )
 
   return {
     status,

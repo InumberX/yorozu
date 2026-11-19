@@ -56,7 +56,8 @@
     "downloadAll": "すべてダウンロード",
     "downloadAllLabel": "すべてダウンロード（ZIP）: {{at}}",
     "failed": "変換できなかったファイル: {{names}}",
-    "reduction": "削減率"
+    "reduction": "削減率",
+    "zipFailed": "ZIP を作れませんでした。もう一度お試しください。"
   },
   "notes": {
     "limitTitle": "対応形式と上限",

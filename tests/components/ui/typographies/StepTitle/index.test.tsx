@@ -17,7 +17,7 @@ describe('StepTitle', () => {
 
   test('見出しのタグと、右端に置くものを指定できる', () => {
     const result = render(
-      <StepTitle step={3} title="変換する" titleTag="h3" action={<button type="button">リセット</button>} />
+      <StepTitle step={3} title="変換する" titleTag="h3" actionElm={<button type="button">リセット</button>} />
     )
     expect(result.getByRole('heading', { level: 3, name: '変換する' })).not.toBe(null)
     expect(result.getByRole('button', { name: 'リセット' })).not.toBe(null)

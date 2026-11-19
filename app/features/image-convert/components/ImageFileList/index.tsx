@@ -31,17 +31,14 @@ export const ImageFileList = ({ files, errors, onRemove, isDisabled }: ImageFile
   )
 }
 
-const ImageFileListItem = ({
-  file,
-  errors,
-  isDisabled,
-  onRemove,
-}: {
+type ImageFileListItemProps = {
   file: File
   errors?: string[]
   isDisabled?: boolean
   onRemove: () => void
-}) => {
+}
+
+const ImageFileListItem = ({ file, errors, isDisabled, onRemove }: ImageFileListItemProps) => {
   const { t } = useTranslation('pages/YZ20_100')
   const [size, setSize] = useState<{ width: number; height: number } | undefined>(undefined)
   const hasErrors = !!errors?.length

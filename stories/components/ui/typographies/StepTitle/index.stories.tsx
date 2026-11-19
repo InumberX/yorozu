@@ -18,6 +18,6 @@ export const Default: Story = {}
 
 export const WithAction: Story = {
   args: {
-    action: <button type="button">リセット</button>,
+    actionElm: <button type="button">リセット</button>,
   },
 }

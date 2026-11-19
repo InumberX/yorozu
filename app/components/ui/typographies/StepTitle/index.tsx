@@ -7,13 +7,13 @@ export type StepTitleProps = {
   step: number
   title: ReactNode
   titleTag?: keyof JSX.IntrinsicElements
-  // 見出しの右端に置くもの（リセットのボタンなど）
-  action?: ReactNode
+  // その手順の操作（リセットのボタンなど）。見出しの行の終わりに置く
+  actionElm?: ReactNode
   className?: string
 }
 
 // 操作の手順の見出し。アンバーの「STEP 01」と見出しを並べる。
-export const StepTitle = ({ step, title, titleTag = 'h2', action, className }: StepTitleProps) => {
+export const StepTitle = ({ step, title, titleTag = 'h2', actionElm, className }: StepTitleProps) => {
   const Title = titleTag
 
   return (
@@ -24,7 +24,7 @@ export const StepTitle = ({ step, title, titleTag = 'h2', action, className }: S
         </span>
         <Title className={styles.stepTitle_title}>{title}</Title>
       </div>
-      {action && <div className={styles.stepTitle_action}>{action}</div>}
+      {actionElm && <div className={styles.stepTitle_action}>{actionElm}</div>}
     </div>
   )
 }

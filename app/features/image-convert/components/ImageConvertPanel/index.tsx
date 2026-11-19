@@ -51,8 +51,9 @@ export const ImageConvertPanel = () => {
       if (submission?.status !== 'success') {
         return
       }
-      const { format, quality, lossless } = submission.value
-      void convert(files, { format, quality: quality ?? DEFAULT_QUALITY, lossless: !!lossless })
+      // 検証したものと同じファイルを変換する（一覧の state ではなく、フォームの値を使う）
+      const { files: validatedFiles, format, quality, lossless } = submission.value
+      void convert(validatedFiles, { format, quality: quality ?? DEFAULT_QUALITY, lossless: !!lossless })
     },
   })
 
@@ -67,7 +68,7 @@ export const ImageConvertPanel = () => {
   // ファイルごとのエラー（files[0] など）を、一覧の並びにそろえる
   const fileErrors = files.map((_, index) => fields.files.allErrors[`${fields.files.name}[${index}]`])
 
-  const changeFiles = (next: File[]) => {
+  const handleChangeFiles = (next: File[]) => {
     setFiles(next)
     clearDone()
   }
@@ -81,13 +82,13 @@ export const ImageConvertPanel = () => {
               <StepTitle
                 step={1}
                 title={t('steps.load')}
-                action={
+                actionElm={
                   hasFiles && (
                     <button
                       type="button"
                       className={styles.imageConvertPanel_reset}
                       disabled={isConverting}
-                      onClick={() => changeFiles([])}
+                      onClick={() => handleChangeFiles([])}
                     >
                       {t('form.reset')}
                     </button>
@@ -96,9 +97,11 @@ export const ImageConvertPanel = () => {
               />
               <InputFileDrop
                 inputProps={getInputProps(fields.files, { type: 'file' })}
-                errors={fields.files.errors}
+                // ファイルがないときは「変換する」が押せないので、読み込むよう求めるエラーは出さない
+                // （リセットや最後の 1 件の削除のあとに、エラーが出たままにならないように）
+                errors={hasFiles ? fields.files.errors : undefined}
                 files={files}
-                onChangeFiles={changeFiles}
+                onChangeFiles={handleChangeFiles}
                 accept={IMAGE_ACCEPT}
                 helperText={
                   <>
@@ -115,7 +118,7 @@ export const ImageConvertPanel = () => {
                   files={files}
                   errors={fileErrors}
                   isDisabled={isConverting}
-                  onRemove={(index) => changeFiles(files.filter((_, i) => i !== index))}
+                  onRemove={(index) => handleChangeFiles(files.filter((_, i) => i !== index))}
                 />
               </InputFileDrop>
             </section>

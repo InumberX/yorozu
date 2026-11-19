@@ -25,22 +25,33 @@ export const ImageConvertResults = ({ groups, onRemoveGroup }: ImageConvertResul
     <BasePanel tag="section" className={styles.imageConvertResults}>
       <h2 className={styles.imageConvertResults_title}>{t('results.title')}</h2>
       {groups.map((group) => (
-        <ResultGroup key={group.id} group={group} onRemove={() => onRemoveGroup(group.id)} />
+        <ImageConvertResultsGroup key={group.id} group={group} onRemove={() => onRemoveGroup(group.id)} />
       ))}
     </BasePanel>
   )
 }
 
-const ResultGroup = ({ group, onRemove }: { group: ImageConvertResultGroup; onRemove: () => void }) => {
+type ImageConvertResultsGroupProps = {
+  group: ImageConvertResultGroup
+  onRemove: () => void
+}
+
+// 1 回の変換でできたもの。見出しの行（日時・設定・削除）と、ファイルの行と、まとめて保存するボタン。
+const ImageConvertResultsGroup = ({ group, onRemove }: ImageConvertResultsGroupProps) => {
   const { t } = useTranslation('pages/YZ20_100')
   const [isZipping, setIsZipping] = useState(false)
+  const [isZipFailed, setIsZipFailed] = useState(false)
   const at = formatDateTime(group.convertedAt)
 
-  const downloadAll = async () => {
+  const handleClickDownloadAll = async () => {
     setIsZipping(true)
+    setIsZipFailed(false)
     try {
       const zip = await createZip(group.items.map((item) => ({ name: item.fileName, blob: item.blob })))
       downloadBlob(zip, `yorozu-images-${formatDateTimeForFileName(group.convertedAt)}.zip`)
+    } catch (error) {
+      console.error('[image-convert] failed to create zip', error)
+      setIsZipFailed(true)
     } finally {
       setIsZipping(false)
     }
@@ -127,12 +138,17 @@ const ResultGroup = ({ group, onRemove }: { group: ImageConvertResultGroup; onRe
             ariaLabel={t('results.downloadAllLabel', { at })}
             isDisabled={isZipping}
             onClick={() => {
-              void downloadAll()
+              void handleClickDownloadAll()
             }}
             rightElm={<span aria-hidden="true">↓</span>}
           >
             {t('results.downloadAll')}
           </BaseButton>
+          {isZipFailed && (
+            <p role="alert" className={styles.resultGroup_zipFailed}>
+              {t('results.zipFailed')}
+            </p>
+          )}
         </div>
       )}
     </div>

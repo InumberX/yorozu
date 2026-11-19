@@ -319,7 +319,9 @@ export const resultGroup_footer = style({
   '@layer': {
     [cssLayerComponentPage]: {
       display: 'flex',
-      justifyContent: 'flex-end',
+      flexDirection: 'column',
+      alignItems: 'flex-end',
+      gap: 10,
       paddingBlock: `${getClampPx(14, 16)} ${getClampPx(16, 18)}`,
       paddingInline: getClampPx(20, 28),
       borderBlockStart: LINE,
@@ -337,6 +339,15 @@ export const resultGroup_downloadAll = style({
           inlineSize: 'auto',
         },
       },
+    },
+  },
+})
+
+export const resultGroup_zipFailed = style({
+  '@layer': {
+    [cssLayerComponentPage]: {
+      ...fontSmall,
+      color: cssVariables.color.font.error.hex,
     },
   },
 })

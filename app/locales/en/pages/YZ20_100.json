@@ -57,7 +57,8 @@
     "downloadAll": "Download all",
     "downloadAllLabel": "Download all (ZIP): {{at}}",
     "failed": "Files that could not be converted: {{names}}",
-    "reduction": "Reduction"
+    "reduction": "Reduction",
+    "zipFailed": "Could not create the ZIP file. Please try again."
   },
   "notes": {
     "limitTitle": "Formats and limits",

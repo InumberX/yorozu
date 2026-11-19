@@ -21,6 +21,9 @@ vi.mock('~/features/image-convert/hooks/use-image-convert', () => ({
   useImageConvert: () => hookState,
 }))
 
+const { createZipMock } = vi.hoisted(() => ({ createZipMock: vi.fn() }))
+vi.mock('~/utils/download', () => ({ createZip: createZipMock, downloadBlob: vi.fn() }))
+
 import { ImageConvertPanel } from '~/features/image-convert/components/ImageConvertPanel'
 
 const createFile = (name: string, type = 'image/png') => new File(['x'], name, { type, lastModified: 1 })
@@ -109,6 +112,7 @@ describe('ImageConvertPanel', () => {
       fireEvent.click(result.getByRole('button', { name: 'リセット' }))
       expect(result.queryByText('b.png')).toBe(null)
       expect(result.getByRole('button', { name: /変換する/ })).toBeDisabled()
+      expect(result.queryByText('ファイルを読み込んでください。')).toBe(null)
     })
 
     test('ロスレスにすると品質のスライダーが押せなくなり、設定の表示も変わる', () => {
@@ -188,7 +192,20 @@ describe('ImageConvertPanel', () => {
       result = renderWithProviders(<ImageConvertPanel />)
 
       expect(result.getByRole('button', { name: 'すべてダウンロード（ZIP）: 2026/11/19 12:34' })).not.toBe(null)
-      expect(result.getByRole('alert').textContent).toBe('変換できなかったファイル: c.png')
+      expect(result.getByText('変換できなかったファイル: c.png').getAttribute('role')).toBe('alert')
+    })
+
+    test('ZIP を作れなかったら、そのことを知らせる', async () => {
+      vi.spyOn(console, 'error').mockImplementation(() => undefined)
+      createZipMock.mockRejectedValueOnce(new Error('zip failed'))
+      hookState.groups = [createGroup()]
+      result = renderWithProviders(<ImageConvertPanel />)
+
+      fireEvent.click(result.getByRole('button', { name: 'すべてダウンロード（ZIP）: 2026/11/19 12:34' }))
+
+      await waitFor(() =>
+        expect(result.getByText('ZIP を作れませんでした。もう一度お試しください。').getAttribute('role')).toBe('alert')
+      )
     })
 
     test('回ごとに削除できる', () => {
