@@ -22,19 +22,26 @@ const MIME_TYPES: Record<ImageOutputFormat, string> = {
 }
 
 // 読み込み（デコード）はブラウザに任せる。PNG / JPEG はどのブラウザも読め、EXIF の向きも反映される。
+// 画像は bitmap・キャンバス・ImageData のそれぞれが「幅×高さ×4 バイト」を持つ。
+// 3 つが同時に残らないよう、描いたらすぐに bitmap を閉じ、取り出したらキャンバスを 0×0 にして手放す。
 const decode = async (file: File): Promise<ImageData> => {
   const bitmap = await createImageBitmap(file)
+  const { width, height } = bitmap
+  const canvas = new OffscreenCanvas(width, height)
 
   try {
-    const canvas = new OffscreenCanvas(bitmap.width, bitmap.height)
     const context = canvas.getContext('2d')
     if (!context) {
       throw new Error('OffscreenCanvas 2d context is not available')
     }
     context.drawImage(bitmap, 0, 0)
-    return context.getImageData(0, 0, bitmap.width, bitmap.height)
-  } finally {
     bitmap.close()
+    return context.getImageData(0, 0, width, height)
+  } finally {
+    // close は 2 回呼んでも害がない（描く前に失敗したときのため）
+    bitmap.close()
+    canvas.width = 0
+    canvas.height = 0
   }
 }
 

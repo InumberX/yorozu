@@ -147,56 +147,65 @@ export const useImageConvert = () => {
       worker.postMessage(request)
     })
 
-  const convert = useCallback(async (files: File[], options: ImageConvertOptions) => {
-    if (files.length === 0 || !workerRef.current) {
-      return
-    }
-
-    runRef.current = runRef.current + 1
-    const run = runRef.current
-    const items: ImageConvertResultItem[] = []
-    const failedNames: string[] = []
-    const usedNames = new Set<string>()
-
-    setStatus('converting')
-    setProgress(0)
-
-    for (const [index, file] of files.entries()) {
-      const blob = await convertFile(file, options, (fileProgress) => {
-        if (runRef.current === run) {
-          setProgress(Math.floor(((index + fileProgress / 100) / files.length) * 100))
-        }
-      })
-
-      // 中止されたら、ここまでの結果も残さない
-      if (runRef.current !== run) {
-        for (const item of items) {
-          URL.revokeObjectURL(item.url)
-        }
+  const convert = useCallback(
+    async (files: File[], options: ImageConvertOptions) => {
+      if (files.length === 0 || !workerRef.current) {
         return
       }
 
-      if (blob) {
-        items.push({
-          id: nextId(),
-          sourceName: file.name,
-          fileName: toOutputFileName(file.name, options.format, usedNames),
-          beforeSize: file.size,
-          afterSize: blob.size,
-          blob,
-          url: URL.createObjectURL(blob),
+      runRef.current = runRef.current + 1
+      const run = runRef.current
+      const items: ImageConvertResultItem[] = []
+      const failedNames: string[] = []
+      const usedNames = new Set<string>()
+
+      setStatus('converting')
+      setProgress(0)
+
+      for (const [index, file] of files.entries()) {
+        const blob = await convertFile(file, options, (fileProgress) => {
+          if (runRef.current === run) {
+            setProgress(Math.floor(((index + fileProgress / 100) / files.length) * 100))
+          }
         })
-      } else {
-        failedNames.push(file.name)
+
+        // 中止されたら、ここまでの結果も残さない
+        if (runRef.current !== run) {
+          for (const item of items) {
+            URL.revokeObjectURL(item.url)
+          }
+          return
+        }
+
+        if (blob) {
+          items.push({
+            id: nextId(),
+            sourceName: file.name,
+            fileName: toOutputFileName(file.name, options.format, usedNames),
+            beforeSize: file.size,
+            afterSize: blob.size,
+            blob,
+            url: URL.createObjectURL(blob),
+          })
+        } else {
+          failedNames.push(file.name)
+        }
+
+        setProgress(Math.floor(((index + 1) / files.length) * 100))
       }
 
-      setProgress(Math.floor(((index + 1) / files.length) * 100))
-    }
+      updateGroups((current) => [{ id: nextId(), convertedAt: new Date(), options, items, failedNames }, ...current])
+      setStatus('done')
 
-    updateGroups((current) => [{ id: nextId(), convertedAt: new Date(), options, items, failedNames }, ...current])
-    setStatus('done')
-    // convertFile と updateGroups は ref しか読まない
-  }, [])
+      // エンコーダー（WASM）が使うメモリは、大きい画像のあとも縮まない。
+      // 変換が終わるたびに Worker を作り直して、そのメモリを手放す。
+      // 次の変換で WASM を読み込み直すが、ブラウザのキャッシュから読むので待ちはわずか。
+      workerRef.current?.terminate()
+      setupWorker()
+      // convertFile と updateGroups は ref しか読まない
+    },
+    [setupWorker]
+  )
 
   // 変換を中止する。Worker の計算は止められないため、Worker ごと作り直す。
   const cancel = useCallback(() => {

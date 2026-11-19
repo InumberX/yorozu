@@ -87,7 +87,7 @@ const ResultGroup = ({ group, onRemove }: { group: ImageConvertResultGroup; onRe
       <ul className={styles.resultGroup_items}>
         {group.items.map((item) => (
           <li key={item.id} className={styles.resultItem}>
-            <ImageThumbnail src={item.url} className={styles.resultItem_thumbnail} />
+            <ImageThumbnail file={item.blob} className={styles.resultItem_thumbnail} />
             <span className={styles.resultItem_name}>{item.fileName}</span>
             <span className={styles.resultItem_sizes}>
               {formatFileSize(item.beforeSize)} → {formatFileSize(item.afterSize)}
