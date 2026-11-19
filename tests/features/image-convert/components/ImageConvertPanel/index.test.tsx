@@ -3,7 +3,10 @@ import { afterEach, describe, expect, test, vi } from 'vitest'
 
 import { renderWithProviders } from '../../../../test-utils'
 
-import type { ImageConvertResultGroup } from '~/features/image-convert/hooks/use-image-convert'
+import type { ConvertResultGroup } from '~/features/file-convert/types'
+import type { ImageConvertOptions } from '~/features/image-convert/types'
+
+type ImageConvertResultGroup = ConvertResultGroup<ImageConvertOptions>
 
 // Worker を作る hook は置き換える（jsdom に Worker はないため）。返す状態はテストごとに変える。
 const { hookState } = vi.hoisted(() => ({
@@ -41,6 +44,7 @@ const createGroup = (): ImageConvertResultGroup => ({
       afterSize: 1000,
       blob: new Blob(['x']),
       url: 'blob:a',
+      warnings: [],
     },
     {
       id: 'i2',
@@ -50,9 +54,10 @@ const createGroup = (): ImageConvertResultGroup => ({
       afterSize: 1000,
       blob: new Blob(['x']),
       url: 'blob:b',
+      warnings: [],
     },
   ],
-  failedNames: ['c.png'],
+  failures: [{ name: 'c.png', code: null }],
 })
 
 describe('ImageConvertPanel', () => {

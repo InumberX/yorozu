@@ -8,18 +8,18 @@ import { getClampPx, getClampRem } from '~/styles/mixins/size.css'
 import { getTransition } from '~/styles/mixins/transition.css'
 import { visuallyHidden } from '~/styles/mixins/visually-hidden.css'
 import { cssVariables } from '~/styles/variables/css-variables.css'
-import { fontMediumBold, fontSmall } from '~/styles/variables/font.css'
+import { fontCaption, fontMediumBold, fontSmall } from '~/styles/variables/font.css'
 import { cssLayerComponentPage } from '~/styles/variables/layers.css'
 
 const LINE = `1px solid ${getLineColor(0.3)}`
 
-export const imageConvertResults = style({
+export const convertResults = style({
   '@layer': {
     [cssLayerComponentPage]: {},
   },
 })
 
-export const imageConvertResults_title = style({
+export const convertResults_title = style({
   '@layer': {
     [cssLayerComponentPage]: {
       paddingBlock: `${getClampPx(16, 18)} ${getClampPx(14, 16)}`,
@@ -214,6 +214,20 @@ export const resultItem_name = style({
       gridArea: 'name',
       color: cssVariables.color.font.white.hex,
       wordBreak: 'break-all',
+    },
+  },
+})
+
+// 変換はできたが知らせておきたいこと。名前の下に出す
+export const resultItem_warning = style({
+  '@layer': {
+    [cssLayerComponentPage]: {
+      ...fontCaption,
+      display: 'block',
+      marginBlockStart: 2,
+      fontWeight: cssVariables.font.weight.regular,
+      color: cssVariables.color.font.accent.hex,
+      wordBreak: 'normal',
     },
   },
 })

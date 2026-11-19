@@ -3,17 +3,13 @@ import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import * as styles from './style.css'
-
-import { BaseButton } from '~/components/ui/buttons/BaseButton'
 import { InputCheckbox } from '~/components/ui/forms/InputCheckbox'
-import { InputFileDrop } from '~/components/ui/forms/InputFileDrop'
 import { InputRadioCard } from '~/components/ui/forms/InputRadioCard'
 import { InputRange } from '~/components/ui/forms/InputRange'
-import { BasePanel } from '~/components/ui/panels/BasePanel'
-import { StepTitle } from '~/components/ui/typographies/StepTitle'
-import { ImageConvertResults } from '~/features/image-convert/components/ImageConvertResults'
-import { ImageFileList } from '~/features/image-convert/components/ImageFileList'
+import { ConvertFileList, ConvertFileListItem } from '~/features/file-convert/components/ConvertFileList'
+import { ConvertPanel } from '~/features/file-convert/components/ConvertPanel'
+import { ConvertResults } from '~/features/file-convert/components/ConvertResults'
+import { FileThumbnail } from '~/features/file-convert/components/FileThumbnail'
 import { useImageConvert } from '~/features/image-convert/hooks/use-image-convert'
 import {
   createImageConvertSchema,
@@ -22,7 +18,8 @@ import {
   MAX_FILE_SIZE_LABEL,
 } from '~/features/image-convert/schema'
 import { IMAGE_OUTPUT_FORMATS, type ImageOutputFormat } from '~/features/image-convert/types'
-import { toSettingLabel } from '~/features/image-convert/utils/image-label'
+import { toImageMetaLabel, toSettingLabel } from '~/features/image-convert/utils/image-label'
+import { type ImageThumbnailMeta, loadImageThumbnail } from '~/features/image-convert/utils/image-thumbnail'
 
 const FORM_ID = 'image-convert-form'
 
@@ -58,15 +55,11 @@ export const ImageConvertPanel = () => {
   })
 
   const isConverting = status === 'converting'
-  const hasFiles = files.length > 0
   const isLossless = fields.lossless.value === 'on'
   const format = (IMAGE_OUTPUT_FORMATS as readonly string[]).includes(String(fields.format.value))
     ? (fields.format.value as ImageOutputFormat)
     : 'webp'
   const quality = Number(fields.quality.value ?? DEFAULT_QUALITY)
-
-  // ファイルごとのエラー（files[0] など）を、一覧の並びにそろえる
-  const fileErrors = files.map((_, index) => fields.files.allErrors[`${fields.files.name}[${index}]`])
 
   const handleChangeFiles = (next: File[]) => {
     setFiles(next)
@@ -75,148 +68,104 @@ export const ImageConvertPanel = () => {
 
   return (
     <>
-      <form {...getFormProps(form)} className={styles.imageConvertPanel}>
-        <BasePanel className={styles.imageConvertPanel_panel}>
-          <div className={styles.imageConvertPanel_steps}>
-            <section className={styles.imageConvertPanel_step}>
-              <StepTitle
-                step={1}
-                title={t('steps.load')}
-                actionElm={
-                  hasFiles && (
-                    <button
-                      type="button"
-                      className={styles.imageConvertPanel_reset}
-                      disabled={isConverting}
-                      onClick={() => handleChangeFiles([])}
-                    >
-                      {t('form.reset')}
-                    </button>
-                  )
-                }
-              />
-              <InputFileDrop
-                inputProps={getInputProps(fields.files, { type: 'file' })}
-                // ファイルがないときは「変換する」が押せないので、読み込むよう求めるエラーは出さない
-                // （リセットや最後の 1 件の削除のあとに、エラーが出たままにならないように）
-                errors={hasFiles ? fields.files.errors : undefined}
-                files={files}
-                onChangeFiles={handleChangeFiles}
-                accept={IMAGE_ACCEPT}
-                helperText={
-                  <>
-                    <span lang="en" className={styles.imageConvertPanel_accept}>
-                      {t('form.files.accept')}
-                    </span>
-                    <br />
-                    {t('form.files.limit', { size: MAX_FILE_SIZE_LABEL })}
-                  </>
-                }
+      <ConvertPanel
+        formProps={getFormProps(form)}
+        status={status}
+        progress={progress}
+        fileInputProps={getInputProps(fields.files, { type: 'file' })}
+        fileErrors={fields.files.errors}
+        files={files}
+        onChangeFiles={handleChangeFiles}
+        accept={IMAGE_ACCEPT}
+        acceptLabel={t('form.files.accept')}
+        limitLabel={t('form.files.limit', { size: MAX_FILE_SIZE_LABEL })}
+        fileList={
+          <ConvertFileList>
+            {files.map((file, index) => (
+              <ImageFileListItem
+                key={`${file.name}-${file.size}-${file.lastModified}`}
+                file={file}
+                // ファイルごとのエラー（files[0] など）
+                errors={fields.files.allErrors[`${fields.files.name}[${index}]`]}
                 isDisabled={isConverting}
-              >
-                <ImageFileList
-                  files={files}
-                  errors={fileErrors}
-                  isDisabled={isConverting}
-                  onRemove={(index) => handleChangeFiles(files.filter((_, i) => i !== index))}
-                />
-              </InputFileDrop>
-            </section>
+                onRemove={() => handleChangeFiles(files.filter((_, i) => i !== index))}
+              />
+            ))}
+          </ConvertFileList>
+        }
+        options={
+          <>
+            <InputRadioCard
+              id={fields.format.id}
+              inputProps={getCollectionProps(fields.format, {
+                type: 'radio',
+                options: [...IMAGE_OUTPUT_FORMATS],
+              })}
+              options={[
+                { label: t('form.format.webp'), note: t('form.format.webpNote') },
+                { label: t('form.format.avif'), note: t('form.format.avifNote') },
+              ]}
+              legend={t('form.format.legend')}
+              errors={fields.format.errors}
+              isDisabled={isConverting}
+              onChange={clearDone}
+            />
+            <InputRange
+              inputProps={getInputProps(fields.quality, { type: 'range' })}
+              errors={fields.quality.errors}
+              label={t('form.quality.label')}
+              minLabel={t('form.quality.low')}
+              maxLabel={t('form.quality.high')}
+              isDisabled={isConverting || isLossless}
+              onChange={clearDone}
+            />
+            <InputCheckbox
+              inputProps={getInputProps(fields.lossless, { type: 'checkbox' })}
+              errors={fields.lossless.errors}
+              label={t('form.lossless')}
+              isDisabled={isConverting}
+              onChange={clearDone}
+            />
+          </>
+        }
+        settingLabel={toSettingLabel(t, { format, quality, lossless: isLossless })}
+        runNote={t('convert.runNote')}
+        onCancel={cancel}
+      />
 
-            <section className={styles.imageConvertPanel_step}>
-              <StepTitle step={2} title={t('steps.options')} />
-              <div className={styles.imageConvertPanel_options}>
-                <InputRadioCard
-                  id={fields.format.id}
-                  inputProps={getCollectionProps(fields.format, {
-                    type: 'radio',
-                    options: [...IMAGE_OUTPUT_FORMATS],
-                  })}
-                  options={[
-                    { label: t('form.format.webp'), note: t('form.format.webpNote') },
-                    { label: t('form.format.avif'), note: t('form.format.avifNote') },
-                  ]}
-                  legend={t('form.format.legend')}
-                  errors={fields.format.errors}
-                  isDisabled={isConverting}
-                  onChange={clearDone}
-                />
-                <InputRange
-                  inputProps={getInputProps(fields.quality, { type: 'range' })}
-                  errors={fields.quality.errors}
-                  label={t('form.quality.label')}
-                  minLabel={t('form.quality.low')}
-                  maxLabel={t('form.quality.high')}
-                  isDisabled={isConverting || isLossless}
-                  onChange={clearDone}
-                />
-                <InputCheckbox
-                  inputProps={getInputProps(fields.lossless, { type: 'checkbox' })}
-                  errors={fields.lossless.errors}
-                  label={t('form.lossless')}
-                  isDisabled={isConverting}
-                  onChange={clearDone}
-                />
-              </div>
-            </section>
-
-            <section className={styles.imageConvertPanel_step} aria-live="polite">
-              <StepTitle step={3} title={t('steps.convert')} />
-              {isConverting ? (
-                <div className={styles.imageConvertPanel_running}>
-                  <div className={styles.imageConvertPanel_progressHeader}>
-                    <span id={`${FORM_ID}-progress`} className={styles.imageConvertPanel_progressLabel}>
-                      {t('convert.running')}
-                    </span>
-                    <span className={styles.imageConvertPanel_progressValue}>{progress}%</span>
-                  </div>
-                  <progress
-                    className={styles.imageConvertPanel_progress}
-                    aria-labelledby={`${FORM_ID}-progress`}
-                    max={100}
-                    value={progress}
-                  />
-                  <p className={styles.imageConvertPanel_note}>{t('convert.runNote')}</p>
-                  <BaseButton
-                    variant="outlined"
-                    size="medium"
-                    className={styles.imageConvertPanel_cancel}
-                    onClick={cancel}
-                  >
-                    {t('convert.cancel')}
-                  </BaseButton>
-                </div>
-              ) : (
-                <div className={styles.imageConvertPanel_ready}>
-                  {status === 'done' && <p className={styles.imageConvertPanel_done}>{t('convert.done')}</p>}
-                  {hasFiles ? (
-                    <p className={styles.imageConvertPanel_summary}>
-                      {t('convert.count', { count: files.length })}
-                      <br />
-                      <span className={styles.imageConvertPanel_summaryOutput}>
-                        → {toSettingLabel(t, { format, quality, lossless: isLossless })}
-                      </span>
-                    </p>
-                  ) : (
-                    <p className={styles.imageConvertPanel_summary}>{t('convert.needFile')}</p>
-                  )}
-                  <BaseButton
-                    buttonType="submit"
-                    size="large"
-                    className={styles.imageConvertPanel_run}
-                    isDisabled={!hasFiles}
-                    rightElm={<span aria-hidden="true">→</span>}
-                  >
-                    {t('convert.run')}
-                  </BaseButton>
-                </div>
-              )}
-            </section>
-          </div>
-        </BasePanel>
-      </form>
-
-      {groups.length > 0 && <ImageConvertResults groups={groups} onRemoveGroup={removeGroup} />}
+      {groups.length > 0 && (
+        <ConvertResults
+          groups={groups}
+          onRemoveGroup={removeGroup}
+          getSettingLabel={(options) => toSettingLabel(t, options)}
+          renderThumbnail={(item) => <FileThumbnail file={item.blob} load={loadImageThumbnail} icon="image" />}
+          zipNamePrefix="yorozu-images"
+          logLabel="image-convert"
+        />
+      )}
     </>
+  )
+}
+
+type ImageFileListItemProps = {
+  file: File
+  errors?: string[]
+  isDisabled?: boolean
+  onRemove: () => void
+}
+
+// 読み込んだ画像の 1 件。見本を描けたら、大きさ（px）も出す。
+const ImageFileListItem = ({ file, errors, isDisabled, onRemove }: ImageFileListItemProps) => {
+  const [meta, setMeta] = useState<ImageThumbnailMeta | undefined>(undefined)
+
+  return (
+    <ConvertFileListItem
+      name={file.name}
+      meta={toImageMetaLabel({ width: meta?.width, height: meta?.height, size: file.size, type: file.type })}
+      thumbnail={<FileThumbnail file={file} load={loadImageThumbnail} icon="image" onLoad={setMeta} />}
+      errors={errors}
+      isDisabled={isDisabled}
+      onRemove={onRemove}
+    />
   )
 }

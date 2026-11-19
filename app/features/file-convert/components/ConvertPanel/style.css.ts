@@ -13,13 +13,13 @@ import { cssLayerComponentPage } from '~/styles/variables/layers.css'
 
 const LINE = `1px solid ${getLineColor(0.3)}`
 
-export const imageConvertPanel = style({
+export const convertPanel = style({
   '@layer': {
     [cssLayerComponentPage]: {},
   },
 })
 
-export const imageConvertPanel_panel = style({
+export const convertPanel_panel = style({
   '@layer': {
     [cssLayerComponentPage]: {},
   },
@@ -29,7 +29,7 @@ export const imageConvertPanel_panel = style({
 // - md 未満: 3 つを縦に積む
 // - md 以上: 「読み込む」を上に置き、その下に「指定する」「変換する」を 2 列で並べる
 // - lg 以上: 3 列（デザインの PC）
-export const imageConvertPanel_steps = style({
+export const convertPanel_steps = style({
   '@layer': {
     [cssLayerComponentPage]: {
       display: 'grid',
@@ -47,7 +47,7 @@ export const imageConvertPanel_steps = style({
   },
 })
 
-export const imageConvertPanel_step = style({
+export const convertPanel_step = style({
   '@layer': {
     [cssLayerComponentPage]: {
       position: 'relative',
@@ -96,7 +96,7 @@ export const imageConvertPanel_step = style({
   },
 })
 
-export const imageConvertPanel_reset = style({
+export const convertPanel_reset = style({
   '@layer': {
     [cssLayerComponentPage]: {
       ...buttonReset,
@@ -135,7 +135,7 @@ export const imageConvertPanel_reset = style({
   },
 })
 
-export const imageConvertPanel_accept = style({
+export const convertPanel_accept = style({
   '@layer': {
     [cssLayerComponentPage]: {
       fontFamily: cssVariables.font.family.mono,
@@ -145,7 +145,7 @@ export const imageConvertPanel_accept = style({
   },
 })
 
-export const imageConvertPanel_options = style({
+export const convertPanel_options = style({
   '@layer': {
     [cssLayerComponentPage]: {
       display: 'grid',
@@ -154,13 +154,13 @@ export const imageConvertPanel_options = style({
   },
 })
 
-export const imageConvertPanel_ready = style({
+export const convertPanel_ready = style({
   '@layer': {
     [cssLayerComponentPage]: {},
   },
 })
 
-export const imageConvertPanel_done = style({
+export const convertPanel_done = style({
   '@layer': {
     [cssLayerComponentPage]: {
       ...fontMediumBold,
@@ -182,7 +182,7 @@ export const imageConvertPanel_done = style({
   },
 })
 
-export const imageConvertPanel_summary = style({
+export const convertPanel_summary = style({
   '@layer': {
     [cssLayerComponentPage]: {
       ...fontMedium,
@@ -193,7 +193,7 @@ export const imageConvertPanel_summary = style({
   },
 })
 
-export const imageConvertPanel_summaryOutput = style({
+export const convertPanel_summaryOutput = style({
   '@layer': {
     [cssLayerComponentPage]: {
       fontWeight: cssVariables.font.weight.bold,
@@ -203,7 +203,7 @@ export const imageConvertPanel_summaryOutput = style({
 })
 
 // 変換するボタン。md 未満は幅いっぱいにする（デザインの SP）
-export const imageConvertPanel_run = style({
+export const convertPanel_run = style({
   '@layer': {
     [cssLayerComponentPage]: {
       inlineSize: '100%',
@@ -217,13 +217,13 @@ export const imageConvertPanel_run = style({
   },
 })
 
-export const imageConvertPanel_running = style({
+export const convertPanel_running = style({
   '@layer': {
     [cssLayerComponentPage]: {},
   },
 })
 
-export const imageConvertPanel_progressHeader = style({
+export const convertPanel_progressHeader = style({
   '@layer': {
     [cssLayerComponentPage]: {
       display: 'flex',
@@ -234,7 +234,7 @@ export const imageConvertPanel_progressHeader = style({
   },
 })
 
-export const imageConvertPanel_progressLabel = style({
+export const convertPanel_progressLabel = style({
   '@layer': {
     [cssLayerComponentPage]: {
       ...fontMediumBold,
@@ -243,7 +243,7 @@ export const imageConvertPanel_progressLabel = style({
   },
 })
 
-export const imageConvertPanel_progressValue = style({
+export const convertPanel_progressValue = style({
   '@layer': {
     [cssLayerComponentPage]: {
       fontFamily: cssVariables.font.family.mono,
@@ -254,7 +254,7 @@ export const imageConvertPanel_progressValue = style({
   },
 })
 
-export const imageConvertPanel_progress = style({
+export const convertPanel_progress = style({
   '@layer': {
     [cssLayerComponentPage]: {
       display: 'block',
@@ -283,7 +283,7 @@ export const imageConvertPanel_progress = style({
   },
 })
 
-export const imageConvertPanel_note = style({
+export const convertPanel_note = style({
   '@layer': {
     [cssLayerComponentPage]: {
       ...fontSmall,
@@ -294,7 +294,7 @@ export const imageConvertPanel_note = style({
   },
 })
 
-export const imageConvertPanel_cancel = style({
+export const convertPanel_cancel = style({
   '@layer': {
     [cssLayerComponentPage]: {
       inlineSize: '100%',
