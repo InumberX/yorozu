@@ -6,7 +6,7 @@ import { z } from 'zod'
 
 import { InputFileDrop } from '~/components/ui/forms/InputFileDrop'
 
-const MAX_FILE_SIZE = 50 * 1024 * 1024
+const MAX_FILE_SIZE = 20 * 1024 * 1024
 
 const schema = z.object({
   files: z.array(z.file().mime(['image/png', 'image/jpeg']).max(MAX_FILE_SIZE)).min(1),
@@ -57,7 +57,7 @@ const meta: Meta<typeof InputFileDropStory> = {
   title: 'components/ui/forms/InputFileDrop',
   component: InputFileDropStory,
   args: {
-    helperText: 'PNG / JPEG ・ 1ファイル 50MB まで',
+    helperText: 'PNG / JPEG ・ 1ファイル 20MB まで',
   },
 }
 export default meta

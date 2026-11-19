@@ -9,7 +9,7 @@ export const IMAGE_ACCEPT_TYPES = ['image/png', 'image/jpeg'] as const
 export const IMAGE_ACCEPT = IMAGE_ACCEPT_TYPES.join(',')
 
 // 1 ファイルの上限。大きすぎる画像は、変換の途中でメモリが足りなくなるため。
-export const MAX_FILE_SIZE = 50 * 1024 * 1024
+export const MAX_FILE_SIZE = 20 * 1024 * 1024
 export const MAX_FILE_SIZE_LABEL = formatFileSize(MAX_FILE_SIZE)
 
 export const DEFAULT_QUALITY = 80

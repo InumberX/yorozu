@@ -34,7 +34,7 @@ describe('ImageConverter', () => {
 
       expect(result.getByTestId('panel')).not.toBe(null)
       expect(result.getByRole('heading', { level: 2, name: '対応形式と上限' })).not.toBe(null)
-      expect(result.getByText('PNG・JPEG を読み込めます。1ファイル 50MB までです。')).not.toBe(null)
+      expect(result.getByText('PNG・JPEG を読み込めます。1ファイル 20MB までです。')).not.toBe(null)
       expect(result.getByRole('heading', { level: 2, name: 'プライバシー' })).not.toBe(null)
     })
   })

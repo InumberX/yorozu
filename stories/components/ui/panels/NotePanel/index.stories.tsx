@@ -7,7 +7,7 @@ const meta: Meta<typeof NotePanel> = {
   component: NotePanel,
   args: {
     items: [
-      { title: '対応形式と上限', text: 'PNG・JPEG を読み込めます。1ファイル 50MB までです。' },
+      { title: '対応形式と上限', text: 'PNG・JPEG を読み込めます。1ファイル 20MB までです。' },
       {
         title: 'プライバシー',
         text: 'ファイルはブラウザ内で処理され、外部には送信されません。タブを閉じるとデータは破棄されます。',
