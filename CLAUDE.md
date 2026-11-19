@@ -18,7 +18,7 @@
 - 画像変換エンジン: 書き出しは jSquash（WASM、`@jsquash/webp` / `@jsquash/avif`）、読み込みはブラウザの `createImageBitmap`。Worker から必要になったときに動的 import する（`vite.config.ts` の `worker.format: 'es'`）。
 - 動画変換エンジン: ブラウザの WebCodecs（`VideoDecoder` / `VideoEncoder` / `AudioEncoder`）と、MP4 / MOV を読み WebM を書く Mediabunny（`mediabunny`）。大きい WASM は使わない。WebCodecs のない環境では変換できない旨を出す。
   - ffmpeg.wasm は採らなかった。core の WASM（約 31MiB）が Cloudflare Workers の静的アセットの上限（1 ファイル 25MiB）を超え、シングルスレッド版は VP9 の書き出しが遅すぎる（2 分の 1080p で数十分）ため。
-  - WebCodecs には CRF がないため、画質は Mediabunny の 5 段階の品質（解像度とコーデックに応じたビットレート）で指定する。
+  - 画質は Mediabunny の 5 段階の品質で指定する。VP9 は量子化値（CRF に近いもの）、VP8 とそれに対応しないエンコーダーはビットレートで書き出す。CRF の数値を選ばせないのは、VP9 の量子化値の範囲がブラウザの版で変わり、VP8 には量子化値がないため（詳しくは `features/video-convert/types.ts`）。
 
 ## 重要な制約・落とし穴
 

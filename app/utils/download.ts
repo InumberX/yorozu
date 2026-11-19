@@ -1,4 +1,4 @@
-import { zip } from 'fflate'
+import { Zip, ZipPassThrough } from 'fflate'
 
 // Blob をファイルとして保存させる。
 export const downloadBlob = (blob: Blob, fileName: string) => {
@@ -19,23 +19,38 @@ export type ZipEntry = {
   blob: Blob
 }
 
-// ファイルを ZIP にまとめる。画像や動画はすでに圧縮されているので、まとめるだけにして（level 0）速くする。
-export const createZip = async (entries: ZipEntry[]): Promise<Blob> => {
-  const files: Record<string, [Uint8Array, { level: 0 }]> = {}
+// 1 回に読む大きさ。動画は 1 件で数十 MB になるため、ファイルを丸ごと読まずに区切って流し込む。
+const CHUNK_SIZE = 8 * 1024 * 1024
 
-  for (const entry of entries) {
-    files[entry.name] = [new Uint8Array(await entry.blob.arrayBuffer()), { level: 0 }]
-  }
-
-  const data = await new Promise<Uint8Array>((resolve, reject) => {
-    zip(files, (error, result) => {
+// ファイルを ZIP にまとめる。画像や動画はすでに圧縮されているので、まとめるだけにする（圧縮しない）。
+// 全ファイルを一度に読み込むと、元の Blob に加えて同じ大きさのコピーがメモリに載る。
+// 1 ファイルずつ、CHUNK_SIZE ごとに読んで ZIP に流し込み、同時に載るコピーを 1 区切り分に抑える。
+export const createZip = (entries: ZipEntry[]): Promise<Blob> =>
+  new Promise<Blob>((resolve, reject) => {
+    const parts: Uint8Array[] = []
+    const zip = new Zip((error, data, isFinal) => {
       if (error) {
         reject(error)
         return
       }
-      resolve(result)
+      parts.push(data)
+      if (isFinal) {
+        resolve(new Blob(parts as BlobPart[], { type: 'application/zip' }))
+      }
     })
-  })
 
-  return new Blob([data as BlobPart], { type: 'application/zip' })
-}
+    const write = async () => {
+      for (const entry of entries) {
+        const file = new ZipPassThrough(entry.name)
+        zip.add(file)
+        for (let start = 0; start < entry.blob.size; start = start + CHUNK_SIZE) {
+          const chunk = new Uint8Array(await entry.blob.slice(start, start + CHUNK_SIZE).arrayBuffer())
+          file.push(chunk)
+        }
+        file.push(new Uint8Array(0), true)
+      }
+      zip.end()
+    }
+
+    write().catch(reject)
+  })

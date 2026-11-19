@@ -5,8 +5,11 @@ export const VIDEO_CODECS = ['vp9', 'vp8'] as const
 
 export type VideoCodec = (typeof VIDEO_CODECS)[number]
 
-// 画質の段階（1: いちばん小さく 〜 5: いちばんきれいに）。WebCodecs のエンコーダーには CRF がないため、
-// Mediabunny の 5 段階の品質（解像度とコーデックに応じたビットレート）に対応させる。
+// 画質の段階（1: いちばん小さく 〜 5: いちばんきれいに）。Mediabunny の 5 段階の品質に対応させる。
+// Mediabunny は、VP9 では量子化値（ffmpeg の CRF に近いもの）で書き出し、エンコーダーが対応していなければ
+// ビットレートの指定に切り替える。VP8 は量子化値に対応していないため、ビットレートの指定になる。
+// CRF の数値をそのまま選ばせないのは、VP9 の量子化値の範囲がブラウザの版で変わり（Chromium 145 より前は 0〜63、
+// 以降は 0〜255）、VP8 には量子化値がないため。
 export const VIDEO_QUALITY_LEVELS = [1, 2, 3, 4, 5] as const
 
 export type VideoQualityLevel = (typeof VIDEO_QUALITY_LEVELS)[number]

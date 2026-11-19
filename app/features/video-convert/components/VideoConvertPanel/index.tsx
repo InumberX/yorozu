@@ -11,7 +11,7 @@ import { ConvertPanel } from '~/features/file-convert/components/ConvertPanel'
 import { ConvertResults } from '~/features/file-convert/components/ConvertResults'
 import { FileThumbnail } from '~/features/file-convert/components/FileThumbnail'
 import { useVideoConvert } from '~/features/video-convert/hooks/use-video-convert'
-import { MAX_DURATION_MINUTES, MAX_DURATION_SECONDS, MAX_FILE_SIZE_LABEL } from '~/features/video-convert/limits'
+import { MAX_DURATION_MINUTES, MAX_FILE_SIZE_LABEL } from '~/features/video-convert/limits'
 import { createVideoConvertSchema, DEFAULT_QUALITY, VIDEO_ACCEPT } from '~/features/video-convert/schema'
 import {
   VIDEO_CODECS,
@@ -49,8 +49,12 @@ export const VideoConvertPanel = () => {
   const [files, setFiles] = useState<File[]>([])
   const isSupported = useSyncExternalStore(subscribeNothing, getIsSupported, getIsSupportedOnServer)
 
+  // 読み込んだ動画の長さ（秒）。見本を作ったときにわかる。
+  // 検証のときにだけ読み、描画には使わないので、変えても描き直さない入れ物（同じ WeakMap）に入れておく
+  const [durations] = useState(() => new WeakMap<File, number>())
+
   // 言語が変わったら、エラーの文言もその言語で作り直す
-  const schema = useMemo(() => createVideoConvertSchema(t), [t])
+  const schema = useMemo(() => createVideoConvertSchema(t, (file) => durations.get(file)), [t, durations])
 
   const [form, fields] = useForm({
     id: FORM_ID,
@@ -87,6 +91,12 @@ export const VideoConvertPanel = () => {
     clearDone()
   }
 
+  // 長さがわかったら、ファイルをもう一度検証する（上限を超えていれば、一覧にエラーが出て変換できなくなる）
+  const handleLoadMeta = (file: File, meta: VideoThumbnailMeta) => {
+    durations.set(file, meta.duration)
+    form.validate({ name: fields.files.name })
+  }
+
   return (
     <>
       <ConvertPanel
@@ -100,7 +110,7 @@ export const VideoConvertPanel = () => {
         accept={VIDEO_ACCEPT}
         acceptLabel={t('form.files.accept')}
         limitLabel={t('form.files.limit', { minutes: MAX_DURATION_MINUTES, size: MAX_FILE_SIZE_LABEL })}
-        fileList={
+        fileListElm={
           <ConvertFileList>
             {files.map((file, index) => (
               <VideoFileListItem
@@ -109,12 +119,13 @@ export const VideoConvertPanel = () => {
                 // ファイルごとのエラー（files[0] など）
                 errors={fields.files.allErrors[`${fields.files.name}[${index}]`]}
                 isDisabled={isConverting}
+                onLoadMeta={(meta) => handleLoadMeta(file, meta)}
                 onRemove={() => handleChangeFiles(files.filter((_, i) => i !== index))}
               />
             ))}
           </ConvertFileList>
         }
-        options={
+        optionsElm={
           <>
             <InputRadioCard
               id={fields.codec.id}
@@ -187,23 +198,25 @@ type VideoFileListItemProps = {
   file: File
   errors?: string[]
   isDisabled?: boolean
+  onLoadMeta: (meta: VideoThumbnailMeta) => void
   onRemove: () => void
 }
 
-// 読み込んだ動画の 1 件。見本を描けたら、大きさ（px）と長さも出す。長すぎるものは、ここで知らせる。
-const VideoFileListItem = ({ file, errors, isDisabled, onRemove }: VideoFileListItemProps) => {
-  const { t } = useTranslation('pages/YZ30_100')
+// 読み込んだ動画の 1 件。見本を描けたら、大きさ（px）と長さも出す。
+const VideoFileListItem = ({ file, errors, isDisabled, onLoadMeta, onRemove }: VideoFileListItemProps) => {
   const [meta, setMeta] = useState<VideoThumbnailMeta | undefined>(undefined)
-  const isTooLong = !!meta && meta.duration > MAX_DURATION_SECONDS
+
+  const handleLoad = (loaded: VideoThumbnailMeta) => {
+    setMeta(loaded)
+    onLoadMeta(loaded)
+  }
 
   return (
     <ConvertFileListItem
       name={file.name}
       meta={toVideoMetaLabel({ width: meta?.width, height: meta?.height, duration: meta?.duration, size: file.size })}
-      thumbnail={<FileThumbnail file={file} load={loadVideoThumbnail} icon="video" onLoad={setMeta} />}
-      errors={
-        isTooLong ? [...(errors ?? []), t('form.files.errors.duration', { minutes: MAX_DURATION_MINUTES })] : errors
-      }
+      thumbnailElm={<FileThumbnail file={file} load={loadVideoThumbnail} icon="video" onLoad={handleLoad} />}
+      errors={errors}
       isDisabled={isDisabled}
       onRemove={onRemove}
     />

@@ -29,10 +29,10 @@ export type ConvertPanelProps = {
   // 上限の表示（例: 1ファイル 20MB まで）
   limitLabel: string
   // 読み込んだファイルの一覧（ConvertFileList）
-  fileList: ReactNode
+  fileListElm: ReactNode
 
   // 2. 指定する
-  options: ReactNode
+  optionsElm: ReactNode
 
   // 3. 変換する
   // 変換の設定を 1 行で表す（例: WebP / 品質 80）
@@ -56,8 +56,8 @@ export const ConvertPanel = ({
   accept,
   acceptLabel,
   limitLabel,
-  fileList,
-  options,
+  fileListElm,
+  optionsElm,
   settingLabel,
   runNote,
   unavailableMessage,
@@ -108,13 +108,13 @@ export const ConvertPanel = ({
               }
               isDisabled={isConverting}
             >
-              {fileList}
+              {fileListElm}
             </InputFileDrop>
           </section>
 
           <section className={styles.convertPanel_step}>
             <StepTitle step={2} title={t('convert.steps.options')} />
-            <div className={styles.convertPanel_options}>{options}</div>
+            <div className={styles.convertPanel_options}>{optionsElm}</div>
           </section>
 
           <section className={styles.convertPanel_step} aria-live="polite">
@@ -125,7 +125,11 @@ export const ConvertPanel = ({
                   <span id={progressLabelId} className={styles.convertPanel_progressLabel}>
                     {t('convert.running')}
                   </span>
-                  <span className={styles.convertPanel_progressValue}>{progress}%</span>
+                  {/* 手順 3 は aria-live なので、% の文字は読み上げない（1% ごとに読み上げられてしまう）。
+                      進み具合は <progress> で伝わる */}
+                  <span className={styles.convertPanel_progressValue} aria-hidden="true">
+                    {progress}%
+                  </span>
                 </div>
                 <progress
                   className={styles.convertPanel_progress}

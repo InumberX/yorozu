@@ -7,12 +7,7 @@ import {
   MP4,
   Output,
   QTFF,
-  QUALITY_HIGH,
-  QUALITY_LOW,
-  QUALITY_MEDIUM,
-  QUALITY_VERY_HIGH,
-  QUALITY_VERY_LOW,
-  type Quality,
+  Quality,
   WebMOutputFormat,
 } from 'mediabunny'
 
@@ -38,11 +33,11 @@ const post = (message: VideoConvertResponse) => {
 }
 
 const QUALITIES: Record<VideoQualityLevel, Quality> = {
-  1: QUALITY_VERY_LOW,
-  2: QUALITY_LOW,
-  3: QUALITY_MEDIUM,
-  4: QUALITY_HIGH,
-  5: QUALITY_VERY_HIGH,
+  1: new Quality('very-low'),
+  2: new Quality('low'),
+  3: new Quality('medium'),
+  4: new Quality('high'),
+  5: new Quality('very-high'),
 }
 
 class ConvertError extends Error {
@@ -112,8 +107,15 @@ const convert = async (request: VideoConvertRequest): Promise<{ blob: Blob; warn
       ? ['AUDIO_DROPPED']
       : []
 
+    // onProgress は進み具合（小数）が変わるたびに、ほぼ 1 コマごとに呼ばれる。
+    // 画面に出すのは整数の % なので、それが変わったときだけ知らせる。
+    let lastProgress = 0
     conversion.onProgress = (progress) => {
-      post({ type: 'progress', id, progress: Math.floor(progress * 100) })
+      const percent = Math.floor(progress * 100)
+      if (percent !== lastProgress) {
+        lastProgress = percent
+        post({ type: 'progress', id, progress: percent })
+      }
     }
     await conversion.execute()
 

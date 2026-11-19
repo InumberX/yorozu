@@ -79,7 +79,7 @@ export const ImageConvertPanel = () => {
         accept={IMAGE_ACCEPT}
         acceptLabel={t('form.files.accept')}
         limitLabel={t('form.files.limit', { size: MAX_FILE_SIZE_LABEL })}
-        fileList={
+        fileListElm={
           <ConvertFileList>
             {files.map((file, index) => (
               <ImageFileListItem
@@ -93,7 +93,7 @@ export const ImageConvertPanel = () => {
             ))}
           </ConvertFileList>
         }
-        options={
+        optionsElm={
           <>
             <InputRadioCard
               id={fields.format.id}
@@ -162,7 +162,7 @@ const ImageFileListItem = ({ file, errors, isDisabled, onRemove }: ImageFileList
     <ConvertFileListItem
       name={file.name}
       meta={toImageMetaLabel({ width: meta?.width, height: meta?.height, size: file.size, type: file.type })}
-      thumbnail={<FileThumbnail file={file} load={loadImageThumbnail} icon="image" onLoad={setMeta} />}
+      thumbnailElm={<FileThumbnail file={file} load={loadImageThumbnail} icon="image" onLoad={setMeta} />}
       errors={errors}
       isDisabled={isDisabled}
       onRemove={onRemove}

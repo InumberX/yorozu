@@ -45,4 +45,27 @@ describe('createVideoConvertSchema', () => {
     expect(parse([createFile(10)], { resolution: '360' }).success).toBe(false)
     expect(parse([createFile(10)], { codec: 'av1' }).success).toBe(false)
   })
+
+  test('長さがわかっていて 2 分を超えるものはエラーにし、わからないものは通す', () => {
+    const short = createFile(10)
+    const long = createFile(10)
+    const unknown = createFile(10)
+    const durations = new Map([
+      [short, 120],
+      [long, 120.5],
+    ])
+    const withDurations = createVideoConvertSchema(testI18n.getFixedT(LANG.JA, 'pages/YZ30_100'), (file) =>
+      durations.get(file)
+    )
+
+    const result = withDurations.safeParse({
+      files: [short, long, unknown],
+      codec: 'vp9',
+      quality: 3,
+      resolution: 'original',
+    })
+    expect(result.error?.issues).toHaveLength(1)
+    expect(result.error?.issues[0]?.path).toEqual(['files', 1])
+    expect(result.error?.issues[0]?.message).toBe('長さ 2分 までです。')
+  })
 })

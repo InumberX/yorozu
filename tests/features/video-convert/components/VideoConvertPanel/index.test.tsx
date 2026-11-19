@@ -22,6 +22,21 @@ vi.mock('~/features/video-convert/hooks/use-video-convert', () => ({
   useVideoConvert: () => hookState,
 }))
 
+// 見本を作る処理は置き換え、長さをテストごとに決める（jsdom は動画を読めないため）
+const { thumbnailDurations } = vi.hoisted(() => ({ thumbnailDurations: new Map<string, number>() }))
+vi.mock('~/features/video-convert/utils/video-thumbnail', () => ({
+  loadVideoThumbnail: async (file: File) => {
+    const duration = thumbnailDurations.get(file.name)
+    if (duration === undefined) {
+      throw new Error('cannot play')
+    }
+    return {
+      bitmap: { width: 112, height: 112, close: () => undefined },
+      meta: { width: 1920, height: 1080, duration },
+    }
+  },
+}))
+
 import { VideoConvertPanel } from '~/features/video-convert/components/VideoConvertPanel'
 
 const createFile = (name: string, type = 'video/mp4') => new File(['x'], name, { type, lastModified: 1 })
@@ -59,12 +74,34 @@ describe('VideoConvertPanel', () => {
     // jsdom に WebCodecs はないため、対応しているブラウザとして扱う
     vi.stubGlobal('VideoEncoder', class {})
     vi.stubGlobal('VideoDecoder', class {})
+    // jsdom の FormData は、テストで差し替えた input.files を読まない。
+    // ブラウザと同じく、ファイルの入力の中身を FormData に入れる。
+    const OriginalFormData = globalThis.FormData
+    class FormDataWithFiles extends OriginalFormData {
+      constructor(form?: HTMLFormElement, submitter?: HTMLElement | null) {
+        super(form, submitter)
+        form?.querySelectorAll<HTMLInputElement>('input[type="file"]').forEach((input) => {
+          this.delete(input.name)
+          for (const file of Array.from(input.files ?? [])) {
+            this.append(input.name, file)
+          }
+        })
+      }
+    }
+    vi.stubGlobal('FormData', FormDataWithFiles)
+    // 見本をキャンバスに描けるようにする（jsdom のキャンバスは描けない）
+    vi.stubGlobal('createImageBitmap', vi.fn())
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
+      drawImage: () => undefined,
+    } as unknown as CanvasRenderingContext2D)
   })
 
   afterEach(() => {
     cleanup()
     vi.clearAllMocks()
     vi.unstubAllGlobals()
+    vi.restoreAllMocks()
+    thumbnailDurations.clear()
     hookState.status = 'idle'
     hookState.progress = 0
     hookState.groups = []
@@ -133,22 +170,6 @@ describe('VideoConvertPanel', () => {
     })
 
     test('変換すると、読み込んだファイルと設定で convert を呼ぶ', async () => {
-      // jsdom の FormData は、テストで差し替えた input.files を読まない。
-      // ブラウザと同じく、ファイルの入力の中身を FormData に入れる。
-      const OriginalFormData = globalThis.FormData
-      class FormDataWithFiles extends OriginalFormData {
-        constructor(form?: HTMLFormElement, submitter?: HTMLElement | null) {
-          super(form, submitter)
-          form?.querySelectorAll<HTMLInputElement>('input[type="file"]').forEach((input) => {
-            this.delete(input.name)
-            for (const file of Array.from(input.files ?? [])) {
-              this.append(input.name, file)
-            }
-          })
-        }
-      }
-      vi.stubGlobal('FormData', FormDataWithFiles)
-
       result = renderWithProviders(<VideoConvertPanel />)
       const file = createFile('a.mp4')
       pickFiles([file])
@@ -160,6 +181,25 @@ describe('VideoConvertPanel', () => {
       await waitFor(() =>
         expect(hookState.convert).toHaveBeenCalledWith([file], { codec: 'vp9', quality: 2, resolution: '480' })
       )
+    })
+
+    test('見本から長さがわかったら、大きさ・長さを出す', async () => {
+      thumbnailDurations.set('a.mp4', 42)
+      result = renderWithProviders(<VideoConvertPanel />)
+      pickFiles([createFile('a.mp4')])
+
+      await waitFor(() => expect(result.getByText('1920×1080 · 00:42 · 1B')).not.toBe(null))
+    })
+
+    test('2 分を超えるとわかった動画はエラーにし、変換させない', async () => {
+      thumbnailDurations.set('long.mp4', 130)
+      result = renderWithProviders(<VideoConvertPanel />)
+      pickFiles([createFile('long.mp4')])
+
+      await waitFor(() => expect(result.getByText('長さ 2分 までです。')).not.toBe(null))
+      fireEvent.click(result.getByRole('button', { name: /変換する/ }))
+      await waitFor(() => expect(result.getByText('長さ 2分 までです。')).not.toBe(null))
+      expect(hookState.convert).not.toHaveBeenCalled()
     })
 
     test('MP4・MOV 以外のファイルは読み込まない', () => {
@@ -178,6 +218,8 @@ describe('VideoConvertPanel', () => {
       result = renderWithProviders(<VideoConvertPanel />)
 
       expect(result.getByRole('progressbar', { name: '変換しています' }).getAttribute('value')).toBe('42')
+      // 手順 3 は aria-live なので、% の文字は読み上げさせない
+      expect(result.getByText('42%')).toHaveAttribute('aria-hidden', 'true')
       expect(result.getByText(/端末内で処理するため時間がかかります。/)).not.toBe(null)
       expect(result.getByRole('combobox', { name: '解像度' })).toBeDisabled()
 

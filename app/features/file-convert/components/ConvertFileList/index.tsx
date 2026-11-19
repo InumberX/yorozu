@@ -18,7 +18,7 @@ export type ConvertFileListItemProps = {
   // 「3024×2016 · 4.2MB · PNG」などの情報
   meta: string
   // 見本（FileThumbnail）
-  thumbnail: ReactNode
+  thumbnailElm: ReactNode
   errors?: string[]
   isDisabled?: boolean
   onRemove: () => void
@@ -28,7 +28,7 @@ export type ConvertFileListItemProps = {
 export const ConvertFileListItem = ({
   name,
   meta,
-  thumbnail,
+  thumbnailElm,
   errors,
   isDisabled,
   onRemove,
@@ -42,7 +42,7 @@ export const ConvertFileListItem = ({
         .filter(Boolean)
         .join(' ')}
     >
-      <span className={styles.convertFileList_thumbnail}>{thumbnail}</span>
+      <span className={styles.convertFileList_thumbnail}>{thumbnailElm}</span>
       <span className={styles.convertFileList_body}>
         <span className={styles.convertFileList_name}>{name}</span>
         <span className={styles.convertFileList_meta}>{meta}</span>
