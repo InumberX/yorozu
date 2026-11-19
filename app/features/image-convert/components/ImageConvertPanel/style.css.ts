@@ -1,174 +1,309 @@
 import { style } from '@vanilla-extract/css'
 
+import { buttonReset } from '~/styles/mixins/button-reset.css'
+import { getLineColor, getRgba } from '~/styles/mixins/color.css'
+import { getCornerMark } from '~/styles/mixins/corner-mark.css'
+import { getFontSize } from '~/styles/mixins/font.css'
+import { getContainerQuery, getMediaQuery } from '~/styles/mixins/media-query.css'
+import { getClampPx } from '~/styles/mixins/size.css'
+import { getTransition } from '~/styles/mixins/transition.css'
 import { cssVariables } from '~/styles/variables/css-variables.css'
-import { fontCaption, fontLabel, fontMedium, fontMono } from '~/styles/variables/font.css'
+import { fontMedium, fontMediumBold, fontSmall } from '~/styles/variables/font.css'
 import { cssLayerComponentPage } from '~/styles/variables/layers.css'
 
-export const panel = style({
+const LINE = `1px solid ${getLineColor(0.3)}`
+
+export const imageConvertPanel = style({
   '@layer': {
-    [cssLayerComponentPage]: {
-      display: 'grid',
-      gap: '24px',
-      marginBlockStart: '24px',
-      padding: '24px',
-      borderRadius: '4px',
-      backgroundColor: cssVariables.color.surface.level1,
-      border: `1px solid ${cssVariables.color.line.level2}`,
-    },
+    [cssLayerComponentPage]: {},
   },
 })
 
-export const dropzone = style({
+export const imageConvertPanel_panel = style({
+  '@layer': {
+    [cssLayerComponentPage]: {},
+  },
+})
+
+// 手順の並べ方
+// - md 未満: 3 つを縦に積む
+// - md 以上: 「読み込む」を上に置き、その下に「指定する」「変換する」を 2 列で並べる
+// - lg 以上: 3 列（デザインの PC）
+export const imageConvertPanel_steps = style({
   '@layer': {
     [cssLayerComponentPage]: {
       display: 'grid',
-      gap: '8px',
-      justifyItems: 'center',
-      paddingBlock: '40px',
-      paddingInline: '24px',
-      borderRadius: '4px',
-      border: `1px dashed ${cssVariables.color.line.level3}`,
-      backgroundColor: cssVariables.color.background.darkest.hex,
-      textAlign: 'center',
 
-      selectors: {
-        // input を視覚的に隠しつつフォーカス可能にしているため、フォーカス時は
-        // ドロップゾーン自体にフォーカスリングを出す。
-        '&:focus-within': {
-          borderColor: cssVariables.color.border.primary.hex,
-          outline: `2px solid ${cssVariables.color.border.primary.hex}`,
-          outlineOffset: '2px',
+      '@container': {
+        [getContainerQuery('md')]: {
+          gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+        },
+
+        [getContainerQuery('lg')]: {
+          gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
         },
       },
     },
   },
 })
 
-// `display: none` にするとキーボードでフォーカスできずファイル選択ができないため、
-// 視覚的に隠しつつフォーカス可能（タブ順に残る）なスタイルにする。
-export const dropzone_input = style({
+export const imageConvertPanel_step = style({
   '@layer': {
     [cssLayerComponentPage]: {
-      position: 'absolute',
-      inlineSize: '1px',
-      blockSize: '1px',
-      padding: 0,
-      margin: '-1px',
-      overflow: 'hidden',
-      clip: 'rect(0, 0, 0, 0)',
-      whiteSpace: 'nowrap',
-      borderWidth: 0,
+      position: 'relative',
+      minInlineSize: 0,
+      paddingBlock: `${getClampPx(22, 26)} ${getClampPx(24, 30)}`,
+      paddingInline: getClampPx(20, 28),
+
+      selectors: {
+        '& + &': {
+          borderBlockStart: LINE,
+        },
+      },
+
+      '@container': {
+        [getContainerQuery('md')]: {
+          selectors: {
+            '&:first-child': {
+              gridColumn: '1 / -1',
+            },
+
+            '&:last-child': {
+              borderInlineStart: LINE,
+            },
+
+            // 列の境目と上の罫線が交わるところに「＋」を置く
+            '&:last-child::before': getCornerMark({ shape: 'cross', corners: ['topLeft'] }),
+          },
+        },
+
+        [getContainerQuery('lg')]: {
+          selectors: {
+            '&:first-child': {
+              gridColumn: 'auto',
+            },
+
+            '& + &': {
+              borderBlockStart: 'none',
+              borderInlineStart: LINE,
+            },
+
+            '& + &::before': getCornerMark({ shape: 'cross', corners: ['topLeft'] }),
+          },
+        },
+      },
     },
   },
 })
 
-export const dropzone_label = style({
+export const imageConvertPanel_reset = style({
   '@layer': {
     [cssLayerComponentPage]: {
-      ...fontLabel,
-      color: cssVariables.color.font.heading.hex,
+      ...buttonReset,
+      ...fontSmall,
+      minBlockSize: 44,
+      marginBlock: -8,
+      paddingBlock: 4,
+      color: cssVariables.color.font.primary.hex,
+      textDecoration: 'underline',
+      textUnderlineOffset: 3,
+      cursor: 'pointer',
+      transition: getTransition([{ property: 'color' }]),
+
+      selectors: {
+        '&:focus-visible': {
+          outline: `2px solid ${cssVariables.color.border.accent.hex}`,
+          outlineOffset: 3,
+        },
+
+        '&:disabled': {
+          cursor: 'not-allowed',
+          opacity: cssVariables.opacity.disabled,
+        },
+      },
+
+      '@media': {
+        [getMediaQuery('hover')]: {
+          selectors: {
+            '&:enabled:hover': {
+              color: cssVariables.color.font.primaryLight.hex,
+            },
+          },
+        },
+      },
     },
   },
 })
 
-export const dropzone_hint = style({
+export const imageConvertPanel_accept = style({
   '@layer': {
     [cssLayerComponentPage]: {
-      ...fontCaption,
-      color: cssVariables.color.font.sub.hex,
+      fontFamily: cssVariables.font.family.mono,
+      fontSize: getFontSize(12),
+      color: cssVariables.color.font.subLight.hex,
     },
   },
 })
 
-export const options = style({
+export const imageConvertPanel_options = style({
   '@layer': {
     [cssLayerComponentPage]: {
       display: 'grid',
-      gap: '20px',
+      gap: 22,
     },
   },
 })
 
-export const field = style({
+export const imageConvertPanel_ready = style({
   '@layer': {
-    [cssLayerComponentPage]: {
-      display: 'grid',
-      gap: '8px',
-    },
+    [cssLayerComponentPage]: {},
   },
 })
 
-export const field_label = style({
+export const imageConvertPanel_done = style({
   '@layer': {
     [cssLayerComponentPage]: {
-      ...fontLabel,
-      color: cssVariables.color.font.heading.hex,
-    },
-  },
-})
-
-export const formatList = style({
-  '@layer': {
-    [cssLayerComponentPage]: {
+      ...fontMediumBold,
       display: 'flex',
-      gap: '20px',
+      alignItems: 'center',
+      gap: 10,
+      marginBlockEnd: 10,
+      color: cssVariables.color.font.white.hex,
+
+      selectors: {
+        '&::before': {
+          content: '""',
+          inlineSize: 8,
+          blockSize: 8,
+          backgroundColor: cssVariables.color.background.primary.hex,
+        },
+      },
     },
   },
 })
 
-export const formatItem = style({
+export const imageConvertPanel_summary = style({
   '@layer': {
     [cssLayerComponentPage]: {
       ...fontMedium,
-      display: 'inline-flex',
-      alignItems: 'center',
-      gap: '6px',
+      marginBlockEnd: getClampPx(16, 20),
+      lineHeight: 1.9,
+      color: cssVariables.color.font.pale.hex,
     },
   },
 })
 
-export const range = style({
+export const imageConvertPanel_summaryOutput = style({
+  '@layer': {
+    [cssLayerComponentPage]: {
+      fontWeight: cssVariables.font.weight.bold,
+      color: cssVariables.color.font.white.hex,
+    },
+  },
+})
+
+// 変換するボタン。md 未満は幅いっぱいにする（デザインの SP）
+export const imageConvertPanel_run = style({
   '@layer': {
     [cssLayerComponentPage]: {
       inlineSize: '100%',
-      maxInlineSize: '320px',
-      accentColor: cssVariables.color.font.primary.hex,
+
+      '@container': {
+        [getContainerQuery('md')]: {
+          inlineSize: 'auto',
+        },
+      },
     },
   },
 })
 
-export const actions = style({
+export const imageConvertPanel_running = style({
+  '@layer': {
+    [cssLayerComponentPage]: {},
+  },
+})
+
+export const imageConvertPanel_progressHeader = style({
   '@layer': {
     [cssLayerComponentPage]: {
       display: 'flex',
+      alignItems: 'baseline',
+      justifyContent: 'space-between',
+      marginBlockEnd: 10,
     },
   },
 })
 
-export const progress = style({
+export const imageConvertPanel_progressLabel = style({
   '@layer': {
     [cssLayerComponentPage]: {
-      ...fontMono,
-      color: cssVariables.color.font.primary.hex,
-      textShadow: cssVariables.shadow.text,
+      ...fontMediumBold,
+      color: cssVariables.color.font.white.hex,
     },
   },
 })
 
-export const error = style({
+export const imageConvertPanel_progressValue = style({
   '@layer': {
     [cssLayerComponentPage]: {
-      ...fontMedium,
-      color: cssVariables.color.font.error.hex,
+      fontFamily: cssVariables.font.family.mono,
+      fontSize: getFontSize(28),
+      lineHeight: 1,
+      color: cssVariables.color.font.white.hex,
     },
   },
 })
 
-export const note = style({
+export const imageConvertPanel_progress = style({
   '@layer': {
     [cssLayerComponentPage]: {
-      ...fontCaption,
-      color: cssVariables.color.font.subDark.hex,
+      display: 'block',
+      inlineSize: '100%',
+      blockSize: 6,
+      border: 'none',
+      appearance: 'none',
+      backgroundColor: getRgba(cssVariables.color.background.primary.rgb, 0.16),
+      color: cssVariables.color.background.primary.hex,
+
+      selectors: {
+        '&::-webkit-progress-bar': {
+          backgroundColor: getRgba(cssVariables.color.background.primary.rgb, 0.16),
+        },
+
+        '&::-webkit-progress-value': {
+          backgroundColor: cssVariables.color.background.primary.hex,
+          transition: getTransition([{ property: 'inline-size', speed: 0.2 }]),
+        },
+
+        '&::-moz-progress-bar': {
+          backgroundColor: cssVariables.color.background.primary.hex,
+        },
+      },
+    },
+  },
+})
+
+export const imageConvertPanel_note = style({
+  '@layer': {
+    [cssLayerComponentPage]: {
+      ...fontSmall,
+      marginBlock: `12px ${getClampPx(16, 18)}`,
+      lineHeight: 1.8,
+      color: cssVariables.color.font.pale.hex,
+    },
+  },
+})
+
+export const imageConvertPanel_cancel = style({
+  '@layer': {
+    [cssLayerComponentPage]: {
+      inlineSize: '100%',
+
+      '@container': {
+        [getContainerQuery('md')]: {
+          inlineSize: 'auto',
+        },
+      },
     },
   },
 })

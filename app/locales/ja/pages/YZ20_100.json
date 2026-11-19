@@ -1,23 +1,68 @@
 {
-  "title": {
-    "heading": "画像変換",
-    "lead": "画像を WebP / AVIF に変換します。ファイルはサーバーに送られず、ブラウザ内で処理されます。"
+  "heading": {
+    "breadcrumbLabel": "パンくずリスト",
+    "label": "IMAGE",
+    "title": "画像を変換する",
+    "lead": "PNG・JPEG の画像を、WebP または AVIF に変換します。"
+  },
+  "steps": {
+    "load": "読み込む",
+    "options": "指定する",
+    "convert": "変換する"
   },
   "form": {
-    "dropzone": {
-      "label": "画像ファイルをドラッグ＆ドロップ、またはクリックして選択",
-      "hint": "対応形式: PNG / JPEG / GIF など"
+    "reset": "リセット",
+    "files": {
+      "accept": "PNG / JPEG",
+      "limit": "1ファイル {{size}} まで",
+      "remove": "ファイルを削除: {{name}}",
+      "errors": {
+        "required": "ファイルを読み込んでください。",
+        "type": "PNG か JPEG のファイルを読み込んでください。",
+        "size": "1ファイル {{size}} までです。"
+      }
     },
     "format": {
-      "label": "出力フォーマット",
+      "legend": "出力形式",
       "webp": "WebP",
-      "avif": "AVIF"
+      "webpNote": "幅広く対応",
+      "avif": "AVIF",
+      "avifNote": "最も小さい"
     },
     "quality": {
-      "label": "品質"
+      "label": "品質",
+      "low": "小さく",
+      "high": "きれいに"
     },
-    "submit": "変換する",
-    "converting": "変換中…"
+    "lossless": "ロスレスで書き出す"
   },
-  "note": "※ 変換エンジン（jSquash）は今後組み込み予定です。現在は UI の雛形のみです。"
+  "convert": {
+    "needFile": "ファイルを読み込むと変換できます。",
+    "count": "{{count}}件のファイル",
+    "setting": "{{format}} / {{detail}}",
+    "qualityDetail": "品質 {{quality}}",
+    "run": "変換する",
+    "running": "変換しています",
+    "runNote": "変換中もページの操作を続けられます。",
+    "cancel": "中止する",
+    "done": "変換が完了しました"
+  },
+  "results": {
+    "title": "変換結果",
+    "convertedAt": "変換日時",
+    "remove": "この変換結果を削除: {{at}}",
+    "download": "ダウンロード",
+    "downloadLabel": "ダウンロード: {{name}}",
+    "downloadAll": "すべてダウンロード",
+    "downloadAllLabel": "すべてダウンロード（ZIP）: {{at}}",
+    "failed": "変換できなかったファイル: {{names}}",
+    "reduction": "削減率",
+    "zipFailed": "ZIP を作れませんでした。もう一度お試しください。"
+  },
+  "notes": {
+    "limitTitle": "対応形式と上限",
+    "limit": "PNG・JPEG を読み込めます。1ファイル {{size}} までです。",
+    "privacyTitle": "プライバシー",
+    "privacy": "ファイルはブラウザ内で処理され、外部には送信されません。タブを閉じるとデータは破棄されます。"
+  }
 }

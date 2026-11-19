@@ -70,6 +70,11 @@ export default defineConfig(({ mode }) => {
       'import.meta.env.VITE_LASTMOD': `"${LASTMOD}"`,
     },
     plugins: [reactRouter(), vanillaExtractPlugin(), devtoolsJson()],
+    // 変換の Worker は、エンコーダー（jSquash）を必要になったときに読み込む（動的 import）。
+    // 既定の iife ではコードを分けられないため、ES モジュールの Worker として出力する。
+    worker: {
+      format: 'es' as const,
+    },
     resolve: {
       tsconfigPaths: true,
     },

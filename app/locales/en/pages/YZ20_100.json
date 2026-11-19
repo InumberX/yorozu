@@ -1,23 +1,69 @@
 {
-  "title": {
-    "heading": "Image Converter",
-    "lead": "Convert images to WebP / AVIF. Files are never uploaded — everything is processed in your browser."
+  "heading": {
+    "breadcrumbLabel": "Breadcrumb",
+    "label": "IMAGE",
+    "title": "Convert images",
+    "lead": "Convert PNG and JPEG images to WebP or AVIF."
+  },
+  "steps": {
+    "load": "Load",
+    "options": "Set options",
+    "convert": "Convert"
   },
   "form": {
-    "dropzone": {
-      "label": "Drag & drop an image here, or click to choose a file",
-      "hint": "Supported inputs: PNG / JPEG / GIF and more"
+    "reset": "Reset",
+    "files": {
+      "accept": "PNG / JPEG",
+      "limit": "Up to {{size}} per file",
+      "remove": "Remove file: {{name}}",
+      "errors": {
+        "required": "Load a file.",
+        "type": "Load a PNG or JPEG file.",
+        "size": "Each file can be up to {{size}}."
+      }
     },
     "format": {
-      "label": "Output format",
+      "legend": "Output format",
       "webp": "WebP",
-      "avif": "AVIF"
+      "webpNote": "Widely supported",
+      "avif": "AVIF",
+      "avifNote": "Smallest files"
     },
     "quality": {
-      "label": "Quality"
+      "label": "Quality",
+      "low": "Smaller",
+      "high": "Sharper"
     },
-    "submit": "Convert",
-    "converting": "Converting…"
+    "lossless": "Export lossless"
   },
-  "note": "* The conversion engine (jSquash) will be integrated later. This is a UI skeleton for now."
+  "convert": {
+    "needFile": "Load a file to convert it.",
+    "count_one": "{{count}} file",
+    "count_other": "{{count}} files",
+    "setting": "{{format}} / {{detail}}",
+    "qualityDetail": "Quality {{quality}}",
+    "run": "Convert",
+    "running": "Converting",
+    "runNote": "You can keep using the page while it converts.",
+    "cancel": "Cancel",
+    "done": "Conversion complete"
+  },
+  "results": {
+    "title": "Results",
+    "convertedAt": "Converted",
+    "remove": "Delete this result: {{at}}",
+    "download": "Download",
+    "downloadLabel": "Download: {{name}}",
+    "downloadAll": "Download all",
+    "downloadAllLabel": "Download all (ZIP): {{at}}",
+    "failed": "Files that could not be converted: {{names}}",
+    "reduction": "Reduction",
+    "zipFailed": "Could not create the ZIP file. Please try again."
+  },
+  "notes": {
+    "limitTitle": "Formats and limits",
+    "limit": "PNG and JPEG files can be loaded, up to {{size}} each.",
+    "privacyTitle": "Privacy",
+    "privacy": "Files are processed in your browser and never sent anywhere. Closing the tab discards the data."
+  }
 }

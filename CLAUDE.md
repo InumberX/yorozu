@@ -15,7 +15,7 @@
 
 ## 技術候補（未確定・要判断）
 
-- 画像変換エンジン: jSquash（WASM）を想定（候補）。
+- 画像変換エンジン: 書き出しは jSquash（WASM、`@jsquash/webp` / `@jsquash/avif`）、読み込みはブラウザの `createImageBitmap`。Worker から必要になったときに動的 import する（`vite.config.ts` の `worker.format: 'es'`）。
 - 動画変換エンジン: ffmpeg.wasm を想定（候補）。
   - **ffmpeg のシングルスレッド / マルチスレッドは未決定。** MT版は `SharedArrayBuffer` のため COOP/COEP（cross-origin isolation）ヘッダが必須。ST版は不要だが遅い。**着手前に確認すること。**
 
@@ -65,4 +65,4 @@
 ## 未決事項（TBD）
 
 - ffmpeg: シングルスレッド / マルチスレッド。
-- 対応入力形式、品質 / 圧縮オプション、一括変換の要否。
+- 動画の対応入力形式、品質 / 圧縮オプション。（画像は `docs/screens.md` の YZ20_100 に記載）
