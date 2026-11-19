@@ -45,5 +45,37 @@
   },
   "a11y": {
     "newTab": " (opens in a new tab)"
+  },
+  "form": {
+    "inputFileDrop": {
+      "dropTitle": "Drop a file here",
+      "dropOr": "or",
+      "pick": "Choose a file",
+      "add": "Add a file",
+      "rejected": "Files in an unsupported format were not loaded ({{names}})"
+    }
+  },
+  "validation": {
+    "required": "This field is required.",
+    "invalidType": "The value is in the wrong format.",
+    "invalid": "The value is invalid.",
+    "invalidValue": "This value cannot be chosen.",
+    "notMultipleOf": "Use a multiple of {{divisor}}.",
+    "tooSmall": {
+      "array_one": "Choose at least {{count}} item.",
+      "array_other": "Choose at least {{count}} items.",
+      "string_one": "Enter at least {{count}} character.",
+      "string_other": "Enter at least {{count}} characters.",
+      "number": "Use {{minimum}} or more.",
+      "file": "Use a file of {{size}} or larger."
+    },
+    "tooBig": {
+      "array_one": "Choose up to {{count}} item.",
+      "array_other": "Choose up to {{count}} items.",
+      "string_one": "Enter up to {{count}} character.",
+      "string_other": "Enter up to {{count}} characters.",
+      "number": "Use {{maximum}} or less.",
+      "file": "Use a file of up to {{size}}."
+    }
   }
 }

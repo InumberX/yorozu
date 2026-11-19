@@ -19,6 +19,7 @@ import * as styles from './root.css'
 import { LayoutPortal } from '~/components/common/LayoutPortal'
 import { LANG } from '~/config/consts'
 import { GOOGLE_ANALYTICS_ID } from '~/config/env'
+import { ZodProvider } from '~/providers/ZodProvider'
 import * as gtag from '~/utils/gtag.client'
 import { getLang, getLangFromPathname, getSiteInfo, shouldRevalidateOnLangChange } from '~/utils/locale'
 
@@ -152,7 +153,11 @@ export default function RootRoute({ loaderData }: Route.ComponentProps) {
     gtag.pageview(location.pathname, GOOGLE_ANALYTICS_ID)
   }, [location.pathname])
 
-  return <Outlet />
+  return (
+    <ZodProvider>
+      <Outlet />
+    </ZodProvider>
+  )
 }
 
 export function ErrorBoundary() {

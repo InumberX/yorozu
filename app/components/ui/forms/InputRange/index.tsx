@@ -1,17 +1,19 @@
-import { type FieldMetadata, getInputProps } from '@conform-to/react'
+import { type getInputProps } from '@conform-to/react'
 import { type ReactNode, useState } from 'react'
 
 import * as styles from './style.css'
 
 import { FormErrorMessage } from '~/components/ui/forms/FormErrorMessage'
+import { getDescriptionId, getErrorId, joinIds } from '~/utils/form'
 
 export type InputRangeProps = {
-  // Conform のフィールド。min / max / step は zod のスキーマ（getZodConstraint）から受け取る。
-  field: FieldMetadata<number | undefined>
+  // `getInputProps(fields.x, { type: 'range' })` の戻り値。min / max / step はスキーマから入る。
+  inputProps: ReturnType<typeof getInputProps>
   label: ReactNode
   // 目盛りの両端に添える言葉（例: 小さく / きれいに）
   minLabel?: ReactNode
   maxLabel?: ReactNode
+  errors?: string[]
   helperText?: ReactNode
   isDisabled?: boolean
   className?: string
@@ -19,29 +21,32 @@ export type InputRangeProps = {
 }
 
 const toNumber = (value: unknown): number | undefined => {
-  const n = typeof value === 'string' && value !== '' ? Number(value) : NaN
-  return Number.isFinite(n) ? n : undefined
+  const n = typeof value === 'string' || typeof value === 'number' ? Number(value) : NaN
+  return value !== '' && Number.isFinite(n) ? n : undefined
 }
 
 // 範囲から数値を選ぶスライダー。選んでいる値を見出しの右に表示する。
 export const InputRange = ({
-  field,
+  inputProps,
   label,
   minLabel,
   maxLabel,
+  errors,
   helperText,
   isDisabled,
   className,
   onChange,
 }: InputRangeProps) => {
-  const { key, ...inputProps } = getInputProps(field, {
-    type: 'range',
-    ariaDescribedBy: helperText ? field.descriptionId : undefined,
-  })
+  const { key, ...props } = inputProps
+  const id = props.id ?? ''
+  const hasErrors = !!errors?.length
 
-  // 表示する値。入力自体は Conform の管理（非制御）のまま、表示のためだけに持つ。
+  // 表示する値。入力そのものは Conform の管理（非制御）のまま、表示のためだけに持つ。
   // フォームがリセットされると key が変わるので、そのときは初期値に戻す。
-  const initialValue = toNumber(field.initialValue) ?? toNumber(String(field.min ?? ''))
+  // 初期値がなければ、ブラウザの既定（min と max の中間）にそろえる。
+  const min = toNumber(props.min) ?? 0
+  const max = toNumber(props.max) ?? 100
+  const initialValue = toNumber(props.defaultValue) ?? min + (max - min) / 2
   const [value, setValue] = useState(initialValue)
   const [previousKey, setPreviousKey] = useState(key)
 
@@ -50,24 +55,26 @@ export const InputRange = ({
     setValue(initialValue)
   }
 
-  const labelId = `${field.id}-label`
   const hasScale = !!minLabel || !!maxLabel
 
   return (
     <div className={[styles.inputRange, className].filter(Boolean).join(' ')}>
       <div className={styles.inputRange_header}>
-        <label id={labelId} htmlFor={field.id} className={styles.inputRange_label}>
+        <label htmlFor={id} className={styles.inputRange_label}>
           {label}
         </label>
-        <output htmlFor={field.id} className={styles.inputRange_value} aria-hidden="true">
+        <output htmlFor={id} className={styles.inputRange_value} aria-hidden="true">
           {value}
         </output>
       </div>
 
       <input
         key={key}
-        {...inputProps}
+        {...props}
+        type="range"
         className={styles.inputRange_input}
+        aria-invalid={hasErrors || undefined}
+        aria-describedby={joinIds(hasErrors && getErrorId(id), !!helperText && getDescriptionId(id))}
         disabled={isDisabled}
         onChange={(event) => {
           const newValue = Number(event.currentTarget.value)
@@ -84,12 +91,12 @@ export const InputRange = ({
       )}
 
       {helperText && (
-        <p id={field.descriptionId} className={styles.inputRange_helperText}>
+        <p id={getDescriptionId(id)} className={styles.inputRange_helperText}>
           {helperText}
         </p>
       )}
 
-      <FormErrorMessage id={field.errorId} errors={field.errors} />
+      <FormErrorMessage id={getErrorId(id)} errors={errors} />
     </div>
   )
 }

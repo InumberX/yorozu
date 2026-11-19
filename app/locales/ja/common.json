@@ -45,5 +45,33 @@
   },
   "a11y": {
     "newTab": "（新しいタブで開きます）"
+  },
+  "form": {
+    "inputFileDrop": {
+      "dropTitle": "ここにファイルをドロップ",
+      "dropOr": "または",
+      "pick": "ファイルを選択",
+      "add": "ファイルを追加する",
+      "rejected": "対応していない形式のファイルは読み込みませんでした（{{names}}）"
+    }
+  },
+  "validation": {
+    "required": "入力してください。",
+    "invalidType": "入力の形式が正しくありません。",
+    "invalid": "入力が正しくありません。",
+    "invalidValue": "選べない値です。",
+    "notMultipleOf": "{{divisor}} の倍数にしてください。",
+    "tooSmall": {
+      "array": "{{count}} 個以上選んでください。",
+      "string": "{{count}} 文字以上で入力してください。",
+      "number": "{{minimum}} 以上にしてください。",
+      "file": "{{size}} 以上のファイルにしてください。"
+    },
+    "tooBig": {
+      "array": "{{count}} 個までにしてください。",
+      "string": "{{count}} 文字以内で入力してください。",
+      "number": "{{maximum}} 以下にしてください。",
+      "file": "{{size}} までのファイルにしてください。"
+    }
   }
 }
