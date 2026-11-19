@@ -52,8 +52,8 @@ export const mainVisualGeometry = style({
       pointerEvents: 'none',
       // 模様をパネルいっぱいに広げる（object-fit: cover 相当）ため、パネルの大きさを測る。
       containerType: 'size',
-      // 帯の外は 0.6 × 37% ≒ 22%、帯の中は 60% の濃さで見せる。
-      opacity: 0.6,
+      // 帯の外は 0.4 × 37% ≒ 15%、帯の中は 40% の濃さで見せる。
+      opacity: 0.4,
       maskImage: 'linear-gradient(105deg, rgb(0 0 0 / 37%) 42%, #000 50%, rgb(0 0 0 / 37%) 58%)',
       maskSize: '300% 100%',
       maskRepeat: 'no-repeat',
