@@ -19,7 +19,7 @@ export type ConvertResultsProps<O> = {
   // 変換したファイルの見本（FileThumbnail）
   renderThumbnail: (item: ConvertResultItem) => ReactNode
   // 変換できなかった理由。わからないとき（undefined）は名前だけを出す
-  getFailureReason?: (code: string) => string | undefined
+  getFailureReason?: (code: string, options: O) => string | undefined
   // 変換はできたが知らせておきたいこと（例: 音声を書き出せなかった）
   getWarningLabel?: (code: string) => string | undefined
   // まとめて保存する ZIP の名前の頭（例: yorozu-images）
@@ -78,7 +78,7 @@ const ConvertResultsGroup = <O,>({
   }
 
   const toFailureLabel = (failure: ConvertFailure) => {
-    const reason = failure.code === null ? undefined : getFailureReason?.(failure.code)
+    const reason = failure.code === null ? undefined : getFailureReason?.(failure.code, group.options)
     return reason ? t('convert.results.failedReason', { name: failure.name, reason }) : failure.name
   }
 

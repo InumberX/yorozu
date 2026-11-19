@@ -15,9 +15,11 @@ const schema = z.object({
 const Harness = ({
   defaultQuality,
   isDisabled,
+  formatValue,
   onChange,
 }: {
   defaultQuality?: string
+  formatValue?: (value: number) => string
   isDisabled?: boolean
   onChange?: (event: React.ChangeEvent<HTMLInputElement>, newValue: number) => void
 }) => {
@@ -36,6 +38,7 @@ const Harness = ({
         label="品質"
         minLabel="小さく"
         maxLabel="きれいに"
+        formatValue={formatValue}
         isDisabled={isDisabled}
         onChange={onChange}
       />
@@ -98,6 +101,24 @@ describe('InputRange', () => {
 
     test('スライダーが無効になる', () => {
       expect(result.getByRole('slider', { name: '品質' })).toBeDisabled()
+    })
+  })
+
+  describe('値の見せ方を指定したとき', () => {
+    beforeEach(() => {
+      result = renderWithProviders(
+        <Harness defaultQuality="80" formatValue={(value) => (value >= 80 ? '高画質' : '標準')} />
+      )
+    })
+
+    test('表示と読み上げに、指定した見せ方を使う', () => {
+      const slider = result.getByRole('slider', { name: '品質' })
+      expect(result.container.querySelector('output')?.textContent).toBe('高画質')
+      expect(slider.getAttribute('aria-valuetext')).toBe('高画質')
+
+      fireEvent.change(slider, { target: { value: '40' } })
+      expect(result.container.querySelector('output')?.textContent).toBe('標準')
+      expect(slider.getAttribute('aria-valuetext')).toBe('標準')
     })
   })
 })

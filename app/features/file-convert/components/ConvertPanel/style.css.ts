@@ -182,6 +182,20 @@ export const convertPanel_done = style({
   },
 })
 
+export const convertPanel_unavailable = style({
+  '@layer': {
+    [cssLayerComponentPage]: {
+      ...fontSmall,
+      marginBlockEnd: 12,
+      paddingBlock: 10,
+      paddingInline: 12,
+      border: `1px solid ${cssVariables.color.border.error.hex}`,
+      lineHeight: 1.8,
+      color: cssVariables.color.font.error.hex,
+    },
+  },
+})
+
 export const convertPanel_summary = style({
   '@layer': {
     [cssLayerComponentPage]: {

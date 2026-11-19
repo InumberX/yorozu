@@ -1,23 +1,65 @@
 {
-  "title": {
-    "heading": "Video Converter",
-    "lead": "Convert videos to WebM. Everything runs in your browser (Web Worker); files are never uploaded."
+  "heading": {
+    "breadcrumbLabel": "Breadcrumb",
+    "label": "VIDEO",
+    "title": "Convert videos",
+    "lead": "Convert MP4 and MOV videos to WebM."
   },
   "form": {
-    "dropzone": {
-      "label": "Drag & drop a video here, or click to choose a file",
-      "hint": "Mind the size / length limits"
+    "files": {
+      "accept": "MP4 / MOV",
+      "limit": "Up to {{minutes}} minutes and {{size}}",
+      "errors": {
+        "required": "Load a file.",
+        "type": "Load an MP4 or MOV file.",
+        "size": "Each file can be up to {{size}}.",
+        "duration": "Videos can be up to {{minutes}} minutes long."
+      }
     },
     "codec": {
-      "label": "Video codec",
+      "legend": "Codec",
       "vp9": "VP9",
-      "vp8": "VP8"
+      "vp9Note": "Recommended",
+      "vp8": "VP8",
+      "vp8Note": "Faster"
     },
     "quality": {
-      "label": "Quality (CRF)"
+      "label": "Quality",
+      "low": "Smaller",
+      "high": "Sharper",
+      "levels": {
+        "1": "Smallest",
+        "2": "Small",
+        "3": "Standard",
+        "4": "High",
+        "5": "Highest"
+      }
     },
-    "submit": "Convert",
-    "converting": "Converting…"
+    "resolution": {
+      "label": "Resolution",
+      "original": "Original",
+      "helper": "Portrait videos are matched by their short side. Videos are never scaled up."
+    },
+    "unsupported": "This browser cannot convert videos (WebCodecs is not available). Please try the latest Chrome, Edge, Safari or Firefox."
   },
-  "note": "* The conversion engine (ffmpeg.wasm, single-threaded) will be integrated later. This is a UI skeleton for now."
+  "convert": {
+    "setting": "WebM · {{codec}} / Quality: {{quality}} / {{resolution}}",
+    "runNote": "This runs on your device, so it takes a while. You can keep using the page meanwhile."
+  },
+  "results": {
+    "errors": {
+      "UNSUPPORTED_INPUT": "unsupported format",
+      "UNDECODABLE_VIDEO": "this browser cannot read the video",
+      "TOO_LONG": "longer than {{minutes}} minutes",
+      "UNSUPPORTED_ENCODER": "this browser cannot export {{codec}}",
+      "CONVERT_FAILED": "failed during conversion"
+    },
+    "warnings": {
+      "AUDIO_DROPPED": "This browser cannot export the audio, so only the video was kept."
+    }
+  },
+  "notes": {
+    "limitTitle": "Formats and limits",
+    "limit": "MP4 and MOV files can be loaded. Because it runs on your device, the limit is {{minutes}} minutes and {{size}}."
+  }
 }

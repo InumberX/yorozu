@@ -13,6 +13,8 @@ export type InputRangeProps = {
   // 目盛りの両端に添える言葉（例: 小さく / きれいに）
   minLabel?: ReactNode
   maxLabel?: ReactNode
+  // 選んでいる値の見せ方（例: 3 → 標準）。読み上げにも使う。なければ数値のまま出す
+  formatValue?: (value: number) => string
   errors?: string[]
   helperText?: ReactNode
   isDisabled?: boolean
@@ -31,6 +33,7 @@ export const InputRange = ({
   label,
   minLabel,
   maxLabel,
+  formatValue,
   errors,
   helperText,
   isDisabled,
@@ -64,7 +67,7 @@ export const InputRange = ({
           {label}
         </label>
         <output htmlFor={id} className={styles.inputRange_value} aria-hidden="true">
-          {value}
+          {formatValue ? formatValue(value) : value}
         </output>
       </div>
 
@@ -74,6 +77,7 @@ export const InputRange = ({
         type="range"
         className={styles.inputRange_input}
         aria-invalid={hasErrors || undefined}
+        aria-valuetext={formatValue?.(value)}
         aria-describedby={joinIds(hasErrors && getErrorId(id), !!helperText && getDescriptionId(id))}
         disabled={isDisabled}
         onChange={(event) => {

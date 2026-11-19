@@ -9,7 +9,7 @@
 
 - React Router v7 / SPA モード（`ssr: false`）＋ `prerender` で用途ルートを静的HTML化
 - ホスティング: Cloudflare Workers（静的アセット配信 ＋ Basic 認証ゲート）
-- 変換はすべてクライアントサイド・Web Worker（画像=jSquash / 動画=ffmpeg.wasm を想定、いずれも同一オリジンから WASM を自前配信）
+- 変換はすべてクライアントサイド・Web Worker（画像=jSquash / 動画=WebCodecs + Mediabunny。画像の WASM は同一オリジンから自前配信）
 - スタイル: Vanilla Extract / Lint・Format: oxlint・oxfmt / テスト: Vitest / Storybook
 
 詳細は `docs/`（`docs/README.md` が目次）を参照。

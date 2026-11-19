@@ -47,13 +47,9 @@ yorozu（万）は、開発・web制作で「あると嬉しい」便利ツー�
 ### 技術候補（未確定）
 
 - 画像変換エンジン: jSquash（WASM）
-- 動画変換エンジン: ffmpeg.wasm
-  - シングルスレッド版 / マルチスレッド版は未決定。
-  - マルチスレッド版を使う場合、`SharedArrayBuffer` のため COOP/COEP（cross-origin isolation）ヘッダが必要。
-- WASM は静的アセットとして同一オリジンから配信し、`_headers` でヘッダを付与。
+- 動画変換エンジン: WebCodecs + Mediabunny（ffmpeg.wasm は、WASM が Cloudflare Workers の 1 ファイル 25MiB の上限を超え、シングルスレッド版が遅すぎるため採らない）
+- WASM は静的アセットとして同一オリジンから配信する。
 
 ## 未決事項（TBD）
 
-- ffmpeg: シングルスレッド / マルチスレッドどちらで始めるか。
-- 対応入力形式・品質 / 圧縮オプションの範囲。
-- 一括変換の要否。
+- なし（対応形式・オプション・一括変換は `docs/screens.md` に記載）。

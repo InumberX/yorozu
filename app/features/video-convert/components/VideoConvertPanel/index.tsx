@@ -1,92 +1,211 @@
-import { useMemo, useState, type ChangeEvent } from 'react'
+import { getCollectionProps, getFormProps, getInputProps, getSelectProps, useForm } from '@conform-to/react'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
+import { useMemo, useState, useSyncExternalStore } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import * as styles from './style.css'
-
-import { BaseButton } from '~/components/ui/buttons/BaseButton'
+import { InputRadioCard } from '~/components/ui/forms/InputRadioCard'
+import { InputRange } from '~/components/ui/forms/InputRange'
+import { InputSelect } from '~/components/ui/forms/InputSelect'
+import { ConvertFileList, ConvertFileListItem } from '~/features/file-convert/components/ConvertFileList'
+import { ConvertPanel } from '~/features/file-convert/components/ConvertPanel'
+import { ConvertResults } from '~/features/file-convert/components/ConvertResults'
+import { FileThumbnail } from '~/features/file-convert/components/FileThumbnail'
 import { useVideoConvert } from '~/features/video-convert/hooks/use-video-convert'
-import { type VideoCodec } from '~/features/video-convert/types'
+import { MAX_DURATION_MINUTES, MAX_DURATION_SECONDS, MAX_FILE_SIZE_LABEL } from '~/features/video-convert/limits'
+import { createVideoConvertSchema, DEFAULT_QUALITY, VIDEO_ACCEPT } from '~/features/video-convert/schema'
+import {
+  VIDEO_CODECS,
+  VIDEO_QUALITY_LEVELS,
+  VIDEO_RESOLUTIONS,
+  type VideoCodec,
+  type VideoConvertOptions,
+  type VideoQualityLevel,
+  type VideoResolution,
+} from '~/features/video-convert/types'
+import { CODEC_LABELS, toSettingLabel, toVideoMetaLabel } from '~/features/video-convert/utils/video-label'
+import { loadVideoThumbnail, type VideoThumbnailMeta } from '~/features/video-convert/utils/video-thumbnail'
 
+const FORM_ID = 'video-convert-form'
+
+// 解像度の選択肢に出す大きさ（横長のときの幅 × 高さ）
+const RESOLUTION_SIZES: Record<Exclude<VideoResolution, 'original'>, string> = {
+  1080: '1920 × 1080',
+  720: '1280 × 720',
+  480: '854 × 480',
+}
+
+// 変換には WebCodecs の VideoEncoder を使う。prerender の描画中は、対応しているものとして描く。
+const subscribeNothing = () => () => undefined
+const getIsSupported = () => typeof VideoEncoder !== 'undefined' && typeof VideoDecoder !== 'undefined'
+const getIsSupportedOnServer = () => true
+
+const pick = <T extends string | number>(values: readonly T[], value: unknown, fallback: T): T =>
+  values.find((candidate) => String(candidate) === String(value)) ?? fallback
+
+// 動画変換の操作。読み込む → 指定する → 変換する の 3 つの手順と、変換結果。
 export const VideoConvertPanel = () => {
   const { t } = useTranslation('pages/YZ30_100')
-  const { status, progress, error, convert } = useVideoConvert()
+  const { status, progress, groups, convert, cancel, clearDone, removeGroup } = useVideoConvert()
+  const [files, setFiles] = useState<File[]>([])
+  const isSupported = useSyncExternalStore(subscribeNothing, getIsSupported, getIsSupportedOnServer)
 
-  const [file, setFile] = useState<File | null>(null)
-  const [codec, setCodec] = useState<VideoCodec>('vp9')
-  const [crf, setCrf] = useState(31)
+  // 言語が変わったら、エラーの文言もその言語で作り直す
+  const schema = useMemo(() => createVideoConvertSchema(t), [t])
+
+  const [form, fields] = useForm({
+    id: FORM_ID,
+    defaultValue: {
+      codec: 'vp9',
+      quality: String(DEFAULT_QUALITY),
+      resolution: 'original',
+    },
+    constraint: getZodConstraint(schema),
+    shouldValidate: 'onInput',
+    shouldRevalidate: 'onInput',
+    onValidate: ({ formData }) => parseWithZod(formData, { schema }),
+    onSubmit: (event, { submission }) => {
+      // 変換はブラウザの中で行う。フォームは送らない
+      event.preventDefault()
+      if (submission?.status !== 'success') {
+        return
+      }
+      // 検証したものと同じファイルを変換する（一覧の state ではなく、フォームの値を使う）
+      const { files: validatedFiles, codec, quality, resolution } = submission.value
+      void convert(validatedFiles, { codec, quality: quality as VideoQualityLevel, resolution })
+    },
+  })
 
   const isConverting = status === 'converting'
-
-  const onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setFile(event.target.files?.[0] ?? null)
+  const options: VideoConvertOptions = {
+    codec: pick<VideoCodec>(VIDEO_CODECS, fields.codec.value, 'vp9'),
+    quality: pick<VideoQualityLevel>(VIDEO_QUALITY_LEVELS, fields.quality.value, DEFAULT_QUALITY),
+    resolution: pick<VideoResolution>(VIDEO_RESOLUTIONS, fields.resolution.value, 'original'),
   }
 
-  const onSubmit = () => {
-    if (!file) {
-      return
-    }
-    convert(file, { codec, crf })
+  const handleChangeFiles = (next: File[]) => {
+    setFiles(next)
+    clearDone()
   }
-
-  const codecs: VideoCodec[] = useMemo(() => ['vp9', 'vp8'], [])
 
   return (
-    <div className={styles.panel}>
-      <label className={styles.dropzone}>
-        <input type="file" accept="video/*" className={styles.dropzone_input} onChange={onFileChange} />
-        <span className={styles.dropzone_label}>{file ? file.name : t('form.dropzone.label')}</span>
-        <span className={styles.dropzone_hint}>{t('form.dropzone.hint')}</span>
-      </label>
-
-      <div className={styles.options}>
-        <div className={styles.field}>
-          <span className={styles.field_label}>{t('form.codec.label')}</span>
-          <div className={styles.codecList}>
-            {codecs.map((value) => (
-              <label key={value} className={styles.codecItem}>
-                <input
-                  type="radio"
-                  name="codec"
-                  value={value}
-                  checked={codec === value}
-                  onChange={() => setCodec(value)}
-                />
-                <span>{t(`form.codec.${value}`)}</span>
-              </label>
+    <>
+      <ConvertPanel
+        formProps={getFormProps(form)}
+        status={status}
+        progress={progress}
+        fileInputProps={getInputProps(fields.files, { type: 'file' })}
+        fileErrors={fields.files.errors}
+        files={files}
+        onChangeFiles={handleChangeFiles}
+        accept={VIDEO_ACCEPT}
+        acceptLabel={t('form.files.accept')}
+        limitLabel={t('form.files.limit', { minutes: MAX_DURATION_MINUTES, size: MAX_FILE_SIZE_LABEL })}
+        fileList={
+          <ConvertFileList>
+            {files.map((file, index) => (
+              <VideoFileListItem
+                key={`${file.name}-${file.size}-${file.lastModified}`}
+                file={file}
+                // ファイルごとのエラー（files[0] など）
+                errors={fields.files.allErrors[`${fields.files.name}[${index}]`]}
+                isDisabled={isConverting}
+                onRemove={() => handleChangeFiles(files.filter((_, i) => i !== index))}
+              />
             ))}
-          </div>
-        </div>
+          </ConvertFileList>
+        }
+        options={
+          <>
+            <InputRadioCard
+              id={fields.codec.id}
+              inputProps={getCollectionProps(fields.codec, {
+                type: 'radio',
+                options: [...VIDEO_CODECS],
+              })}
+              options={[
+                { label: t('form.codec.vp9'), note: t('form.codec.vp9Note') },
+                { label: t('form.codec.vp8'), note: t('form.codec.vp8Note') },
+              ]}
+              legend={t('form.codec.legend')}
+              errors={fields.codec.errors}
+              isDisabled={isConverting}
+              onChange={clearDone}
+            />
+            <InputRange
+              inputProps={getInputProps(fields.quality, { type: 'range' })}
+              errors={fields.quality.errors}
+              label={t('form.quality.label')}
+              minLabel={t('form.quality.low')}
+              maxLabel={t('form.quality.high')}
+              formatValue={(value) => t(`form.quality.levels.${value}`)}
+              isDisabled={isConverting}
+              onChange={clearDone}
+            />
+            <InputSelect
+              selectProps={getSelectProps(fields.resolution)}
+              errors={fields.resolution.errors}
+              label={t('form.resolution.label')}
+              options={VIDEO_RESOLUTIONS.map((resolution) => ({
+                value: resolution,
+                label: resolution === 'original' ? t('form.resolution.original') : RESOLUTION_SIZES[resolution],
+              }))}
+              helperText={t('form.resolution.helper')}
+              isDisabled={isConverting}
+              onChange={clearDone}
+            />
+          </>
+        }
+        settingLabel={toSettingLabel(t, options)}
+        runNote={t('convert.runNote')}
+        unavailableMessage={isSupported ? undefined : t('form.unsupported')}
+        onCancel={cancel}
+      />
 
-        <div className={styles.field}>
-          <span className={styles.field_label}>
-            {t('form.quality.label')}（{crf}）
-          </span>
-          <input
-            type="range"
-            min={0}
-            max={63}
-            value={crf}
-            onChange={(event) => setCrf(Number(event.target.value))}
-            className={styles.range}
-            aria-label={t('form.quality.label')}
-          />
-        </div>
-      </div>
-
-      <div className={styles.actions}>
-        <BaseButton buttonType="button" isDisabled={!file || isConverting} onClick={onSubmit} size="large">
-          {isConverting ? t('form.converting') : t('form.submit')}
-        </BaseButton>
-      </div>
-
-      {isConverting && (
-        <p className={styles.progress} role="status">
-          {progress}%
-        </p>
+      {groups.length > 0 && (
+        <ConvertResults
+          groups={groups}
+          onRemoveGroup={removeGroup}
+          getSettingLabel={(groupOptions) => toSettingLabel(t, groupOptions)}
+          renderThumbnail={(item) => <FileThumbnail file={item.blob} load={loadVideoThumbnail} icon="video" />}
+          getFailureReason={(code, groupOptions) =>
+            t(`results.errors.${code}`, {
+              defaultValue: '',
+              minutes: MAX_DURATION_MINUTES,
+              codec: CODEC_LABELS[groupOptions.codec],
+            }) || undefined
+          }
+          getWarningLabel={(code) => t(`results.warnings.${code}`, { defaultValue: '' }) || undefined}
+          zipNamePrefix="yorozu-videos"
+          logLabel="video-convert"
+        />
       )}
-      {status === 'error' && error && <p className={styles.error}>{error}</p>}
+    </>
+  )
+}
 
-      <p className={styles.note}>{t('note')}</p>
-    </div>
+type VideoFileListItemProps = {
+  file: File
+  errors?: string[]
+  isDisabled?: boolean
+  onRemove: () => void
+}
+
+// 読み込んだ動画の 1 件。見本を描けたら、大きさ（px）と長さも出す。長すぎるものは、ここで知らせる。
+const VideoFileListItem = ({ file, errors, isDisabled, onRemove }: VideoFileListItemProps) => {
+  const { t } = useTranslation('pages/YZ30_100')
+  const [meta, setMeta] = useState<VideoThumbnailMeta | undefined>(undefined)
+  const isTooLong = !!meta && meta.duration > MAX_DURATION_SECONDS
+
+  return (
+    <ConvertFileListItem
+      name={file.name}
+      meta={toVideoMetaLabel({ width: meta?.width, height: meta?.height, duration: meta?.duration, size: file.size })}
+      thumbnail={<FileThumbnail file={file} load={loadVideoThumbnail} icon="video" onLoad={setMeta} />}
+      errors={
+        isTooLong ? [...(errors ?? []), t('form.files.errors.duration', { minutes: MAX_DURATION_MINUTES })] : errors
+      }
+      isDisabled={isDisabled}
+      onRemove={onRemove}
+    />
   )
 }

@@ -39,6 +39,8 @@ export type ConvertPanelProps = {
   settingLabel: string
   // 変換しているあいだに出す注意
   runNote: string
+  // 変換できない理由（例: このブラウザでは変換できない）。あれば「変換する」を押せなくして、理由を出す
+  unavailableMessage?: string
   onCancel: () => void
 }
 
@@ -58,6 +60,7 @@ export const ConvertPanel = ({
   options,
   settingLabel,
   runNote,
+  unavailableMessage,
   onCancel,
 }: ConvertPanelProps) => {
   const { t } = useTranslation('common')
@@ -138,6 +141,7 @@ export const ConvertPanel = ({
             ) : (
               <div className={styles.convertPanel_ready}>
                 {status === 'done' && <p className={styles.convertPanel_done}>{t('convert.done')}</p>}
+                {unavailableMessage && <p className={styles.convertPanel_unavailable}>{unavailableMessage}</p>}
                 {hasFiles ? (
                   <p className={styles.convertPanel_summary}>
                     {t('convert.count', { count: files.length })}
@@ -151,7 +155,7 @@ export const ConvertPanel = ({
                   buttonType="submit"
                   size="large"
                   className={styles.convertPanel_run}
-                  isDisabled={!hasFiles}
+                  isDisabled={!hasFiles || !!unavailableMessage}
                   rightElm={<span aria-hidden="true">→</span>}
                 >
                   {t('convert.run')}

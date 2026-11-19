@@ -19,7 +19,7 @@ export type ZipEntry = {
   blob: Blob
 }
 
-// ファイルを ZIP にまとめる。画像はすでに圧縮されているので、まとめるだけにして（level 0）速くする。
+// ファイルを ZIP にまとめる。画像や動画はすでに圧縮されているので、まとめるだけにして（level 0）速くする。
 export const createZip = async (entries: ZipEntry[]): Promise<Blob> => {
   const files: Record<string, [Uint8Array, { level: 0 }]> = {}
 
