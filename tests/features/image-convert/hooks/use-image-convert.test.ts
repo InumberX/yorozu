@@ -16,12 +16,14 @@ class FakeWorker {
   onerror: ((event: Event) => void) | null = null
   onmessageerror: ((event: Event) => void) | null = null
   isTerminated = false
+  lastRequest: ImageConvertRequest | null = null
 
   constructor() {
     workers.push(this)
   }
 
   postMessage(request: ImageConvertRequest) {
+    this.lastRequest = request
     const behavior = behaviors.shift() ?? 'done'
     queueMicrotask(() => {
       if (this.isTerminated) {
@@ -58,13 +60,17 @@ describe('useImageConvert', () => {
     workers.length = 0
     behaviors = []
     vi.stubGlobal('Worker', FakeWorker)
-    vi.stubGlobal('URL', Object.assign(URL, { createObjectURL: vi.fn(() => 'blob:x'), revokeObjectURL: vi.fn() }))
+    // jsdom の URL には createObjectURL / revokeObjectURL がないため、このテストの間だけ足す
+    Object.defineProperty(URL, 'createObjectURL', { configurable: true, value: vi.fn(() => 'blob:x') })
+    Object.defineProperty(URL, 'revokeObjectURL', { configurable: true, value: vi.fn() })
     vi.spyOn(console, 'error').mockImplementation(() => undefined)
   })
 
   afterEach(() => {
     vi.unstubAllGlobals()
     vi.restoreAllMocks()
+    Reflect.deleteProperty(URL, 'createObjectURL')
+    Reflect.deleteProperty(URL, 'revokeObjectURL')
   })
 
   test('描画しただけでは Worker を作らない', () => {
@@ -115,6 +121,56 @@ describe('useImageConvert', () => {
     expect(result.current.status).toBe('done')
     expect(result.current.groups[0].failedNames).toEqual(['a.png', 'b.png', 'c.png'])
     expect(workers).toHaveLength(2)
+  })
+
+  test('止めたあとの Worker からエラーが届いても、今の Worker の変換には影響しない', async () => {
+    behaviors = ['hang']
+    const { result } = renderHook(() => useImageConvert())
+
+    let first: Promise<void> | undefined
+    act(() => {
+      first = result.current.convert([createFile('a.png')], OPTIONS)
+    })
+    await waitFor(() => expect(workers).toHaveLength(1))
+    act(() => result.current.cancel())
+    await act(() => first)
+
+    // 次の変換の途中で、止めた Worker からエラーが届く
+    behaviors = ['hang']
+    let second: Promise<void> | undefined
+    act(() => {
+      second = result.current.convert([createFile('b.png')], OPTIONS)
+    })
+    await waitFor(() => expect(workers[1]?.lastRequest).not.toBe(null))
+    act(() => workers[0].onerror?.(new Event('error')))
+    expect(workers[1].isTerminated).toBe(false)
+
+    // 今の Worker の返事で、ふつうに終わる
+    const request = workers[1].lastRequest as ImageConvertRequest
+    act(() =>
+      workers[1].onmessage?.({ data: { type: 'done', id: request.id, blob: new Blob(['ok']) } } as MessageEvent)
+    )
+    await act(() => second)
+
+    expect(result.current.groups[0].items.map((item) => item.sourceName)).toEqual(['b.png'])
+    expect(result.current.groups[0].failedNames).toEqual([])
+  })
+
+  test('Worker を作れないときは、変換できなかったものとして終える', async () => {
+    vi.stubGlobal(
+      'Worker',
+      class {
+        constructor() {
+          throw new Error('blocked by CSP')
+        }
+      }
+    )
+    const { result } = renderHook(() => useImageConvert())
+
+    await act(() => result.current.convert([createFile('a.png'), createFile('b.png')], OPTIONS))
+
+    expect(result.current.status).toBe('done')
+    expect(result.current.groups[0].failedNames).toEqual(['a.png', 'b.png'])
   })
 
   test('中止すると Worker を止め、結果を残さない', async () => {

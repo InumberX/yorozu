@@ -65,8 +65,8 @@ type PendingRequest = {
 }
 
 // Worker が続けて落ちたら、残りのファイルは変換しない。
-// 2 回続くのは、Worker のスクリプト自体が読めない（新しい版がデプロイされて古いファイルが消えた、通信が切れた）ときで、
-// 何度作り直しても同じ結果になるため。1 回だけなら、そのファイルが重すぎただけとみなして次へ進む。
+// スクリプト自体が読めないとき（新しい版のデプロイで古いファイルが消えた、通信が切れた）は、何度作り直しても同じ結果になる。
+// 重いファイルが続いただけのときとは区別できないため、2 回続いたら打ち切る。1 回だけなら、そのファイルだけ失敗にして次へ進む。
 const MAX_CONSECUTIVE_CRASHES = 2
 
 const createWorker = () =>
@@ -139,6 +139,10 @@ export const useImageConvert = () => {
     // 待っている依頼が永遠に終わらなくなるため、Worker ごと捨てて、次のファイルでは作り直す。
     const handleCrash = (event: Event) => {
       event.preventDefault()
+      // 止めたあとの Worker から届いたものなら、今の Worker と依頼には関係がない
+      if (workerRef.current !== worker) {
+        return
+      }
       console.error('[image-convert] worker crashed', event)
       stopWorker(true)
     }
@@ -173,7 +177,14 @@ export const useImageConvert = () => {
         const id = nextId()
         pendingRef.current = { id, resolve, onProgress }
         const request: ImageConvertRequest = { type: 'convert', id, file, options }
-        getWorker().postMessage(request)
+        try {
+          getWorker().postMessage(request)
+        } catch (error) {
+          // Worker を作れない（CSP で禁じられているなど）。作り直しても同じなので、落ちたものとして扱う
+          console.error('[image-convert] failed to start worker', error)
+          pendingRef.current = null
+          resolve({ blob: null, isCrashed: true })
+        }
       }),
     [getWorker, nextId]
   )
@@ -201,7 +212,7 @@ export const useImageConvert = () => {
           }
         })
 
-        // 中止されたら、ここまでの結果も残さない
+        // 中止されたり、画面を離れたりしたら、ここまでの結果も残さない
         if (runRef.current !== run) {
           for (const item of items) {
             URL.revokeObjectURL(item.url)
