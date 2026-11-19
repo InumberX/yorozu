@@ -1,5 +1,6 @@
 import { style } from '@vanilla-extract/css'
 
+import { getLineColor, getRgba } from '~/styles/mixins/color.css'
 import { getFontSize } from '~/styles/mixins/font.css'
 import { getMediaQuery } from '~/styles/mixins/media-query.css'
 import { getTransition } from '~/styles/mixins/transition.css'
@@ -32,7 +33,6 @@ export const inputRadioCard_legend = style({
       ...fontMediumBold,
       marginBlockEnd: 8,
       paddingInline: 0,
-      letterSpacing: '0.06em',
       color: cssVariables.color.font.white.hex,
     },
   },
@@ -63,7 +63,7 @@ export const inputRadioCard_item = style({
       display: 'block',
       paddingBlock: 12,
       paddingInline: 14,
-      border: `1px solid ${cssVariables.color.line.level3}`,
+      border: `1px solid ${getLineColor(0.3)}`,
       backgroundColor: 'transparent',
       color: cssVariables.color.font.white.hex,
       cursor: 'pointer',
@@ -72,7 +72,7 @@ export const inputRadioCard_item = style({
       selectors: {
         [`&:has(${inputRadioCard_input}:checked)`]: {
           borderColor: cssVariables.color.border.primary.hex,
-          backgroundColor: `rgba(${cssVariables.color.background.primary.rgb}, 0.12)`,
+          backgroundColor: getRgba(cssVariables.color.background.primary.rgb, 0.12),
         },
 
         [`&:has(${inputRadioCard_input}:focus-visible)`]: {
@@ -93,8 +93,8 @@ export const inputRadioCard_item = style({
         [getMediaQuery('hover')]: {
           selectors: {
             [`&:hover:has(${inputRadioCard_input}:enabled:not(:checked))`]: {
-              borderColor: cssVariables.color.line.level5,
-              backgroundColor: `rgba(${cssVariables.color.background.primary.rgb}, 0.06)`,
+              borderColor: getLineColor(0.5),
+              backgroundColor: getRgba(cssVariables.color.background.primary.rgb, 0.06),
             },
           },
         },
@@ -109,7 +109,6 @@ export const inputRadioCard_label = style({
       display: 'block',
       fontFamily: cssVariables.font.family.mono,
       fontSize: getFontSize(16),
-      letterSpacing: '0.06em',
     },
   },
 })

@@ -32,7 +32,6 @@ export const inputRange_label = style({
   '@layer': {
     [cssLayerComponentUiMiddle]: {
       ...fontMediumBold,
-      letterSpacing: '0.06em',
       color: cssVariables.color.font.white.hex,
     },
   },

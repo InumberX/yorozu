@@ -1,5 +1,6 @@
 import { style } from '@vanilla-extract/css'
 
+import { getLineColor, getRgba } from '~/styles/mixins/color.css'
 import { getFontSize } from '~/styles/mixins/font.css'
 import { getContainerQuery, getMediaQuery } from '~/styles/mixins/media-query.css'
 import { getTransition } from '~/styles/mixins/transition.css'
@@ -8,7 +9,7 @@ import { cssVariables } from '~/styles/variables/css-variables.css'
 import { fontLargeBold, fontMediumBold, fontSmall } from '~/styles/variables/font.css'
 import { cssLayerComponentUiMiddle } from '~/styles/variables/layers.css'
 
-const DASHED_BORDER = `1px dashed rgba(${cssVariables.color.border.primary.rgb}, 0.55)`
+const DASHED_BORDER = `1px dashed ${getLineColor(0.55)}`
 
 export const inputFileDrop = style({
   '@layer': {
@@ -55,7 +56,7 @@ export const inputFileDrop_area__dragOver = style({
   '@layer': {
     [cssLayerComponentUiMiddle]: {
       outlineColor: cssVariables.color.border.primary.hex,
-      backgroundColor: `rgba(${cssVariables.color.background.primary.rgb}, 0.08)`,
+      backgroundColor: getRgba(cssVariables.color.background.primary.rgb, 0.08),
     },
   },
 })
@@ -133,7 +134,6 @@ const buttonBase = {
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  letterSpacing: '0.06em',
   color: cssVariables.color.font.primary.hex,
   backgroundColor: 'transparent',
   cursor: 'pointer',
@@ -154,7 +154,7 @@ const buttonBase = {
     [getMediaQuery('hover')]: {
       selectors: {
         '&:enabled:hover': {
-          backgroundColor: `rgba(${cssVariables.color.background.primary.rgb}, 0.12)`,
+          backgroundColor: getRgba(cssVariables.color.background.primary.rgb, 0.12),
         },
       },
     },
@@ -169,7 +169,7 @@ export const inputFileDrop_pickButton = style({
       minBlockSize: 48,
       paddingBlock: 8,
       paddingInline: 18,
-      border: `1px solid rgba(${cssVariables.color.border.primary.rgb}, 0.6)`,
+      border: `1px solid ${getLineColor(0.6)}`,
 
       '@container': {
         [getContainerQuery('sm')]: {

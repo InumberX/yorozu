@@ -1,5 +1,6 @@
 import { style } from '@vanilla-extract/css'
 
+import { getRgba } from '~/styles/mixins/color.css'
 import { getMediaQuery } from '~/styles/mixins/media-query.css'
 import { getTransition } from '~/styles/mixins/transition.css'
 import { visuallyHidden } from '~/styles/mixins/visually-hidden.css'
@@ -66,7 +67,7 @@ export const inputCheckbox_box = style({
         },
 
         [`${inputCheckbox_input}:checked + &`]: {
-          backgroundColor: `rgba(${cssVariables.color.background.primary.rgb}, 0.12)`,
+          backgroundColor: getRgba(cssVariables.color.background.primary.rgb, 0.12),
         },
 
         [`${inputCheckbox_input}:checked + &::after`]: {
