@@ -5,17 +5,10 @@
     "title": "Convert images",
     "lead": "Convert PNG and JPEG images to WebP or AVIF."
   },
-  "steps": {
-    "load": "Load",
-    "options": "Set options",
-    "convert": "Convert"
-  },
   "form": {
-    "reset": "Reset",
     "files": {
       "accept": "PNG / JPEG",
       "limit": "Up to {{size}} per file",
-      "remove": "Remove file: {{name}}",
       "errors": {
         "required": "Load a file.",
         "type": "Load a PNG or JPEG file.",
@@ -37,33 +30,12 @@
     "lossless": "Export lossless"
   },
   "convert": {
-    "needFile": "Load a file to convert it.",
-    "count_one": "{{count}} file",
-    "count_other": "{{count}} files",
     "setting": "{{format}} / {{detail}}",
     "qualityDetail": "Quality {{quality}}",
-    "run": "Convert",
-    "running": "Converting",
-    "runNote": "You can keep using the page while it converts.",
-    "cancel": "Cancel",
-    "done": "Conversion complete"
-  },
-  "results": {
-    "title": "Results",
-    "convertedAt": "Converted",
-    "remove": "Delete this result: {{at}}",
-    "download": "Download",
-    "downloadLabel": "Download: {{name}}",
-    "downloadAll": "Download all",
-    "downloadAllLabel": "Download all (ZIP): {{at}}",
-    "failed": "Files that could not be converted: {{names}}",
-    "reduction": "Reduction",
-    "zipFailed": "Could not create the ZIP file. Please try again."
+    "runNote": "You can keep using the page while it converts."
   },
   "notes": {
     "limitTitle": "Formats and limits",
-    "limit": "PNG and JPEG files can be loaded, up to {{size}} each.",
-    "privacyTitle": "Privacy",
-    "privacy": "Files are processed in your browser and never sent anywhere. Closing the tab discards the data."
+    "limit": "PNG and JPEG files can be loaded, up to {{size}} each."
   }
 }

@@ -29,10 +29,12 @@ export async function loader(args: Route.LoaderArgs) {
   }
 }
 
-export default function PageYZ30_100() {
+export default function PageYZ30_100({ loaderData }: Route.ComponentProps) {
+  const { lang } = loaderData
+
   return (
     <LayoutPageWrapper>
-      <VideoConverter />
+      <VideoConverter lang={lang} />
     </LayoutPageWrapper>
   )
 }

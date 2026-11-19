@@ -1,13 +1,8 @@
 import { type TFunction } from 'i18next'
 
+import { toFileTypeLabel } from '~/features/file-convert/utils/convert-label'
 import { type ImageOutputFormat } from '~/features/image-convert/types'
 import { formatFileSize } from '~/utils/file'
-
-// 画像の種類を、表示用の短い名前にする（image/png → PNG）。
-export const toImageTypeLabel = (mimeType: string): string => {
-  const subtype = mimeType.split('/')[1] ?? ''
-  return subtype === '' ? '' : subtype.toUpperCase()
-}
 
 // ファイルの情報を「3024×2016 · 4.2MB · PNG」の形で表す。大きさ（px）がわからないうちは省く。
 export const toImageMetaLabel = ({
@@ -21,18 +16,9 @@ export const toImageMetaLabel = ({
   size: number
   type: string
 }): string =>
-  [width && height ? `${width}×${height}` : undefined, formatFileSize(size), toImageTypeLabel(type)]
+  [width && height ? `${width}×${height}` : undefined, formatFileSize(size), toFileTypeLabel(type)]
     .filter(Boolean)
     .join(' · ')
-
-// 変換でどれだけ小さくなったか（例: -88%）。大きくなったときは「+」を付ける。
-export const toReductionLabel = (beforeSize: number, afterSize: number): string => {
-  if (beforeSize <= 0) {
-    return ''
-  }
-  const rate = Math.round((afterSize / beforeSize - 1) * 100)
-  return rate > 0 ? `+${rate}%` : `${rate === 0 ? '±' : ''}${rate}%`
-}
 
 const FORMAT_LABELS: Record<ImageOutputFormat, string> = {
   webp: 'WebP',

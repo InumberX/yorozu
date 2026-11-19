@@ -17,6 +17,7 @@ type Props = {
 // 出典: yorozu アーティファクト「yorozu-cyber-net-image」（PC）/「yorozu-cyber-net-image-sp」（SP）。
 export const ImageConverter = ({ lang }: Props) => {
   const { t } = useTranslation('pages/YZ20_100')
+  const { t: tCommon } = useTranslation('common')
 
   return (
     <LayoutInner>
@@ -32,7 +33,7 @@ export const ImageConverter = ({ lang }: Props) => {
         <NotePanel
           items={[
             { title: t('notes.limitTitle'), text: t('notes.limit', { size: MAX_FILE_SIZE_LABEL }) },
-            { title: t('notes.privacyTitle'), text: t('notes.privacy') },
+            { title: tCommon('convert.notes.privacyTitle'), text: tCommon('convert.notes.privacy') },
           ]}
         />
       </div>

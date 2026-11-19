@@ -5,17 +5,10 @@
     "title": "画像を変換する",
     "lead": "PNG・JPEG の画像を、WebP または AVIF に変換します。"
   },
-  "steps": {
-    "load": "読み込む",
-    "options": "指定する",
-    "convert": "変換する"
-  },
   "form": {
-    "reset": "リセット",
     "files": {
       "accept": "PNG / JPEG",
       "limit": "1ファイル {{size}} まで",
-      "remove": "ファイルを削除: {{name}}",
       "errors": {
         "required": "ファイルを読み込んでください。",
         "type": "PNG か JPEG のファイルを読み込んでください。",
@@ -37,32 +30,12 @@
     "lossless": "ロスレスで書き出す"
   },
   "convert": {
-    "needFile": "ファイルを読み込むと変換できます。",
-    "count": "{{count}}件のファイル",
     "setting": "{{format}} / {{detail}}",
     "qualityDetail": "品質 {{quality}}",
-    "run": "変換する",
-    "running": "変換しています",
-    "runNote": "変換中もページの操作を続けられます。",
-    "cancel": "中止する",
-    "done": "変換が完了しました"
-  },
-  "results": {
-    "title": "変換結果",
-    "convertedAt": "変換日時",
-    "remove": "この変換結果を削除: {{at}}",
-    "download": "ダウンロード",
-    "downloadLabel": "ダウンロード: {{name}}",
-    "downloadAll": "すべてダウンロード",
-    "downloadAllLabel": "すべてダウンロード（ZIP）: {{at}}",
-    "failed": "変換できなかったファイル: {{names}}",
-    "reduction": "削減率",
-    "zipFailed": "ZIP を作れませんでした。もう一度お試しください。"
+    "runNote": "変換中もページの操作を続けられます。"
   },
   "notes": {
     "limitTitle": "対応形式と上限",
-    "limit": "PNG・JPEG を読み込めます。1ファイル {{size}} までです。",
-    "privacyTitle": "プライバシー",
-    "privacy": "ファイルはブラウザ内で処理され、外部には送信されません。タブを閉じるとデータは破棄されます。"
+    "limit": "PNG・JPEG を読み込めます。1ファイル {{size}} までです。"
   }
 }

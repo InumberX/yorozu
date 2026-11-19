@@ -16,14 +16,15 @@
 ## 技術候補（未確定・要判断）
 
 - 画像変換エンジン: 書き出しは jSquash（WASM、`@jsquash/webp` / `@jsquash/avif`）、読み込みはブラウザの `createImageBitmap`。Worker から必要になったときに動的 import する（`vite.config.ts` の `worker.format: 'es'`）。
-- 動画変換エンジン: ffmpeg.wasm を想定（候補）。
-  - **ffmpeg のシングルスレッド / マルチスレッドは未決定。** MT版は `SharedArrayBuffer` のため COOP/COEP（cross-origin isolation）ヘッダが必須。ST版は不要だが遅い。**着手前に確認すること。**
+- 動画変換エンジン: ブラウザの WebCodecs（`VideoDecoder` / `VideoEncoder` / `AudioEncoder`）と、MP4 / MOV を読み WebM を書く Mediabunny（`mediabunny`）。大きい WASM は使わない。WebCodecs のない環境では変換できない旨を出す。
+  - ffmpeg.wasm は採らなかった。core の WASM（約 31MiB）が Cloudflare Workers の静的アセットの上限（1 ファイル 25MiB）を超え、シングルスレッド版は VP9 の書き出しが遅すぎる（2 分の 1080p で数十分）ため。
+  - 画質は Mediabunny の 5 段階の品質で指定する。VP9 は量子化値（CRF に近いもの）、VP8 とそれに対応しないエンコーダーはビットレートで書き出す。CRF の数値を選ばせないのは、VP9 の量子化値の範囲がブラウザの版で変わり、VP8 には量子化値がないため（詳しくは `features/video-convert/types.ts`）。
 
 ## 重要な制約・落とし穴
 
-- COOP/COEP（`Cross-Origin-Opener-Policy: same-origin` / `Cross-Origin-Embedder-Policy: require-corp`）は **ffmpeg MT版を使う場合のみ必要**。静的アセットのルート（例: `public/_headers`）で付与する。
-- `require-corp` 下では外部オリジンのリソースに CORP が必要。**WASM（ffmpeg core / jSquash）は同一オリジンから自前配信**する（CDN 依存にしない）。
-- **大きい WASM（ffmpeg core ~25–30MB）は Worker スクリプトにバンドルしない。** 静的アセットとして配信する。
+- COOP/COEP（`Cross-Origin-Opener-Policy: same-origin` / `Cross-Origin-Embedder-Policy: require-corp`）は今は付けていない。`SharedArrayBuffer` が要る処理（マルチスレッドの WASM など）を足すときだけ、静的アセットのルート（例: `public/_headers`）で付与する。
+- `require-corp` 下では外部オリジンのリソースに CORP が必要。**WASM（jSquash など）は同一オリジンから自前配信**する（CDN 依存にしない）。
+- **WASM は Worker スクリプトにバンドルしない。** 静的アセットとして配信する。Cloudflare Workers の静的アセットは 1 ファイル 25MiB までなので、それを超える WASM は置けない。
 - 変換はすべてクライアントサイド。サーバー側処理は現状なし（将来足す余地を残すために RR を採用している）。
 - `ssr: false` でもルートはビルド時に一度サーバー描画されるため SSR-safe にする。`window` / `Worker` 等はレンダー中に触らず、`useEffect` やイベントハンドラ内で遅延初期化する。
 - 大きい / 長いファイルにはサイズ・長さのガードと進捗表示を入れる。
@@ -64,5 +65,4 @@
 
 ## 未決事項（TBD）
 
-- ffmpeg: シングルスレッド / マルチスレッド。
-- 動画の対応入力形式、品質 / 圧縮オプション。（画像は `docs/screens.md` の YZ20_100 に記載）
+- 今はなし。（画像・動画の対応形式とオプションは `docs/screens.md` の YZ20_100 / YZ30_100 に記載）

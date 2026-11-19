@@ -4,11 +4,13 @@ import { getLineColor, getRgba } from '~/styles/mixins/color.css'
 import { cssVariables } from '~/styles/variables/css-variables.css'
 import { cssLayerComponentUiMiddle } from '~/styles/variables/layers.css'
 
-export const imageThumbnail = style({
+export const fileThumbnail = style({
   '@layer': {
     [cssLayerComponentUiMiddle]: {
       position: 'relative',
       display: 'flex',
+      inlineSize: '100%',
+      blockSize: '100%',
       flexShrink: 0,
       alignItems: 'center',
       justifyContent: 'center',
@@ -20,25 +22,7 @@ export const imageThumbnail = style({
   },
 })
 
-export const imageThumbnail__medium = style({
-  '@layer': {
-    [cssLayerComponentUiMiddle]: {
-      inlineSize: 56,
-      blockSize: 56,
-    },
-  },
-})
-
-export const imageThumbnail__small = style({
-  '@layer': {
-    [cssLayerComponentUiMiddle]: {
-      inlineSize: 44,
-      blockSize: 44,
-    },
-  },
-})
-
-export const imageThumbnail_icon = style({
+export const fileThumbnail_icon = style({
   '@layer': {
     [cssLayerComponentUiMiddle]: {
       inlineSize: '64%',
@@ -47,7 +31,7 @@ export const imageThumbnail_icon = style({
   },
 })
 
-export const imageThumbnail_image = style({
+export const fileThumbnail_image = style({
   '@layer': {
     [cssLayerComponentUiMiddle]: {
       position: 'absolute',
@@ -60,7 +44,7 @@ export const imageThumbnail_image = style({
   },
 })
 
-export const imageThumbnail_image__loaded = style({
+export const fileThumbnail_image__loaded = style({
   '@layer': {
     [cssLayerComponentUiMiddle]: {
       opacity: 1,

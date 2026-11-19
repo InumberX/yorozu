@@ -1,56 +1,299 @@
-import { cleanup, fireEvent, type RenderResult } from '@testing-library/react'
+import { cleanup, fireEvent, type RenderResult, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 
 import { renderWithProviders } from '../../../../test-utils'
 
-// Worker を生成する hook はテストではモックする（jsdom に Worker は無いため）。
-const { convertSpy } = vi.hoisted(() => ({ convertSpy: vi.fn() }))
-vi.mock('~/features/video-convert/hooks/use-video-convert', () => ({
-  useVideoConvert: () => ({
-    status: 'idle',
+import type { ConvertResultGroup } from '~/features/file-convert/types'
+import type { VideoConvertOptions } from '~/features/video-convert/types'
+
+// Worker を作る hook は置き換える（jsdom に Worker はないため）。返す状態はテストごとに変える。
+const { hookState } = vi.hoisted(() => ({
+  hookState: {
+    status: 'idle' as 'idle' | 'converting' | 'done',
     progress: 0,
-    error: null,
-    result: null,
-    convert: convertSpy,
-    reset: vi.fn(),
-  }),
+    groups: [] as ConvertResultGroup<VideoConvertOptions>[],
+    convert: vi.fn(),
+    cancel: vi.fn(),
+    clearDone: vi.fn(),
+    removeGroup: vi.fn(),
+  },
+}))
+vi.mock('~/features/video-convert/hooks/use-video-convert', () => ({
+  useVideoConvert: () => hookState,
+}))
+
+// 見本を作る処理は置き換え、長さをテストごとに決める（jsdom は動画を読めないため）
+const { thumbnailDurations, thumbnailGate } = vi.hoisted(() => ({
+  thumbnailDurations: new Map<string, number>(),
+  // 見本ができるのを待たせたいテストだけ、ここに Promise を入れる
+  thumbnailGate: { current: Promise.resolve() as Promise<void> },
+}))
+vi.mock('~/features/video-convert/utils/video-thumbnail', () => ({
+  loadVideoThumbnail: async (file: File) => {
+    await thumbnailGate.current
+    const duration = thumbnailDurations.get(file.name)
+    if (duration === undefined) {
+      throw new Error('cannot play')
+    }
+    return {
+      bitmap: { width: 112, height: 112, close: () => undefined },
+      meta: { width: 1920, height: 1080, duration },
+    }
+  },
 }))
 
 import { VideoConvertPanel } from '~/features/video-convert/components/VideoConvertPanel'
 
+const createFile = (name: string, type = 'video/mp4') => new File(['x'], name, { type, lastModified: 1 })
+
+const createGroup = (): ConvertResultGroup<VideoConvertOptions> => ({
+  id: 'g1',
+  convertedAt: new Date(2026, 10, 19, 12, 34),
+  options: { codec: 'vp8', quality: 4, resolution: '720' },
+  items: [
+    {
+      id: 'i1',
+      sourceName: 'a.mp4',
+      fileName: 'a.webm',
+      beforeSize: 4000,
+      afterSize: 1000,
+      blob: new Blob(['x']),
+      url: 'blob:a',
+      warnings: ['AUDIO_DROPPED'],
+    },
+  ],
+  failures: [
+    { name: 'long.mov', code: 'TOO_LONG' },
+    { name: 'h265.mp4', code: 'UNSUPPORTED_ENCODER' },
+    { name: 'crashed.mp4', code: null },
+  ],
+})
+
 describe('VideoConvertPanel', () => {
   let result: RenderResult
+
+  const getInput = () => result.container.querySelector('input[type="file"]') as HTMLInputElement
+  const pickFiles = (files: File[]) => fireEvent.change(getInput(), { target: { files } })
+
+  beforeEach(() => {
+    // jsdom に WebCodecs はないため、対応しているブラウザとして扱う
+    vi.stubGlobal('VideoEncoder', class {})
+    vi.stubGlobal('VideoDecoder', class {})
+    // jsdom の FormData は、テストで差し替えた input.files を読まない。
+    // ブラウザと同じく、ファイルの入力の中身を FormData に入れる（disabled の入力は入れない）。
+    const OriginalFormData = globalThis.FormData
+    class FormDataWithFiles extends OriginalFormData {
+      constructor(form?: HTMLFormElement, submitter?: HTMLElement | null) {
+        super(form, submitter)
+        form?.querySelectorAll<HTMLInputElement>('input[type="file"]').forEach((input) => {
+          this.delete(input.name)
+          if (input.disabled) {
+            return
+          }
+          for (const file of Array.from(input.files ?? [])) {
+            this.append(input.name, file)
+          }
+        })
+      }
+    }
+    vi.stubGlobal('FormData', FormDataWithFiles)
+    // 見本をキャンバスに描けるようにする（jsdom のキャンバスは描けない）
+    vi.stubGlobal('createImageBitmap', vi.fn())
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
+      drawImage: () => undefined,
+    } as unknown as CanvasRenderingContext2D)
+  })
 
   afterEach(() => {
     cleanup()
     vi.clearAllMocks()
+    vi.unstubAllGlobals()
+    vi.restoreAllMocks()
+    thumbnailDurations.clear()
+    thumbnailGate.current = Promise.resolve()
+    hookState.status = 'idle'
+    hookState.progress = 0
+    hookState.groups = []
   })
 
-  beforeEach(() => {
-    result = renderWithProviders(<VideoConvertPanel />)
+  describe('ファイルがないとき', () => {
+    test('変換するボタンが押せず、読み込むよう案内する', () => {
+      result = renderWithProviders(<VideoConvertPanel />)
+      expect(result.getByText('ファイルを読み込むと変換できます。')).not.toBe(null)
+      expect(result.getByRole('button', { name: /変換する/ })).toBeDisabled()
+    })
+
+    test('既定は VP9・画質 標準・元のまま', () => {
+      result = renderWithProviders(<VideoConvertPanel />)
+      expect(result.getByRole('radio', { name: 'VP9' })).toBeChecked()
+      const slider = result.getByRole('slider', { name: '画質' })
+      expect(slider).toHaveValue('3')
+      expect(slider.getAttribute('aria-valuetext')).toBe('標準')
+      expect(result.getByRole('combobox', { name: '解像度' })).toHaveValue('original')
+    })
+
+    test('読み込める形式を input の accept に渡し、上限を出す', () => {
+      result = renderWithProviders(<VideoConvertPanel />)
+      expect(getInput().getAttribute('accept')).toBe('video/mp4,video/quicktime')
+      expect(result.getByText('長さ 2分・200MB まで')).not.toBe(null)
+    })
   })
 
-  test('ドロップゾーンのラベルとコーデック（VP9 / VP8）が出力されている', () => {
-    expect(result.getByText('動画ファイルをドラッグ＆ドロップ、またはクリックして選択')).not.toBe(null)
-    expect(result.getByText('VP9')).not.toBe(null)
-    expect(result.getByText('VP8')).not.toBe(null)
+  describe('WebCodecs に対応していないブラウザ', () => {
+    test('そのことを知らせ、ファイルがあっても変換するボタンを押せなくする', () => {
+      vi.unstubAllGlobals()
+      result = renderWithProviders(<VideoConvertPanel />)
+      pickFiles([createFile('a.mp4')])
+
+      expect(result.getByText(/このブラウザは動画の変換（WebCodecs）に対応していません。/)).not.toBe(null)
+      expect(result.getByRole('button', { name: /変換する/ })).toBeDisabled()
+    })
   })
 
-  test('ファイル未選択では変換ボタンが無効', () => {
-    const button = result.container.querySelector('button')
-    expect(button?.disabled).toBe(true)
+  describe('ファイルを読み込んだとき', () => {
+    test('一覧に出し、件数と出力の設定を見せる', () => {
+      result = renderWithProviders(<VideoConvertPanel />)
+      pickFiles([createFile('a.mp4'), createFile('b.mov', 'video/quicktime')])
+
+      expect(result.getByText('a.mp4')).not.toBe(null)
+      expect(result.getByText('b.mov')).not.toBe(null)
+      expect(result.getByText('2件のファイル')).not.toBe(null)
+      expect(result.getByText('→ WebM · VP9 / 画質 標準 / 元のまま')).not.toBe(null)
+      expect(result.getByRole('button', { name: /変換する/ })).toBeEnabled()
+    })
+
+    test('設定を変えると、出力の設定の表示も変わる', () => {
+      result = renderWithProviders(<VideoConvertPanel />)
+      pickFiles([createFile('a.mp4')])
+
+      fireEvent.click(result.getByRole('radio', { name: 'VP8' }))
+      // ブラウザと同じく、値を変えたら input と change の両方を送る（Conform は input で値を拾う）
+      const slider = result.getByRole('slider', { name: '画質' })
+      fireEvent.input(slider, { target: { value: '5' } })
+      fireEvent.change(slider)
+      const select = result.getByRole('combobox', { name: '解像度' })
+      fireEvent.input(select, { target: { value: '720' } })
+      fireEvent.change(select)
+
+      expect(result.getByText('→ WebM · VP8 / 画質 最高画質 / 720p')).not.toBe(null)
+    })
+
+    test('変換すると、読み込んだファイルと設定で convert を呼ぶ', async () => {
+      result = renderWithProviders(<VideoConvertPanel />)
+      const file = createFile('a.mp4')
+      pickFiles([file])
+
+      fireEvent.change(result.getByRole('slider', { name: '画質' }), { target: { value: '2' } })
+      fireEvent.change(result.getByRole('combobox', { name: '解像度' }), { target: { value: '480' } })
+      fireEvent.click(result.getByRole('button', { name: /変換する/ }))
+
+      await waitFor(() =>
+        expect(hookState.convert).toHaveBeenCalledWith([file], { codec: 'vp9', quality: 2, resolution: '480' })
+      )
+    })
+
+    test('見本から長さがわかったら、大きさ・長さを出す', async () => {
+      thumbnailDurations.set('a.mp4', 42)
+      result = renderWithProviders(<VideoConvertPanel />)
+      pickFiles([createFile('a.mp4')])
+
+      await waitFor(() => expect(result.getByText('1920×1080 · 00:42 · 1B')).not.toBe(null))
+    })
+
+    test('2 分を超えるとわかった動画はエラーにし、変換させない', async () => {
+      thumbnailDurations.set('long.mp4', 130)
+      result = renderWithProviders(<VideoConvertPanel />)
+      pickFiles([createFile('long.mp4')])
+
+      await waitFor(() => expect(result.getByText('長さ 2分 までです。')).not.toBe(null))
+      fireEvent.click(result.getByRole('button', { name: /変換する/ }))
+      await waitFor(() => expect(result.getByText('長さ 2分 までです。')).not.toBe(null))
+      expect(hookState.convert).not.toHaveBeenCalled()
+    })
+
+    test('長さがわからない（NaN・Infinity）ときは、エラーにしない', async () => {
+      thumbnailDurations.set('a.mp4', Number.POSITIVE_INFINITY)
+      thumbnailDurations.set('b.mp4', Number.NaN)
+      result = renderWithProviders(<VideoConvertPanel />)
+      pickFiles([createFile('a.mp4'), createFile('b.mp4')])
+
+      await waitFor(() => expect(result.getAllByText('1920×1080 · 1B')).toHaveLength(2))
+      expect(result.queryByText('長さ 2分 までです。')).toBe(null)
+    })
+
+    test('変換中に長さがわかったときは、変換が終わってから検証する', async () => {
+      let openGate: () => void = () => undefined
+      thumbnailGate.current = new Promise((resolve) => {
+        openGate = resolve
+      })
+      thumbnailDurations.set('long.mp4', 130)
+      result = renderWithProviders(<VideoConvertPanel />)
+      pickFiles([createFile('long.mp4')])
+
+      // 変換が始まってから、見本ができて長さがわかる
+      hookState.status = 'converting'
+      result.rerender(<VideoConvertPanel />)
+      openGate()
+      await waitFor(() => expect(result.getByText('1920×1080 · 02:10 · 1B')).not.toBe(null))
+
+      // 変換中は入力が disabled なので、検証すると「ファイルを読み込んでください。」になってしまう
+      expect(result.queryByText('ファイルを読み込んでください。')).toBe(null)
+      expect(result.queryByText('長さ 2分 までです。')).toBe(null)
+
+      // 変換が終わったら検証し、長すぎることを知らせる
+      hookState.status = 'done'
+      result.rerender(<VideoConvertPanel />)
+      await waitFor(() => expect(result.getByText('長さ 2分 までです。')).not.toBe(null))
+      expect(result.queryByText('ファイルを読み込んでください。')).toBe(null)
+    })
+
+    test('MP4・MOV 以外のファイルは読み込まない', () => {
+      result = renderWithProviders(<VideoConvertPanel />)
+      pickFiles([createFile('a.avi', 'video/x-msvideo')])
+
+      expect(result.getByText('対応していない形式のファイルは読み込みませんでした（a.avi）')).not.toBe(null)
+      expect(result.getByRole('button', { name: /変換する/ })).toBeDisabled()
+    })
   })
 
-  test('ファイルを選択すると変換ボタンが有効になり、convert が呼ばれる', () => {
-    const input = result.container.querySelector('input[type="file"]') as HTMLInputElement
-    const file = new File(['dummy'], 'sample.mp4', { type: 'video/mp4' })
-    fireEvent.change(input, { target: { files: [file] } })
+  describe('変換中', () => {
+    test('進み具合と中止ボタンを出し、入力を押せなくする', () => {
+      hookState.status = 'converting'
+      hookState.progress = 42
+      result = renderWithProviders(<VideoConvertPanel />)
 
-    const button = result.container.querySelector('button') as HTMLButtonElement
-    expect(button.disabled).toBe(false)
+      expect(result.getByRole('progressbar', { name: '変換しています' }).getAttribute('value')).toBe('42')
+      // 手順 3 は aria-live なので、% の文字は読み上げさせない
+      expect(result.getByText('42%')).toHaveAttribute('aria-hidden', 'true')
+      expect(result.getByText(/端末内で処理するため時間がかかります。/)).not.toBe(null)
+      expect(result.getByRole('combobox', { name: '解像度' })).toBeDisabled()
 
-    fireEvent.click(button)
-    expect(convertSpy).toHaveBeenCalledTimes(1)
-    expect(convertSpy).toHaveBeenCalledWith(expect.any(File), expect.objectContaining({ codec: 'vp9', crf: 31 }))
+      fireEvent.click(result.getByRole('button', { name: '中止する' }))
+      expect(hookState.cancel).toHaveBeenCalled()
+    })
+  })
+
+  describe('変換結果', () => {
+    test('設定・保存のリンク・音声を除いたことを出す', () => {
+      hookState.status = 'done'
+      hookState.groups = [createGroup()]
+      result = renderWithProviders(<VideoConvertPanel />)
+
+      expect(result.getByText('WebM · VP8 / 画質 高画質 / 720p')).not.toBe(null)
+      const download = result.getByRole('link', { name: 'ダウンロード: a.webm' })
+      expect(download.getAttribute('download')).toBe('a.webm')
+      expect(result.getByText('このブラウザでは音声を書き出せないため、映像だけにしました')).not.toBe(null)
+    })
+
+    test('変換できなかったファイルを、わかる理由とともに知らせる', () => {
+      hookState.groups = [createGroup()]
+      result = renderWithProviders(<VideoConvertPanel />)
+
+      expect(
+        result.getByText(
+          '変換できなかったファイル: long.mov（長さ 2分 を超えています）, h265.mp4（このブラウザでは VP8 で書き出せません）, crashed.mp4'
+        )
+      ).not.toBe(null)
+    })
   })
 })

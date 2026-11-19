@@ -55,6 +55,40 @@
       "rejected": "対応していない形式のファイルは読み込みませんでした（{{names}}）"
     }
   },
+  "convert": {
+    "steps": {
+      "load": "読み込む",
+      "options": "指定する",
+      "convert": "変換する"
+    },
+    "reset": "リセット",
+    "files": {
+      "remove": "ファイルを削除: {{name}}"
+    },
+    "needFile": "ファイルを読み込むと変換できます。",
+    "count": "{{count}}件のファイル",
+    "run": "変換する",
+    "running": "変換しています",
+    "cancel": "中止する",
+    "done": "変換が完了しました",
+    "results": {
+      "title": "変換結果",
+      "convertedAt": "変換日時",
+      "remove": "この変換結果を削除: {{at}}",
+      "download": "ダウンロード",
+      "downloadLabel": "ダウンロード: {{name}}",
+      "downloadAll": "すべてダウンロード",
+      "downloadAllLabel": "すべてダウンロード（ZIP）: {{at}}",
+      "failed": "変換できなかったファイル: {{names}}",
+      "reduction": "削減率",
+      "zipFailed": "ZIP を作れませんでした。もう一度お試しください。",
+      "failedReason": "{{name}}（{{reason}}）"
+    },
+    "notes": {
+      "privacyTitle": "プライバシー",
+      "privacy": "ファイルはブラウザ内で処理され、外部には送信されません。タブを閉じるとデータは破棄されます。"
+    }
+  },
   "validation": {
     "required": "入力してください。",
     "invalidType": "入力の形式が正しくありません。",

@@ -1,28 +1,31 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 
-import { toOutputFileName, useImageConvert } from '~/features/image-convert/hooks/use-image-convert'
-import type { ImageConvertRequest, ImageConvertResponse } from '~/features/image-convert/types'
+import { useBatchConvert } from '~/features/file-convert/hooks/use-batch-convert'
+import type { ConvertRequest, ConvertResponse } from '~/features/file-convert/types'
+
+type Options = { format: 'webp' }
+type Request = ConvertRequest<Options>
 
 // jsdom に Worker はないため、変換の Worker を置き換える。
 // 依頼が届いたら behavior の指示どおりに返す（成功・失敗・落ちる・返事をしない）。
-type Behavior = 'done' | 'error' | 'crash' | 'hang'
+type Behavior = 'done' | 'warn' | 'error' | 'crash' | 'hang'
 
 const workers: FakeWorker[] = []
 let behaviors: Behavior[] = []
 
 class FakeWorker {
-  onmessage: ((event: MessageEvent<ImageConvertResponse>) => void) | null = null
+  onmessage: ((event: MessageEvent<ConvertResponse>) => void) | null = null
   onerror: ((event: Event) => void) | null = null
   onmessageerror: ((event: Event) => void) | null = null
   isTerminated = false
-  lastRequest: ImageConvertRequest | null = null
+  lastRequest: Request | null = null
 
   constructor() {
     workers.push(this)
   }
 
-  postMessage(request: ImageConvertRequest) {
+  postMessage(request: Request) {
     this.lastRequest = request
     const behavior = behaviors.shift() ?? 'done'
     queueMicrotask(() => {
@@ -32,6 +35,11 @@ class FakeWorker {
       switch (behavior) {
         case 'done':
           this.onmessage?.({ data: { type: 'done', id: request.id, blob: new Blob(['ok']) } } as MessageEvent)
+          break
+        case 'warn':
+          this.onmessage?.({
+            data: { type: 'done', id: request.id, blob: new Blob(['ok']), warnings: ['AUDIO_DROPPED'] },
+          } as MessageEvent)
           break
         case 'error':
           this.onmessage?.({
@@ -53,9 +61,17 @@ class FakeWorker {
 }
 
 const createFile = (name: string) => new File(['x'], name, { type: 'image/png' })
-const OPTIONS = { format: 'webp', quality: 80, lossless: false } as const
+const OPTIONS: Options = { format: 'webp' }
 
-describe('useImageConvert', () => {
+// 呼び出し元と同じく、Worker を作る関数と拡張子を渡す
+const useTarget = () =>
+  useBatchConvert<Options>({
+    createWorker: () => new Worker('worker.js'),
+    getExtension: (options) => options.format,
+    logLabel: 'test',
+  })
+
+describe('useBatchConvert', () => {
   beforeEach(() => {
     workers.length = 0
     behaviors = []
@@ -74,12 +90,12 @@ describe('useImageConvert', () => {
   })
 
   test('描画しただけでは Worker を作らない', () => {
-    renderHook(() => useImageConvert())
+    renderHook(() => useTarget())
     expect(workers).toHaveLength(0)
   })
 
   test('ファイルを 1 つずつ変換し、終わったら結果をまとめて Worker を止める', async () => {
-    const { result } = renderHook(() => useImageConvert())
+    const { result } = renderHook(() => useTarget())
 
     await act(() => result.current.convert([createFile('a.png'), createFile('b.png')], OPTIONS))
 
@@ -92,40 +108,53 @@ describe('useImageConvert', () => {
 
   test('変換できなかったファイルは、名前を残して次へ進む', async () => {
     behaviors = ['error', 'done']
-    const { result } = renderHook(() => useImageConvert())
+    const { result } = renderHook(() => useTarget())
 
     await act(() => result.current.convert([createFile('a.png'), createFile('b.png')], OPTIONS))
 
-    expect(result.current.groups[0].failedNames).toEqual(['a.png'])
+    expect(result.current.groups[0].failures).toEqual([{ name: 'a.png', code: 'ENCODE_FAILED' }])
     expect(result.current.groups[0].items.map((item) => item.sourceName)).toEqual(['b.png'])
+  })
+
+  test('変換はできたが知らせることがあれば、結果に残す', async () => {
+    behaviors = ['warn']
+    const { result } = renderHook(() => useTarget())
+
+    await act(() => result.current.convert([createFile('a.png')], OPTIONS))
+
+    expect(result.current.groups[0].items[0].warnings).toEqual(['AUDIO_DROPPED'])
   })
 
   test('Worker が 1 回落ちたら、作り直して次のファイルを変換する', async () => {
     behaviors = ['crash', 'done']
-    const { result } = renderHook(() => useImageConvert())
+    const { result } = renderHook(() => useTarget())
 
     await act(() => result.current.convert([createFile('a.png'), createFile('b.png')], OPTIONS))
 
     expect(result.current.status).toBe('done')
-    expect(result.current.groups[0].failedNames).toEqual(['a.png'])
+    expect(result.current.groups[0].failures.map((failure) => failure.name)).toEqual(['a.png'])
     expect(result.current.groups[0].items.map((item) => item.sourceName)).toEqual(['b.png'])
     expect(workers).toHaveLength(2)
   })
 
   test('Worker が続けて落ちたら、残りのファイルは変換せずに終える', async () => {
     behaviors = ['crash', 'crash', 'done']
-    const { result } = renderHook(() => useImageConvert())
+    const { result } = renderHook(() => useTarget())
 
     await act(() => result.current.convert([createFile('a.png'), createFile('b.png'), createFile('c.png')], OPTIONS))
 
     expect(result.current.status).toBe('done')
-    expect(result.current.groups[0].failedNames).toEqual(['a.png', 'b.png', 'c.png'])
+    expect(result.current.groups[0].failures).toEqual([
+      { name: 'a.png', code: null },
+      { name: 'b.png', code: null },
+      { name: 'c.png', code: null },
+    ])
     expect(workers).toHaveLength(2)
   })
 
   test('止めたあとの Worker からエラーが届いても、今の Worker の変換には影響しない', async () => {
     behaviors = ['hang']
-    const { result } = renderHook(() => useImageConvert())
+    const { result } = renderHook(() => useTarget())
 
     let first: Promise<void> | undefined
     act(() => {
@@ -146,14 +175,14 @@ describe('useImageConvert', () => {
     expect(workers[1].isTerminated).toBe(false)
 
     // 今の Worker の返事で、ふつうに終わる
-    const request = workers[1].lastRequest as ImageConvertRequest
+    const request = workers[1].lastRequest as Request
     act(() =>
       workers[1].onmessage?.({ data: { type: 'done', id: request.id, blob: new Blob(['ok']) } } as MessageEvent)
     )
     await act(() => second)
 
     expect(result.current.groups[0].items.map((item) => item.sourceName)).toEqual(['b.png'])
-    expect(result.current.groups[0].failedNames).toEqual([])
+    expect(result.current.groups[0].failures).toEqual([])
   })
 
   test('Worker を作れないときは、変換できなかったものとして終える', async () => {
@@ -165,17 +194,17 @@ describe('useImageConvert', () => {
         }
       }
     )
-    const { result } = renderHook(() => useImageConvert())
+    const { result } = renderHook(() => useTarget())
 
     await act(() => result.current.convert([createFile('a.png'), createFile('b.png')], OPTIONS))
 
     expect(result.current.status).toBe('done')
-    expect(result.current.groups[0].failedNames).toEqual(['a.png', 'b.png'])
+    expect(result.current.groups[0].failures.map((failure) => failure.name)).toEqual(['a.png', 'b.png'])
   })
 
   test('依頼を渡せなかった Worker は止めて、次のファイルでは作り直す', async () => {
     class ThrowingOnceWorker extends FakeWorker {
-      postMessage(request: ImageConvertRequest) {
+      postMessage(request: Request) {
         if (workers.length === 1) {
           throw new Error('DataCloneError')
         }
@@ -183,19 +212,19 @@ describe('useImageConvert', () => {
       }
     }
     vi.stubGlobal('Worker', ThrowingOnceWorker)
-    const { result } = renderHook(() => useImageConvert())
+    const { result } = renderHook(() => useTarget())
 
     await act(() => result.current.convert([createFile('a.png'), createFile('b.png')], OPTIONS))
 
     expect(workers[0].isTerminated).toBe(true)
     expect(workers).toHaveLength(2)
-    expect(result.current.groups[0].failedNames).toEqual(['a.png'])
+    expect(result.current.groups[0].failures.map((failure) => failure.name)).toEqual(['a.png'])
     expect(result.current.groups[0].items.map((item) => item.sourceName)).toEqual(['b.png'])
   })
 
   test('中止すると Worker を止め、結果を残さない', async () => {
     behaviors = ['hang']
-    const { result } = renderHook(() => useImageConvert())
+    const { result } = renderHook(() => useTarget())
 
     let converting: Promise<void> | undefined
     act(() => {
@@ -212,27 +241,12 @@ describe('useImageConvert', () => {
   })
 
   test('結果を削除すると、保存用の URL を手放す', async () => {
-    const { result } = renderHook(() => useImageConvert())
+    const { result } = renderHook(() => useTarget())
     await act(() => result.current.convert([createFile('a.png')], OPTIONS))
 
     act(() => result.current.removeGroup(result.current.groups[0].id))
 
     expect(result.current.groups).toHaveLength(0)
     expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:x')
-  })
-})
-
-describe('toOutputFileName', () => {
-  test('拡張子を出力形式のものに変える', () => {
-    expect(toOutputFileName('photo.png', 'webp', new Set())).toBe('photo.webp')
-    expect(toOutputFileName('archive.v2.jpg', 'avif', new Set())).toBe('archive.v2.avif')
-    expect(toOutputFileName('noext', 'webp', new Set())).toBe('noext.webp')
-  })
-
-  test('同じ回の中で名前がぶつかったら、番号を付ける', () => {
-    const used = new Set<string>()
-    expect(toOutputFileName('a.png', 'webp', used)).toBe('a.webp')
-    expect(toOutputFileName('a.jpg', 'webp', used)).toBe('a-2.webp')
-    expect(toOutputFileName('a.jpeg', 'webp', used)).toBe('a-3.webp')
   })
 })
