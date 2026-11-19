@@ -1,9 +1,7 @@
 import { cleanup, fireEvent, type RenderResult, waitFor } from '@testing-library/react'
-import { I18nextProvider } from 'react-i18next'
-import { MemoryRouter } from 'react-router'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 
-import { renderWithProviders, testI18n } from '../../../../test-utils'
+import { renderWithProviders } from '../../../../test-utils'
 
 import type { ConvertResultGroup } from '~/features/file-convert/types'
 import type { VideoConvertOptions } from '~/features/video-convert/types'
@@ -229,20 +227,12 @@ describe('VideoConvertPanel', () => {
         openGate = resolve
       })
       thumbnailDurations.set('long.mp4', 130)
-      // フックの状態を変えたら、同じツリーで描き直す（renderWithProviders の rerender はプロバイダーを含まない）
-      const renderTree = () => (
-        <I18nextProvider i18n={testI18n}>
-          <MemoryRouter>
-            <VideoConvertPanel />
-          </MemoryRouter>
-        </I18nextProvider>
-      )
       result = renderWithProviders(<VideoConvertPanel />)
       pickFiles([createFile('long.mp4')])
 
       // 変換が始まってから、見本ができて長さがわかる
       hookState.status = 'converting'
-      result.rerender(renderTree())
+      result.rerender(<VideoConvertPanel />)
       openGate()
       await waitFor(() => expect(result.getByText('1920×1080 · 02:10 · 1B')).not.toBe(null))
 
@@ -252,7 +242,7 @@ describe('VideoConvertPanel', () => {
 
       // 変換が終わったら検証し、長すぎることを知らせる
       hookState.status = 'done'
-      result.rerender(renderTree())
+      result.rerender(<VideoConvertPanel />)
       await waitFor(() => expect(result.getByText('長さ 2分 までです。')).not.toBe(null))
       expect(result.queryByText('ファイルを読み込んでください。')).toBe(null)
     })
