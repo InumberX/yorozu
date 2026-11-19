@@ -180,13 +180,13 @@ export const useImageConvert = () => {
         try {
           getWorker().postMessage(request)
         } catch (error) {
-          // Worker を作れない（CSP で禁じられているなど）。作り直しても同じなので、落ちたものとして扱う
+          // Worker を作れない、または依頼を渡せない（CSP で禁じられているなど）。
+          // 落ちたときと同じく、Worker を捨てて次のファイルで作り直す（続けて失敗したら打ち切られる）
           console.error('[image-convert] failed to start worker', error)
-          pendingRef.current = null
-          resolve({ blob: null, isCrashed: true })
+          stopWorker(true)
         }
       }),
-    [getWorker, nextId]
+    [getWorker, nextId, stopWorker]
   )
 
   const convert = useCallback(

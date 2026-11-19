@@ -173,6 +173,26 @@ describe('useImageConvert', () => {
     expect(result.current.groups[0].failedNames).toEqual(['a.png', 'b.png'])
   })
 
+  test('依頼を渡せなかった Worker は止めて、次のファイルでは作り直す', async () => {
+    class ThrowingOnceWorker extends FakeWorker {
+      postMessage(request: ImageConvertRequest) {
+        if (workers.length === 1) {
+          throw new Error('DataCloneError')
+        }
+        super.postMessage(request)
+      }
+    }
+    vi.stubGlobal('Worker', ThrowingOnceWorker)
+    const { result } = renderHook(() => useImageConvert())
+
+    await act(() => result.current.convert([createFile('a.png'), createFile('b.png')], OPTIONS))
+
+    expect(workers[0].isTerminated).toBe(true)
+    expect(workers).toHaveLength(2)
+    expect(result.current.groups[0].failedNames).toEqual(['a.png'])
+    expect(result.current.groups[0].items.map((item) => item.sourceName)).toEqual(['b.png'])
+  })
+
   test('中止すると Worker を止め、結果を残さない', async () => {
     behaviors = ['hang']
     const { result } = renderHook(() => useImageConvert())
