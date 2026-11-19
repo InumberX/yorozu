@@ -52,7 +52,7 @@ export const mainVisualGeometry = style({
       pointerEvents: 'none',
       // 模様をパネルいっぱいに広げる（object-fit: cover 相当）ため、パネルの大きさを測る。
       containerType: 'size',
-      // 帯の外は 0.6 × 37% ≒ 22%、帯の中は 60% の濃さで見せる。
+      // 帯の外は 0.6 × 37% ≒ 22%、帯の中は 60% の濃さで見せる（正方形の 0.6 を掛ける前）。
       opacity: 0.6,
       maskImage: 'linear-gradient(105deg, rgb(0 0 0 / 37%) 42%, #000 50%, rgb(0 0 0 / 37%) 58%)',
       maskSize: '300% 100%',
@@ -91,6 +91,8 @@ const mainVisualGeometry_square = style({
       aspectRatio: '1 / 1',
       translate: '-50% -50%',
       border: `1px solid ${cssVariables.color.border.primary.hex}`,
+      // 背景として目立ちすぎないよう、正方形をさらに 0.6 倍に薄める（帯の外 ≒ 13%、帯の中 36%）。
+      opacity: 0.6,
       animation: `${geometryTwist} 90s ease-in-out infinite alternate`,
 
       '@media': {
