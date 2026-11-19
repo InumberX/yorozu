@@ -39,6 +39,7 @@ export const BaseButton = ({
 
   return (
     <PrimitiveButton {...props} className={baseButtonClassName} isDisabled={isDisabled}>
+      <span aria-hidden="true" className={styles.baseButton_corner} />
       <span className={styles.baseButton_container}>
         {leftElm}
         <span className={styles.baseButton_text}>{children}</span>

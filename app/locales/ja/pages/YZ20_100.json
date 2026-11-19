@@ -1,23 +1,41 @@
 {
-  "title": {
-    "heading": "画像変換",
-    "lead": "画像を WebP / AVIF に変換します。ファイルはサーバーに送られず、ブラウザ内で処理されます。"
+  "heading": {
+    "breadcrumbLabel": "パンくずリスト",
+    "label": "IMAGE",
+    "title": "画像を変換する",
+    "lead": "PNG・JPEG の画像を、WebP または AVIF に変換します。"
   },
   "form": {
-    "dropzone": {
-      "label": "画像ファイルをドラッグ＆ドロップ、またはクリックして選択",
-      "hint": "対応形式: PNG / JPEG / GIF など"
+    "files": {
+      "accept": "PNG / JPEG",
+      "limit": "1ファイル {{size}} まで",
+      "errors": {
+        "required": "ファイルを読み込んでください。",
+        "type": "PNG か JPEG のファイルを読み込んでください。",
+        "size": "1ファイル {{size}} までです。"
+      }
     },
     "format": {
-      "label": "出力フォーマット",
+      "legend": "出力形式",
       "webp": "WebP",
-      "avif": "AVIF"
+      "webpNote": "幅広く対応",
+      "avif": "AVIF",
+      "avifNote": "最も小さい"
     },
     "quality": {
-      "label": "品質"
+      "label": "品質",
+      "low": "小さく",
+      "high": "きれいに"
     },
-    "submit": "変換する",
-    "converting": "変換中…"
+    "lossless": "ロスレスで書き出す"
   },
-  "note": "※ 変換エンジン（jSquash）は今後組み込み予定です。現在は UI の雛形のみです。"
+  "convert": {
+    "setting": "{{format}} / {{detail}}",
+    "qualityDetail": "品質 {{quality}}",
+    "runNote": "変換中もページの操作を続けられます。"
+  },
+  "notes": {
+    "limitTitle": "対応形式と上限",
+    "limit": "PNG・JPEG を読み込めます。1ファイル {{size}} までです。"
+  }
 }

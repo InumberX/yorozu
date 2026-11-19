@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useRef, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   isRouteErrorResponse,
@@ -11,7 +11,6 @@ import {
   ScrollRestoration,
   useLocation,
   useRouteError,
-  useRouteLoaderData,
 } from 'react-router'
 
 import type { Route } from './+types/root'
@@ -20,12 +19,16 @@ import * as styles from './root.css'
 import { LayoutPortal } from '~/components/common/LayoutPortal'
 import { LANG } from '~/config/consts'
 import { GOOGLE_ANALYTICS_ID } from '~/config/env'
-import * as gtag from '~/utils/gtags.client'
-import { getLang } from '~/utils/locale'
+import { ZodProvider } from '~/providers/ZodProvider'
+import * as gtag from '~/utils/gtag.client'
+import { getLang, getLangFromPathname, getSiteInfo, shouldRevalidateOnLangChange } from '~/utils/locale'
 
 export const handle = {
   i18n: 'common',
 }
+
+// lang が変わったら再検証する（理由は shouldRevalidateOnLangChange のコメント）。
+export const shouldRevalidate = shouldRevalidateOnLangChange
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const lang = getLang(params)
@@ -51,8 +54,10 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 
 export function Layout({ children }: { children: ReactNode }) {
   const { i18n } = useTranslation()
-  const loaderData = useRouteLoaderData<typeof loader>('root')
-  const lang = loaderData?.lang ?? i18n.language ?? LANG.JA
+  const location = useLocation()
+  // 正常なページでは root の loaderData の lang と一致する。404 では loaderData が
+  // SPA フォールバック（JA）のものになるため、URL から求める。
+  const lang = getLangFromPathname(location.pathname)
 
   return (
     <html lang={lang} dir={i18n.dir()}>
@@ -62,11 +67,23 @@ export function Layout({ children }: { children: ReactNode }) {
           name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, shrink-to-fit=no, viewport-fit=cover"
         />
-        <meta name="theme-color" content="#0f1b2d" />
+        <meta name="theme-color" content="#05080b" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="twitter:site" content="@InumberX" />
-        <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16" />
+        {/* SVG に対応していないブラウザ向けに favicon.ico も置く。ico の sizes は、SVG と並べるときに広く使われている 32x32 にする。 */}
+        <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="32x32" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-icon.png" type="image/png" sizes="180x180" />
+        {/* Android のホーム画面・アプリとしてのインストール用（android-icon-*.png） */}
+        <link rel="manifest" href="/manifest.webmanifest" />
+        {/* デザイン案A のフォント（和文・見出し: Zen Kaku Gothic New / 英数字: Share Tech Mono）。
+            将来 COOP/COEP を付与する場合は、自前配信へ切り替える必要がある。 */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap"
+        />
         <Meta />
         <Links />
         {GOOGLE_ANALYTICS_ID && (
@@ -114,7 +131,10 @@ export default function RootRoute({ loaderData }: Route.ComponentProps) {
   // 初回の effect 実行はスキップし、以降の SPA 遷移のみを送信する（二重計測の防止）。
   const isFirstPageview = useRef(true)
 
-  useEffect(() => {
+  // 言語は描画前（useLayoutEffect）にそろえる。useEffect だと描画後になり、言語を切り替えた直後に
+  // URL・aria-current は新しい言語なのに文言は前の言語、という画面が 1 フレーム見える（計測済み）。
+  // リソースはインラインなので changeLanguage は同期で終わり、その再描画も描画前に反映される。
+  useLayoutEffect(() => {
     if (i18n.language !== lang) {
       i18n.changeLanguage(lang)
     }
@@ -133,7 +153,11 @@ export default function RootRoute({ loaderData }: Route.ComponentProps) {
     gtag.pageview(location.pathname, GOOGLE_ANALYTICS_ID)
   }, [location.pathname])
 
-  return <Outlet />
+  return (
+    <ZodProvider>
+      <Outlet />
+    </ZodProvider>
+  )
 }
 
 export function ErrorBoundary() {
@@ -142,16 +166,20 @@ export function ErrorBoundary() {
   const location = useLocation()
   const isNotFound = isRouteErrorResponse(error) && error.status === 404
 
-  // ロケールは URL を真実とする。未列挙パスは SPA フォールバック（JA シェル）が返るため
+  // ロケールは URL を真実とする。未列挙パスは SPA フォールバック（JA シェル）が 404 で返るため
   // i18n.language は 'ja' になりがちだが、/en 配下の 404 は英語で表示し /en へ戻す。
-  const lang = location.pathname === '/en' || location.pathname.startsWith('/en/') ? LANG.EN : LANG.JA
+  const lang = getLangFromPathname(location.pathname)
   const backTo = lang === LANG.EN ? '/en' : '/'
 
   const title = isNotFound ? t('error.notFound.title', { lng: lang }) : t('error.errorMessageTitle', { lng: lang })
   const lead = isNotFound ? t('error.notFound.lead', { lng: lang }) : ''
+  // エラー時はページの meta が出ないため、タイトルをここで出す（React 19 が head へ移す）。
+  const { SITE_NAME } = getSiteInfo({ lang })
+  const documentTitle = isNotFound ? `${t('error.notFound.title', { lng: lang })} | ${SITE_NAME}` : SITE_NAME
 
   return (
     <main className={styles.errorPage}>
+      <title>{documentTitle}</title>
       <div className={styles.errorPage_inner}>
         {isRouteErrorResponse(error) && <p className={styles.errorPage_status}>{error.status}</p>}
         <h1 className={styles.errorPage_title}>{title}</h1>

@@ -1,4 +1,4 @@
-import { type Params } from 'react-router'
+import { type Params, type ShouldRevalidateFunctionArgs } from 'react-router'
 
 import { LANG, PAGE_INFO, SITE_INFO } from '~/config/consts'
 
@@ -16,6 +16,24 @@ export const getLang = (params: Params<string>) => {
         statusText: `Not Found: Invalid language ${lang}`,
       })
   }
+}
+
+// `ssr: false` では、loader を持つルートは「自分の path に含まれるパラメータ」が変わったときしか
+// 再検証されない（React Router の getShouldRevalidateFunction）。`:lang?` を path に持つのは
+// `layout-public` だけなので、root と各ページは /image ⇄ /en/image の
+// クライアント遷移で loaderData の lang が古いまま残る。lang を loader から読むルートはこれを export する。
+export const shouldRevalidateOnLangChange = ({
+  currentParams,
+  nextParams,
+  defaultShouldRevalidate,
+}: ShouldRevalidateFunctionArgs) => {
+  return currentParams.lang !== nextParams.lang || defaultShouldRevalidate
+}
+
+// URL のパスから言語を求める（JA=接頭辞なし / EN=/en）。prerender されていないパスの 404 では
+// root の loaderData が SPA フォールバック（JA）のものになるため、表示言語は URL を正とする。
+export const getLangFromPathname = (pathname: string) => {
+  return /^\/en(?:\/|$)/.test(pathname) ? LANG.EN : LANG.JA
 }
 
 export const getLangRoute = ({ lang }: { lang?: string }) => {

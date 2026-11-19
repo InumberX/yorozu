@@ -9,18 +9,108 @@
   },
   "header": {
     "brand": "yorozu",
+    "navLabel": "Main navigation",
     "nav": {
       "home": "Home",
       "image": "Image",
       "video": "Video"
     },
     "language": {
-      "ja": "日本語",
-      "en": "English"
+      "label": "Language",
+      "ja": "JA",
+      "en": "EN"
+    },
+    "menu": {
+      "open": "Open menu",
+      "close": "Close menu"
     }
   },
   "footer": {
-    "note": "Browser-based web tool hub",
-    "copyright": "© yorozu"
+    "brand": "yorozu",
+    "tagline": "A VESSEL THAT HOLDS EVERYTHING",
+    "tools": {
+      "label": "Tools",
+      "title": "TOOLS",
+      "image": "Convert images",
+      "video": "Convert videos"
+    },
+    "links": {
+      "label": "Links",
+      "title": "LINKS",
+      "request": "REQUEST",
+      "github": "GITHUB",
+      "afterworks": "AFTERWORKS"
+    },
+    "copyright": "© NiNE, ALL RIGHTS RESERVED."
+  },
+  "a11y": {
+    "newTab": " (opens in a new tab)"
+  },
+  "form": {
+    "inputFileDrop": {
+      "dropTitle": "Drop a file here",
+      "dropOr": "or",
+      "pick": "Choose a file",
+      "add": "Add a file",
+      "rejected": "Files in an unsupported format were not loaded ({{names}})"
+    }
+  },
+  "convert": {
+    "steps": {
+      "load": "Load",
+      "options": "Set options",
+      "convert": "Convert"
+    },
+    "reset": "Reset",
+    "files": {
+      "remove": "Remove file: {{name}}"
+    },
+    "needFile": "Load a file to convert it.",
+    "count_one": "{{count}} file",
+    "count_other": "{{count}} files",
+    "run": "Convert",
+    "running": "Converting",
+    "cancel": "Cancel",
+    "done": "Conversion complete",
+    "results": {
+      "title": "Results",
+      "convertedAt": "Converted",
+      "remove": "Delete this result: {{at}}",
+      "download": "Download",
+      "downloadLabel": "Download: {{name}}",
+      "downloadAll": "Download all",
+      "downloadAllLabel": "Download all (ZIP): {{at}}",
+      "failed": "Files that could not be converted: {{names}}",
+      "reduction": "Reduction",
+      "zipFailed": "Could not create the ZIP file. Please try again.",
+      "failedReason": "{{name}} ({{reason}})"
+    },
+    "notes": {
+      "privacyTitle": "Privacy",
+      "privacy": "Files are processed in your browser and never sent anywhere. Closing the tab discards the data."
+    }
+  },
+  "validation": {
+    "required": "This field is required.",
+    "invalidType": "The value is in the wrong format.",
+    "invalid": "The value is invalid.",
+    "invalidValue": "This value cannot be chosen.",
+    "notMultipleOf": "Use a multiple of {{divisor}}.",
+    "tooSmall": {
+      "array_one": "Choose at least {{count}} item.",
+      "array_other": "Choose at least {{count}} items.",
+      "string_one": "Enter at least {{count}} character.",
+      "string_other": "Enter at least {{count}} characters.",
+      "number": "Use {{minimum}} or more.",
+      "file": "Use a file of {{size}} or larger."
+    },
+    "tooBig": {
+      "array_one": "Choose up to {{count}} item.",
+      "array_other": "Choose up to {{count}} items.",
+      "string_one": "Enter up to {{count}} character.",
+      "string_other": "Enter up to {{count}} characters.",
+      "number": "Use {{maximum}} or less.",
+      "file": "Use a file of up to {{size}}."
+    }
   }
 }

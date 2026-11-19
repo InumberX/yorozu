@@ -1,19 +1,53 @@
 {
-  "title": {
-    "heading": "yorozu",
-    "lead": "開発・web制作の「あると嬉しい」を、ブラウザだけで。\n画像・動画のフォーマット変換をはじめ、ツールは続々追加予定です。\nファイルはサーバーに送られず、すべて端末内で処理されます。"
+  "mainVisual": {
+    "title": {
+      "line1": "あらゆるものが",
+      "line2": "揃う器。"
+    },
+    "tagline": "A VESSEL THAT HOLDS EVERYTHING",
+    "lead": "開発・制作の現場で使うツールを各種用意しました。処理はブラウザ内で完結し、データは端末外に送信されません。",
+    "cta": "ツールを見る",
+    "stats": {
+      "tools": "稼働ツール",
+      "uploads": "アップロード",
+      "runsIn": "実行場所",
+      "runsInValue": "ブラウザ内"
+    }
   },
   "tools": {
     "heading": "ツール一覧",
-    "image": {
-      "name": "画像変換",
-      "description": "画像を WebP / AVIF に変換。ブラウザ内で完結します。",
-      "action": "使ってみる"
+    "items": {
+      "image": {
+        "name": "画像を変換する",
+        "description": "PNG / JPEG を WebP・AVIF へ再符号化"
+      },
+      "video": {
+        "name": "動画を変換する",
+        "description": "MP4 / MOV を WebM へ再符号化"
+      }
     },
-    "video": {
-      "name": "動画変換",
-      "description": "動画を WebM に変換。アップロード不要で処理します。",
-      "action": "使ってみる"
+    "next": {
+      "name": "次のツール",
+      "description": "順次追加されます。追加してほしいものを送信してください。"
+    }
+  },
+  "concept": {
+    "heading": "コンセプト",
+    "items": {
+      "device": {
+        "heading": "端末内で処理",
+        "text": "各ツールの処理はブラウザ内で完結します。外部への送信は発生しません。"
+      },
+      "worker": {
+        "heading": "画面は固まらない",
+        "text": "重い処理はWeb Workerに分離します。処理中も操作を継続できます。"
+      },
+      "growing": {
+        "heading": "少しずつ増える",
+        "textBefore": "ツールは継続的に追加します。",
+        "link": "こちら",
+        "textAfter": "から要望もお送りいただけます。"
+      }
     }
   }
 }

@@ -9,18 +9,103 @@
   },
   "header": {
     "brand": "yorozu",
+    "navLabel": "メインナビゲーション",
     "nav": {
       "home": "ホーム",
       "image": "画像変換",
       "video": "動画変換"
     },
     "language": {
-      "ja": "日本語",
-      "en": "English"
+      "label": "言語",
+      "ja": "JA",
+      "en": "EN"
+    },
+    "menu": {
+      "open": "メニューを開く",
+      "close": "メニューを閉じる"
     }
   },
   "footer": {
-    "note": "ブラウザ完結の便利ツールハブ",
-    "copyright": "© yorozu"
+    "brand": "yorozu",
+    "tagline": "A VESSEL THAT HOLDS EVERYTHING",
+    "tools": {
+      "label": "ツール一覧",
+      "title": "TOOLS",
+      "image": "画像を変換する",
+      "video": "動画を変換する"
+    },
+    "links": {
+      "label": "関連リンク",
+      "title": "LINKS",
+      "request": "REQUEST",
+      "github": "GITHUB",
+      "afterworks": "AFTERWORKS"
+    },
+    "copyright": "© NiNE, ALL RIGHTS RESERVED."
+  },
+  "a11y": {
+    "newTab": "（新しいタブで開きます）"
+  },
+  "form": {
+    "inputFileDrop": {
+      "dropTitle": "ここにファイルをドロップ",
+      "dropOr": "または",
+      "pick": "ファイルを選択",
+      "add": "ファイルを追加する",
+      "rejected": "対応していない形式のファイルは読み込みませんでした（{{names}}）"
+    }
+  },
+  "convert": {
+    "steps": {
+      "load": "読み込む",
+      "options": "指定する",
+      "convert": "変換する"
+    },
+    "reset": "リセット",
+    "files": {
+      "remove": "ファイルを削除: {{name}}"
+    },
+    "needFile": "ファイルを読み込むと変換できます。",
+    "count": "{{count}}件のファイル",
+    "run": "変換する",
+    "running": "変換しています",
+    "cancel": "中止する",
+    "done": "変換が完了しました",
+    "results": {
+      "title": "変換結果",
+      "convertedAt": "変換日時",
+      "remove": "この変換結果を削除: {{at}}",
+      "download": "ダウンロード",
+      "downloadLabel": "ダウンロード: {{name}}",
+      "downloadAll": "すべてダウンロード",
+      "downloadAllLabel": "すべてダウンロード（ZIP）: {{at}}",
+      "failed": "変換できなかったファイル: {{names}}",
+      "reduction": "削減率",
+      "zipFailed": "ZIP を作れませんでした。もう一度お試しください。",
+      "failedReason": "{{name}}（{{reason}}）"
+    },
+    "notes": {
+      "privacyTitle": "プライバシー",
+      "privacy": "ファイルはブラウザ内で処理され、外部には送信されません。タブを閉じるとデータは破棄されます。"
+    }
+  },
+  "validation": {
+    "required": "入力してください。",
+    "invalidType": "入力の形式が正しくありません。",
+    "invalid": "入力が正しくありません。",
+    "invalidValue": "選べない値です。",
+    "notMultipleOf": "{{divisor}} の倍数にしてください。",
+    "tooSmall": {
+      "array": "{{count}} 個以上選んでください。",
+      "string": "{{count}} 文字以上で入力してください。",
+      "number": "{{minimum}} 以上にしてください。",
+      "file": "{{size}} 以上のファイルにしてください。"
+    },
+    "tooBig": {
+      "array": "{{count}} 個までにしてください。",
+      "string": "{{count}} 文字以内で入力してください。",
+      "number": "{{maximum}} 以下にしてください。",
+      "file": "{{size}} までのファイルにしてください。"
+    }
   }
 }

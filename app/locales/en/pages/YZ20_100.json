@@ -1,23 +1,41 @@
 {
-  "title": {
-    "heading": "Image Converter",
-    "lead": "Convert images to WebP / AVIF. Files are never uploaded — everything is processed in your browser."
+  "heading": {
+    "breadcrumbLabel": "Breadcrumb",
+    "label": "IMAGE",
+    "title": "Convert images",
+    "lead": "Convert PNG and JPEG images to WebP or AVIF."
   },
   "form": {
-    "dropzone": {
-      "label": "Drag & drop an image here, or click to choose a file",
-      "hint": "Supported inputs: PNG / JPEG / GIF and more"
+    "files": {
+      "accept": "PNG / JPEG",
+      "limit": "Up to {{size}} per file",
+      "errors": {
+        "required": "Load a file.",
+        "type": "Load a PNG or JPEG file.",
+        "size": "Each file can be up to {{size}}."
+      }
     },
     "format": {
-      "label": "Output format",
+      "legend": "Output format",
       "webp": "WebP",
-      "avif": "AVIF"
+      "webpNote": "Widely supported",
+      "avif": "AVIF",
+      "avifNote": "Smallest files"
     },
     "quality": {
-      "label": "Quality"
+      "label": "Quality",
+      "low": "Smaller",
+      "high": "Sharper"
     },
-    "submit": "Convert",
-    "converting": "Converting…"
+    "lossless": "Export lossless"
   },
-  "note": "* The conversion engine (jSquash) will be integrated later. This is a UI skeleton for now."
+  "convert": {
+    "setting": "{{format}} / {{detail}}",
+    "qualityDetail": "Quality {{quality}}",
+    "runNote": "You can keep using the page while it converts."
+  },
+  "notes": {
+    "limitTitle": "Formats and limits",
+    "limit": "PNG and JPEG files can be loaded, up to {{size}} each."
+  }
 }

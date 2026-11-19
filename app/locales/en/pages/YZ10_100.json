@@ -1,19 +1,53 @@
 {
-  "title": {
-    "heading": "yorozu",
-    "lead": "Handy tools for developers and web creators — right in your browser.\nStarting with image and video format conversion, with more tools on the way.\nNothing is uploaded to a server; everything runs on your device."
+  "mainVisual": {
+    "title": {
+      "line1": "A vessel that",
+      "line2": "holds everything."
+    },
+    "tagline": "",
+    "lead": "A set of tools for development and production work. Everything runs in your browser, and your data is never sent off your device.",
+    "cta": "Browse tools",
+    "stats": {
+      "tools": "Active tools",
+      "uploads": "Uploads",
+      "runsIn": "Runs in",
+      "runsInValue": "Browser"
+    }
   },
   "tools": {
     "heading": "Tools",
-    "image": {
-      "name": "Image Converter",
-      "description": "Convert images to WebP / AVIF, entirely in your browser.",
-      "action": "Open"
+    "items": {
+      "image": {
+        "name": "Convert images",
+        "description": "Re-encode PNG / JPEG to WebP or AVIF"
+      },
+      "video": {
+        "name": "Convert videos",
+        "description": "Re-encode MP4 / MOV to WebM"
+      }
     },
-    "video": {
-      "name": "Video Converter",
-      "description": "Convert videos to WebM with no uploads.",
-      "action": "Open"
+    "next": {
+      "name": "Next tool",
+      "description": "More are on the way. Tell us what to add next."
+    }
+  },
+  "concept": {
+    "heading": "Concept",
+    "items": {
+      "device": {
+        "heading": "Processed on your device",
+        "text": "Each tool does its processing in your browser. Nothing is sent anywhere."
+      },
+      "worker": {
+        "heading": "The page never freezes",
+        "text": "Heavy work runs in a Web Worker. You can keep using the page while it runs."
+      },
+      "growing": {
+        "heading": "Growing steadily",
+        "textBefore": "Tools are added on an ongoing basis. You can also ",
+        "link": "send a request",
+        "textAfter": "."
+      }
     }
   }
 }

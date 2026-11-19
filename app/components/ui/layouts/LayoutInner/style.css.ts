@@ -1,7 +1,7 @@
 import { style } from '@vanilla-extract/css'
 
-import { getMediaQuery } from '~/styles/mixins/mediaQuery.css'
-import { cssVariables } from '~/styles/variables/cssVariables.css'
+import { getMediaQuery } from '~/styles/mixins/media-query.css'
+import { cssVariables } from '~/styles/variables/css-variables.css'
 import { cssLayerComponentUiLow } from '~/styles/variables/layers.css'
 
 export const layoutInner__large = style({

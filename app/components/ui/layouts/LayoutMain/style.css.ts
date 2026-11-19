@@ -1,6 +1,5 @@
 import { style, createContainer } from '@vanilla-extract/css'
 
-import { cssVariables } from '~/styles/variables/cssVariables.css'
 import { cssLayerComponentUiLow } from '~/styles/variables/layers.css'
 
 export const layoutMainContainer = createContainer()
@@ -12,9 +11,6 @@ export const layoutMain = style({
       flexGrow: 1,
       containerType: 'inline-size',
       containerName: layoutMainContainer,
-      marginInline: 'auto',
-      maxInlineSize: `calc(${cssVariables.layout.inner.maxWidth.large} + (16px * 2))`,
-      paddingInline: 16,
       display: 'flex',
       flexDirection: 'column',
     },
@@ -24,7 +20,8 @@ export const layoutMain = style({
 export const layoutMain_container = style({
   '@layer': {
     [cssLayerComponentUiLow]: {
-      backgroundColor: cssVariables.color.background.light.hex,
+      // 背景（body）の方眼を透過させるため、面は敷かない。
+      backgroundColor: 'transparent',
       flexGrow: 1,
     },
   },

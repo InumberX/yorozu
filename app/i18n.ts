@@ -12,6 +12,11 @@ export const i18n = {
   supportedLngs: [LANG.EN, LANG.JA],
   fallbackLng: LANG.JA,
   defaultNS: 'common',
+  // React が描画するときにエスケープするため、i18next ではエスケープしない。
+  // エスケープすると、差し込んだ値の「/」などが「&#x2F;」のまま画面や aria-label に出る。
+  interpolation: {
+    escapeValue: false,
+  },
   react: {
     useSuspense: false,
   },

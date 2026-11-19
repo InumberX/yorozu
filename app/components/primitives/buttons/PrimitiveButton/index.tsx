@@ -1,4 +1,5 @@
 import { type AriaRole, type AriaAttributes, type ReactNode, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
 import * as styles from './style.css'
@@ -23,6 +24,10 @@ export type PrimitiveButtonProps = {
   ariaLabel?: AriaAttributes['aria-label']
   ariaControls?: AriaAttributes['aria-controls']
   ariaSelected?: AriaAttributes['aria-selected']
+  ariaCurrent?: AriaAttributes['aria-current']
+  ariaExpanded?: AriaAttributes['aria-expanded']
+  lang?: string
+  hrefLang?: string
 }
 
 export const PrimitiveButton = ({
@@ -42,7 +47,13 @@ export const PrimitiveButton = ({
   ariaLabel,
   ariaControls,
   ariaSelected,
+  ariaCurrent,
+  ariaExpanded,
+  lang,
+  hrefLang,
 }: PrimitiveButtonProps) => {
+  const { t, i18n } = useTranslation('common')
+
   // 外部リンク判定
   const isExternal: boolean = useMemo(() => {
     return url ? url.startsWith('http://') || url.startsWith('https://') : false
@@ -52,6 +63,28 @@ export const PrimitiveButton = ({
   const isInternalLink: boolean = useMemo(() => {
     return url ? url.startsWith('#') : false
   }, [url])
+
+  // 外部リンクは、指定がなければ別タブで開く。
+  // 開いた先から window.opener を辿れないよう、rel に noopener を付ける。
+  // noreferrer は付けず、リンク先に参照元（Referer）を渡す。
+  const anchorTarget = target ?? (isExternal ? '_blank' : undefined)
+  const anchorRel = rel ?? (isExternal ? 'noopener' : undefined)
+
+  // 別タブで開くことを、読み上げソフトにだけ伝える。
+  // aria-label があると中身は読まれないため、そのときは aria-label の末尾に足す。
+  // 補足はページの言語の文なので、リンクに別の lang が付いているときは、補足にページの lang を付け直す。
+  // （aria-label の中は言語を分けられないため、そちらはリンクの lang のまま読まれる。）
+  const isNewTab = anchorTarget === '_blank'
+  const newTabText = t('a11y.newTab')
+  const pageLang = i18n?.language
+  const newTabLang = lang && pageLang && lang !== pageLang ? pageLang : undefined
+  const linkAriaLabel = ariaLabel && isNewTab ? `${ariaLabel}${newTabText}` : ariaLabel
+  const newTabHint =
+    isNewTab && !ariaLabel ? (
+      <span lang={newTabLang} className={styles.primitiveButton_newTab}>
+        {newTabText}
+      </span>
+    ) : null
 
   const primitiveButtonClassName = useMemo(() => {
     return [styles.primitiveButton, isDisabled && styles.primitiveButton__disabled, className].filter(Boolean).join(' ')
@@ -73,19 +106,23 @@ export const PrimitiveButton = ({
   return isExternal || isInternalLink ? (
     <a
       href={url}
-      target={target}
-      rel={rel}
+      target={anchorTarget}
+      rel={anchorRel}
       className={primitiveButtonClassName}
       onClick={handleAnchorClick}
       title={title}
       role={role}
       tabIndex={isDisabled ? -1 : tabIndex}
-      aria-label={ariaLabel}
+      aria-label={linkAriaLabel}
       aria-controls={ariaControls}
       aria-selected={ariaSelected}
+      aria-current={ariaCurrent}
       aria-disabled={isDisabled || undefined}
+      lang={lang}
+      hrefLang={hrefLang}
     >
       {children}
+      {newTabHint}
     </a>
   ) : url ? (
     <Link
@@ -97,12 +134,16 @@ export const PrimitiveButton = ({
       title={title}
       role={role}
       tabIndex={isDisabled ? -1 : tabIndex}
-      aria-label={ariaLabel}
+      aria-label={linkAriaLabel}
       aria-controls={ariaControls}
       aria-selected={ariaSelected}
+      aria-current={ariaCurrent}
       aria-disabled={isDisabled || undefined}
+      lang={lang}
+      hrefLang={hrefLang}
     >
       {children}
+      {newTabHint}
     </Link>
   ) : onClick || buttonType ? (
     <button
@@ -118,6 +159,8 @@ export const PrimitiveButton = ({
       aria-label={ariaLabel}
       aria-controls={ariaControls}
       aria-selected={ariaSelected}
+      aria-expanded={ariaExpanded}
+      lang={lang}
     >
       {children}
     </button>

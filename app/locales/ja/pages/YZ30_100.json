@@ -1,23 +1,65 @@
 {
-  "title": {
-    "heading": "動画変換",
-    "lead": "動画を WebM に変換します。処理はすべてブラウザ内（Web Worker）で行われ、ファイルはアップロードされません。"
+  "heading": {
+    "breadcrumbLabel": "パンくずリスト",
+    "label": "VIDEO",
+    "title": "動画を変換する",
+    "lead": "MP4・MOV の動画を、WebM に変換します。"
   },
   "form": {
-    "dropzone": {
-      "label": "動画ファイルをドラッグ＆ドロップ、またはクリックして選択",
-      "hint": "サイズ・長さの上限にご注意ください"
+    "files": {
+      "accept": "MP4 / MOV",
+      "limit": "長さ {{minutes}}分・{{size}} まで",
+      "errors": {
+        "required": "ファイルを読み込んでください。",
+        "type": "MP4 か MOV のファイルを読み込んでください。",
+        "size": "1ファイル {{size}} までです。",
+        "duration": "長さ {{minutes}}分 までです。"
+      }
     },
     "codec": {
-      "label": "映像コーデック",
+      "legend": "コーデック",
       "vp9": "VP9",
-      "vp8": "VP8"
+      "vp9Note": "推奨",
+      "vp8": "VP8",
+      "vp8Note": "速い"
     },
     "quality": {
-      "label": "品質（CRF）"
+      "label": "画質",
+      "low": "小さく",
+      "high": "きれいに",
+      "levels": {
+        "1": "最小",
+        "2": "小さめ",
+        "3": "標準",
+        "4": "高画質",
+        "5": "最高画質"
+      }
     },
-    "submit": "変換する",
-    "converting": "変換中…"
+    "resolution": {
+      "label": "解像度",
+      "original": "元のまま",
+      "helper": "縦長の動画は短い辺をそろえます。元より大きくはしません。"
+    },
+    "unsupported": "このブラウザは動画の変換（WebCodecs）に対応していません。最新の Chrome・Edge・Safari・Firefox でお試しください。"
   },
-  "note": "※ 変換エンジン（ffmpeg.wasm / シングルスレッド版）は今後組み込み予定です。現在は UI の雛形のみです。"
+  "convert": {
+    "setting": "WebM · {{codec}} / 画質 {{quality}} / {{resolution}}",
+    "runNote": "端末内で処理するため時間がかかります。変換中もページの操作を続けられます。"
+  },
+  "results": {
+    "errors": {
+      "UNSUPPORTED_INPUT": "読み込めない形式です",
+      "UNDECODABLE_VIDEO": "このブラウザでは映像を読み出せません",
+      "TOO_LONG": "長さ {{minutes}}分 を超えています",
+      "UNSUPPORTED_ENCODER": "このブラウザでは {{codec}} で書き出せません",
+      "CONVERT_FAILED": "変換の途中で失敗しました"
+    },
+    "warnings": {
+      "AUDIO_DROPPED": "このブラウザでは音声を書き出せないため、映像だけにしました"
+    }
+  },
+  "notes": {
+    "limitTitle": "対応形式と上限",
+    "limit": "MP4・MOV を読み込めます。端末内で処理するため、長さ {{minutes}}分・{{size}} までです。"
+  }
 }
