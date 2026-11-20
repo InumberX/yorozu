@@ -112,6 +112,7 @@ CSS に書く数値（px / rem などのサイズ指定）は整数にし、小�
 - **セクションの余白**: セクションどうしの間は、各セクションの下の余白だけで取る（トップは 40〜64px）。最後のセクションの下は `LayoutPageWrapper` の下の余白に任せる。
 - **ボタン**（`components/ui/buttons/BaseButton`）: `contained` は主色で塗った四角に「┌」の飾り（ホバーで塗りと文字の色を入れ替える）、`outlined` は主色 60% の細い枠（ホバーで面を 12% 塗る）。大きさは `large`（高さ 48px）/ `medium`（40px）/ `small`（36px）。
 - **フォーム**（`components/ui/forms/`）: Conform の `getInputProps` / `getCollectionProps` の戻り値と `errors` を受け取る。エラーと説明は `aria-describedby` で入力に結び付け、エラーの文言は `FormErrorMessage` で出す。zod の既定の文言は `ZodProvider` が画面の言語に置き換える（`common.json` の `validation`）。フォーカスはアンバー 2px の輪郭。
+- **フォーカス表示**: `app/root.css.ts` の reset で、すべての要素の `:focus-visible` にアンバー（`border.accent`）2px・外側 3px の輪郭を付ける。輪郭の位置を変えたい部品（枠の内側に引く一覧の行など）だけ、各コンポーネントで上書きする。ページの先頭には、フォーカスが乗ったときだけ出る「本文へスキップ」のリンク（`components/common/SkipLink`）を置く。
 
 ## ロゴ
 

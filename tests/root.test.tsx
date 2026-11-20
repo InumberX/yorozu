@@ -14,8 +14,16 @@ const notFoundLoader = () => {
   throw data(null, { status: 404 })
 }
 
-const renderErrorBoundary = (path: string) => {
-  const Stub = createRoutesStub([{ path: '*', loader: notFoundLoader, Component: () => null, ErrorBoundary }])
+const serverErrorLoader = () => {
+  throw data(null, { status: 500 })
+}
+
+const thrownErrorLoader = () => {
+  throw new Error('boom')
+}
+
+const renderErrorBoundary = (path: string, loader: () => never = notFoundLoader) => {
+  const Stub = createRoutesStub([{ path: '*', loader, Component: () => null, ErrorBoundary }])
   return render(
     <I18nextProvider i18n={testI18n}>
       <Stub initialEntries={[path]} />
@@ -42,6 +50,27 @@ describe('root', () => {
       expect(await result.findByRole('heading', { level: 1 })).toHaveTextContent('Page not found')
       await waitFor(() => expect(document.title).toMatch(/^Page not found \| /))
       expect(result.getByRole('link')).toHaveAttribute('href', '/en')
+    })
+  })
+
+  describe('ErrorBoundary（404 以外）', () => {
+    test('500 は「問題が発生しました」と説明を日本語で出す', async () => {
+      const result = renderErrorBoundary('/image', serverErrorLoader)
+      expect(await result.findByRole('heading', { level: 1 })).toHaveTextContent('問題が発生しました')
+      expect(
+        result.getByText('ページを表示できませんでした。ページを再読み込みするか、時間をおいてもう一度お試しください。')
+      ).toBeInTheDocument()
+      await waitFor(() => expect(document.title).toMatch(/^問題が発生しました \| /))
+      expect(result.getByRole('link', { name: 'トップへ戻る' })).toHaveAttribute('href', '/')
+    })
+
+    test('例外は /en 配下なら英語で出し、例外の中身は出さない', async () => {
+      const result = renderErrorBoundary('/en/image', thrownErrorLoader)
+      expect(await result.findByRole('heading', { level: 1 })).toHaveTextContent('Something went wrong')
+      expect(result.getByText(/Reload the page, or wait a moment and try again\./)).toBeInTheDocument()
+      expect(result.queryByText(/boom/)).not.toBeInTheDocument()
+      await waitFor(() => expect(document.title).toMatch(/^Something went wrong \| /))
+      expect(result.getByRole('link', { name: 'Back to home' })).toHaveAttribute('href', '/en')
     })
   })
 

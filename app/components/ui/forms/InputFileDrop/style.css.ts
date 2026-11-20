@@ -140,11 +140,6 @@ const buttonBase = {
   transition: getTransition([{ property: 'background-color' }]),
 
   selectors: {
-    '&:focus-visible': {
-      outline: `2px solid ${cssVariables.color.border.accent.hex}`,
-      outlineOffset: 3,
-    },
-
     '&:disabled': {
       cursor: 'not-allowed',
     },

@@ -28,7 +28,9 @@ export type VideoConvertOptions = {
 export type VideoConvertErrorCode =
   // 読めない（MP4 / MOV ではない、壊れている）
   | 'UNSUPPORTED_INPUT'
-  // 映像が入っていない、またはこのブラウザで映像を読み出せない（コーデックに対応していない）
+  // 映像が入っていない（音声だけの MP4 など）
+  | 'NO_VIDEO_TRACK'
+  // このブラウザで映像を読み出せない（コーデックに対応していない）
   | 'UNDECODABLE_VIDEO'
   // 長すぎる
   | 'TOO_LONG'
@@ -36,8 +38,12 @@ export type VideoConvertErrorCode =
   | 'UNSUPPORTED_ENCODER'
   | 'CONVERT_FAILED'
 
-// 音声を書き出せなかったので、映像だけにした
-export type VideoConvertWarningCode = 'AUDIO_DROPPED'
+// 音声を映像だけにした理由
+export type VideoConvertWarningCode =
+  // 音声を読み出せない（このブラウザが対応していない、または Mediabunny がコーデックを判別できない）
+  | 'AUDIO_UNDECODABLE'
+  // このブラウザで音声を書き出せない
+  | 'AUDIO_UNENCODABLE'
 
 // Web Worker とのやりとり（形は画像・動画で共通）
 export type VideoConvertRequest = ConvertRequest<VideoConvertOptions>

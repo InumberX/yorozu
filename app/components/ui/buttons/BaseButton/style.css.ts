@@ -33,13 +33,6 @@ export const baseButton = style({
         { property: 'border-color' },
         { property: 'opacity' },
       ]),
-
-      selectors: {
-        '&:focus-visible': {
-          outline: `2px solid ${cssVariables.color.border.accent.hex}`,
-          outlineOffset: 3,
-        },
-      },
     },
   },
 })
