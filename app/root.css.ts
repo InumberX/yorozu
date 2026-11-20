@@ -429,8 +429,8 @@ globalStyle('button, input, optgroup, select, textarea', {
   },
 })
 
-// キーボード操作のフォーカス表示。上の reset で UA の輪郭を消しているので、代わりにここで
-// すべての操作要素へアンバー 2px の輪郭を付ける（docs/design-guideline.md）。
+// キーボード操作のフォーカス表示。上の reset で輪郭を消した要素（button / input など）も、
+// UA の輪郭のままだったリンクも、アンバー 2px の輪郭にそろえる（docs/design-guideline.md）。
 // 輪郭の位置などを変えたい部品だけ、各コンポーネントで :focus-visible を上書きする。
 globalStyle(':focus-visible', {
   '@layer': {
