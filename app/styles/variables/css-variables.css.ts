@@ -325,5 +325,7 @@ export const cssVariables = createGlobalTheme(':root', {
       wrapper: '10000',
       nav: '10100',
     },
+    // スキップリンクはヘッダー（メニュー含む）より手前に出す。
+    skipLink: '10200',
   },
 })

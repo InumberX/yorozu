@@ -429,6 +429,18 @@ globalStyle('button, input, optgroup, select, textarea', {
   },
 })
 
+// キーボード操作のフォーカス表示。上の reset で UA の輪郭を消しているので、代わりにここで
+// すべての操作要素へアンバー 2px の輪郭を付ける（docs/design-guideline.md）。
+// 輪郭の位置などを変えたい部品だけ、各コンポーネントで :focus-visible を上書きする。
+globalStyle(':focus-visible', {
+  '@layer': {
+    [cssLayerReset]: {
+      outline: `2px solid ${cssVariables.color.border.accent.hex}`,
+      outlineOffset: 3,
+    },
+  },
+})
+
 globalStyle('button::-moz-focus-inner, input::-moz-focus-inner', {
   '@layer': {
     [cssLayerReset]: {
@@ -451,14 +463,6 @@ globalStyle(
     },
   }
 )
-
-globalStyle('input:focus', {
-  '@layer': {
-    [cssLayerReset]: {
-      outline: 0,
-    },
-  },
-})
 
 globalStyle('input:disabled', {
   '@layer': {
@@ -558,14 +562,6 @@ globalStyle('select', {
   },
 })
 
-globalStyle('select:focus', {
-  '@layer': {
-    [cssLayerReset]: {
-      outline: 0,
-    },
-  },
-})
-
 globalStyle('select:disabled', {
   '@layer': {
     [cssLayerReset]: {
@@ -604,14 +600,6 @@ globalStyle('textarea', {
       lineHeight: 1.6,
       resize: 'vertical',
       fontSize: getFontSize(16),
-    },
-  },
-})
-
-globalStyle('textarea:focus', {
-  '@layer': {
-    [cssLayerReset]: {
-      outline: 0,
     },
   },
 })
