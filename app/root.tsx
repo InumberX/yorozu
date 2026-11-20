@@ -171,11 +171,14 @@ export function ErrorBoundary() {
   const lang = getLangFromPathname(location.pathname)
   const backTo = lang === LANG.EN ? '/en' : '/'
 
-  const title = isNotFound ? t('error.notFound.title', { lng: lang }) : t('error.errorMessageTitle', { lng: lang })
-  const lead = isNotFound ? t('error.notFound.lead', { lng: lang }) : ''
+  // 404 とそれ以外で文言を分ける。404 以外（読み込みの失敗、描画中の例外など）は原因を利用者に出さず、
+  // 「問題が発生しました」と、時間をおいて試す案内だけを出す。
+  const key = isNotFound ? 'error.notFound' : 'error.general'
+  const title = t(`${key}.title`, { lng: lang })
+  const lead = t(`${key}.lead`, { lng: lang })
   // エラー時はページの meta が出ないため、タイトルをここで出す（React 19 が head へ移す）。
   const { SITE_NAME } = getSiteInfo({ lang })
-  const documentTitle = isNotFound ? `${t('error.notFound.title', { lng: lang })} | ${SITE_NAME}` : SITE_NAME
+  const documentTitle = `${title} | ${SITE_NAME}`
 
   return (
     <main className={styles.errorPage}>
@@ -183,9 +186,9 @@ export function ErrorBoundary() {
       <div className={styles.errorPage_inner}>
         {isRouteErrorResponse(error) && <p className={styles.errorPage_status}>{error.status}</p>}
         <h1 className={styles.errorPage_title}>{title}</h1>
-        {lead && <p className={styles.errorPage_lead}>{lead}</p>}
+        <p className={styles.errorPage_lead}>{lead}</p>
         <Link to={backTo} className={styles.errorPage_back}>
-          {t('error.notFound.back', { lng: lang })}
+          {t(`${key}.back`, { lng: lang })}
         </Link>
       </div>
     </main>

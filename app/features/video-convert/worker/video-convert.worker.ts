@@ -19,6 +19,7 @@ import type {
   VideoConvertWarningCode,
   VideoQualityLevel,
 } from '~/features/video-convert/types'
+import { toAudioDiscardWarning, toVideoDiscardError } from '~/features/video-convert/utils/video-discard'
 import { toOutputSize } from '~/features/video-convert/utils/video-size'
 
 // DedicatedWorkerGlobalScope を webworker lib 無しで扱うための最小の型付け。
@@ -61,7 +62,7 @@ const convert = async (request: VideoConvertRequest): Promise<{ blob: Blob; warn
       throw new ConvertError('UNSUPPORTED_INPUT', String(error))
     })
     if (!videoTrack) {
-      throw new ConvertError('UNDECODABLE_VIDEO', 'no video track')
+      throw new ConvertError('NO_VIDEO_TRACK', 'no video track')
     }
     if (!(await videoTrack.canDecode())) {
       throw new ConvertError('UNDECODABLE_VIDEO', `cannot decode ${videoTrack.codec ?? 'unknown codec'}`)
@@ -98,14 +99,18 @@ const convert = async (request: VideoConvertRequest): Promise<{ blob: Blob; warn
       showWarnings: false,
     })
 
-    const isVideoDiscarded = conversion.discardedTracks.some(({ track }) => track.isVideoTrack())
-    if (!conversion.isValid || isVideoDiscarded) {
-      throw new ConvertError('UNDECODABLE_VIDEO', JSON.stringify(conversion.discardedTracks.map((t) => t.reason)))
+    // 外された理由（reason）で、エラーと注意の種類を分ける
+    const discardedVideo = conversion.discardedTracks.find(({ track }) => track.isVideoTrack())
+    if (discardedVideo) {
+      throw new ConvertError(toVideoDiscardError(discardedVideo.reason), `video ${discardedVideo.reason}`)
+    }
+    if (!conversion.isValid) {
+      throw new ConvertError('CONVERT_FAILED', JSON.stringify(conversion.discardedTracks.map((t) => t.reason)))
     }
     // 音声を読めない・書き出せないブラウザでは、映像だけにして知らせる
-    const warnings: VideoConvertWarningCode[] = conversion.discardedTracks.some(({ track }) => track.isAudioTrack())
-      ? ['AUDIO_DROPPED']
-      : []
+    const warnings: VideoConvertWarningCode[] = conversion.discardedTracks
+      .filter(({ track }) => track.isAudioTrack())
+      .map(({ reason }) => toAudioDiscardWarning(reason))
 
     // onProgress は進み具合（小数）が変わるたびに、ほぼ 1 コマごとに呼ばれる。
     // 画面に出すのは整数の % なので、それが変わったときだけ知らせる。

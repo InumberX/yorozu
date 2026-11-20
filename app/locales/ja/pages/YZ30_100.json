@@ -49,13 +49,15 @@
   "results": {
     "errors": {
       "UNSUPPORTED_INPUT": "読み込めない形式です",
+      "NO_VIDEO_TRACK": "映像が入っていません",
       "UNDECODABLE_VIDEO": "このブラウザでは映像を読み出せません",
       "TOO_LONG": "長さ {{minutes}}分 を超えています",
       "UNSUPPORTED_ENCODER": "このブラウザでは {{codec}} で書き出せません",
       "CONVERT_FAILED": "変換の途中で失敗しました"
     },
     "warnings": {
-      "AUDIO_DROPPED": "このブラウザでは音声を書き出せないため、映像だけにしました"
+      "AUDIO_UNDECODABLE": "このブラウザでは音声を読み出せないため、映像だけにしました",
+      "AUDIO_UNENCODABLE": "このブラウザでは音声を書き出せないため、映像だけにしました"
     }
   },
   "notes": {

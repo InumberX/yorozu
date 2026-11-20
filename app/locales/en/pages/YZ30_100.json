@@ -49,13 +49,15 @@
   "results": {
     "errors": {
       "UNSUPPORTED_INPUT": "unsupported format",
+      "NO_VIDEO_TRACK": "no video track",
       "UNDECODABLE_VIDEO": "this browser cannot read the video",
       "TOO_LONG": "longer than {{minutes}} minutes",
       "UNSUPPORTED_ENCODER": "this browser cannot export {{codec}}",
       "CONVERT_FAILED": "failed during conversion"
     },
     "warnings": {
-      "AUDIO_DROPPED": "This browser cannot export the audio, so only the video was kept."
+      "AUDIO_UNDECODABLE": "This browser cannot read the audio, so only the video was kept.",
+      "AUDIO_UNENCODABLE": "This browser cannot export the audio, so only the video was kept."
     }
   },
   "notes": {

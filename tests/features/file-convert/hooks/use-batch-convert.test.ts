@@ -38,7 +38,7 @@ class FakeWorker {
           break
         case 'warn':
           this.onmessage?.({
-            data: { type: 'done', id: request.id, blob: new Blob(['ok']), warnings: ['AUDIO_DROPPED'] },
+            data: { type: 'done', id: request.id, blob: new Blob(['ok']), warnings: ['AUDIO_UNENCODABLE'] },
           } as MessageEvent)
           break
         case 'error':
@@ -122,7 +122,7 @@ describe('useBatchConvert', () => {
 
     await act(() => result.current.convert([createFile('a.png')], OPTIONS))
 
-    expect(result.current.groups[0].items[0].warnings).toEqual(['AUDIO_DROPPED'])
+    expect(result.current.groups[0].items[0].warnings).toEqual(['AUDIO_UNENCODABLE'])
   })
 
   test('Worker が 1 回落ちたら、作り直して次のファイルを変換する', async () => {
