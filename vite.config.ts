@@ -3,6 +3,8 @@ import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin'
 import { defineConfig, loadEnv } from 'vite'
 import devtoolsJson from 'vite-plugin-devtools-json'
 
+import { resolveBuildEnv } from './scripts/build-env.ts'
+
 // yorozu は SPA モード（`ssr: false`）。React Router がクライアント資産を
 // build/client に prerender で出力する。ランタイム Worker は Basic 認証と静的配信
 // のみを担い、wrangler 側で別途バンドルするため、ここでは @cloudflare/vite-plugin は
@@ -49,6 +51,8 @@ export default defineConfig(({ mode }) => {
   const envMode = process.env.CLOUDFLARE_ENV || mode
   const fileEnv = loadEnv(envMode, process.cwd(), '')
   const env = { ...fileEnv, ...process.env }
+  // デプロイするビルドで SITE_URL が空なら、ここで例外を投げてビルドを止める。
+  const buildEnv = resolveBuildEnv(env)
 
   return {
     build: {
@@ -61,11 +65,11 @@ export default defineConfig(({ mode }) => {
       },
     },
     define: {
-      'import.meta.env.VITE_NODE_ENV': `"${env.NODE_ENV || 'development'}"`,
-      'import.meta.env.VITE_NO_INDEX': `"${env.NO_INDEX || ''}"`,
-      'import.meta.env.VITE_SITE_URL': `"${env.SITE_URL || 'http://localhost:5173'}"`,
-      'import.meta.env.VITE_SITE_NAME': `"${env.SITE_NAME || 'yorozu(development)'}"`,
-      'import.meta.env.VITE_GOOGLE_ANALYTICS_ID': `"${env.GOOGLE_ANALYTICS_ID || 'G-0WRM57NTKL'}"`,
+      'import.meta.env.VITE_NODE_ENV': JSON.stringify(buildEnv.NODE_ENV),
+      'import.meta.env.VITE_NO_INDEX': JSON.stringify(buildEnv.NO_INDEX),
+      'import.meta.env.VITE_SITE_URL': JSON.stringify(buildEnv.SITE_URL),
+      'import.meta.env.VITE_SITE_NAME': JSON.stringify(buildEnv.SITE_NAME),
+      'import.meta.env.VITE_GOOGLE_ANALYTICS_ID': JSON.stringify(buildEnv.GOOGLE_ANALYTICS_ID),
       'import.meta.env.VITE_CACHE_BUSTER': `"${CACHE_BUSTER}"`,
       'import.meta.env.VITE_LASTMOD': `"${LASTMOD}"`,
     },
