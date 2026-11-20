@@ -3,7 +3,9 @@ import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin'
 import { defineConfig, loadEnv } from 'vite'
 import devtoolsJson from 'vite-plugin-devtools-json'
 
-import { resolveBuildEnv } from './scripts/build-env.ts'
+// 拡張子を付けて読む。付けないと、Vite が設定ファイルの読み込みで警告を出す
+// （将来の既定の configLoader: 'native' では解決できないため）。tsconfig の allowImportingTsExtensions はこのため。
+import { assertDeployBuildEnv, resolveBuildEnv } from './app/config/build-env.ts'
 
 // yorozu は SPA モード（`ssr: false`）。React Router がクライアント資産を
 // build/client に prerender で出力する。ランタイム Worker は Basic 認証と静的配信
@@ -43,7 +45,7 @@ const warmupConfig = () => {
   }
 }
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ command, mode }) => {
   // For local deploys (`npm run deploy-development` etc.) load values from
   // `.env.<env>.local`. CLOUDFLARE_ENV reflects the deploy target; fall back
   // to Vite's own mode (development/production) for `npm run dev`/`build`.
@@ -51,8 +53,7 @@ export default defineConfig(({ mode }) => {
   const envMode = process.env.CLOUDFLARE_ENV || mode
   const fileEnv = loadEnv(envMode, process.cwd(), '')
   const env = { ...fileEnv, ...process.env }
-  // デプロイするビルドで SITE_URL が空なら、ここで例外を投げてビルドを止める。
-  const buildEnv = resolveBuildEnv(env)
+  const buildEnv = resolveBuildEnv(env, { isBuild: command === 'build' })
 
   return {
     build: {
@@ -73,7 +74,20 @@ export default defineConfig(({ mode }) => {
       'import.meta.env.VITE_CACHE_BUSTER': `"${CACHE_BUSTER}"`,
       'import.meta.env.VITE_LASTMOD': `"${LASTMOD}"`,
     },
-    plugins: [reactRouter(), vanillaExtractPlugin(), devtoolsJson()],
+    plugins: [
+      reactRouter(),
+      vanillaExtractPlugin(),
+      devtoolsJson(),
+      {
+        // デプロイするビルドで SITE_URL が空なら止める。typegen は command 'build' で設定を読むだけで
+        // buildStart は走らないので、ここで確かめれば型チェックと開発サーバーは止まらない。
+        name: 'yorozu:assert-deploy-build-env',
+        apply: 'build',
+        buildStart() {
+          assertDeployBuildEnv(env)
+        },
+      },
+    ],
     // 変換の Worker は、エンコーダー（jSquash）を必要になったときに読み込む（動的 import）。
     // 既定の iife ではコードを分けられないため、ES モジュールの Worker として出力する。
     worker: {
