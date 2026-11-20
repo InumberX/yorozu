@@ -59,7 +59,7 @@ const createGroup = (): ConvertResultGroup<VideoConvertOptions> => ({
       afterSize: 1000,
       blob: new Blob(['x']),
       url: 'blob:a',
-      warnings: ['AUDIO_DROPPED'],
+      warnings: ['AUDIO_UNENCODABLE'],
     },
   ],
   failures: [

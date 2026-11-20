@@ -1,9 +1,13 @@
 {
   "error": {
-    "errorMessageTitle": "Error message: ",
     "notFound": {
       "title": "Page not found",
       "lead": "The page you are looking for may have been moved or deleted.",
+      "back": "Back to home"
+    },
+    "general": {
+      "title": "Something went wrong",
+      "lead": "The page could not be displayed. Reload the page, or wait a moment and try again.",
       "back": "Back to home"
     }
   },
