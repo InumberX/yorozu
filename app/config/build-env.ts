@@ -3,25 +3,26 @@ import type { Plugin } from 'vite'
 // ビルド時に埋め込む値（vite.config.ts の define）を、環境変数から決める。
 // vite.config.ts からだけ読む。app のコードは、埋め込まれた値を `~/config/env` から読む。
 //
-// - SITE_URL: デプロイするビルド（CLOUDFLARE_ENV あり）で空なら、ビルドを失敗させる（assertDeployBuildEnvPlugin）。
+// - SITE_URL: デプロイするビルド（CLOUDFLARE_ENV あり）で空なら、ビルドを失敗させる。
 //   既定値で通すと、canonical・og:url・og:image が開発用の URL のまま公開されるため。
 //   デプロイしないビルド（`npm run build`、push.yml の build）と、開発サーバー・typegen は
-//   開発用の既定値で通す。typegen も command 'build' で vite.config を読むので、設定の読み込みでは
-//   確かめず、実際にバンドルするとき（プラグインの buildStart）に確かめる。
+//   開発用の既定値で通す。どこで確かめるかは assertDeployBuildEnvPlugin を参照。
 // - NO_INDEX: staging（CLOUDFLARE_ENV=development）で空なら 'true' にする。変数が漏れても
 //   staging が index されないように。開発サーバーでは NODE_ENV が production でないので、この値に
-//   関係なく noindex になる（`app/utils/meta.ts`）。そのためビルドかどうかは見ない。'true' / 'false' / 空 以外は、綴りの誤りとして失敗させる
-//   （`app/utils/meta.ts` は 'true' としか比べないので、'TRUE' や '1' は黙って index 可能になる）。
+//   関係なく noindex になる（`app/utils/meta.ts`）。そのためビルドかどうかは見ない。
+//
+//   'true' / 'false' / 空 以外は、綴りの誤りとして失敗させる。`app/utils/meta.ts` は 'true' としか
+//   比べないので、'TRUE' や '1' は黙って index 可能になる。
 // - GOOGLE_ANALYTICS_ID: 既定値を置かない。渡したビルドだけが gtag を出す。
 //   既定値に本番の ID を置くと、開発・ローカルビルド・変数の漏れた staging が本番に計測を送る。
 
 export const DEFAULT_SITE_URL = 'http://localhost:5173'
 export const DEFAULT_SITE_NAME = 'yorozu(development)'
-export const STAGING_DEPLOY_TARGET = 'development'
+const STAGING_DEPLOY_TARGET = 'development'
 
 type BuildEnvSource = Record<string, string | undefined>
 
-export type BuildEnv = {
+type BuildEnv = {
   NODE_ENV: string
   NO_INDEX: string
   SITE_URL: string
@@ -69,7 +70,7 @@ export const resolveBuildEnv = (env: BuildEnvSource): BuildEnv => {
 }
 
 // デプロイするビルドで SITE_URL が空なら、例外を投げてビルドを止める。
-// 設定の読み込みでは呼ばず、assertDeployBuildEnvPlugin の buildStart から呼ぶ（上の説明を参照）。
+// 設定の読み込みでは呼ばず、assertDeployBuildEnvPlugin の buildStart から呼ぶ。
 export const assertDeployBuildEnv = (env: BuildEnvSource) => {
   const deployTarget = readEnv(env, 'CLOUDFLARE_ENV')
   if (deployTarget && !readEnv(env, 'SITE_URL')) {

@@ -34,52 +34,16 @@ describe('resolveBuildEnv', () => {
     )
   })
 
-  describe('assertDeployBuildEnv', () => {
-    it.each(['development', 'production'])('デプロイ先（%s）があり SITE_URL が空なら例外を投げる', (target) => {
-      expect(() => assertDeployBuildEnv({ CLOUDFLARE_ENV: target })).toThrow(/SITE_URL/)
-      expect(() => assertDeployBuildEnv({ CLOUDFLARE_ENV: target, SITE_URL: '  ' })).toThrow(/SITE_URL/)
-    })
-
-    it('デプロイ先があり SITE_URL があれば通す', () => {
-      expect(() => assertDeployBuildEnv({ CLOUDFLARE_ENV: 'production', SITE_URL })).not.toThrow()
-    })
-
-    it('デプロイ先がなければ、SITE_URL が空でも通す', () => {
-      expect(() => assertDeployBuildEnv({})).not.toThrow()
-      expect(() => assertDeployBuildEnv({ CLOUDFLARE_ENV: '  ' })).not.toThrow()
-    })
-  })
-
-  describe('assertDeployBuildEnvPlugin', () => {
-    it('vite build のときだけ使われる', () => {
-      expect(assertDeployBuildEnvPlugin({}).apply).toBe('build')
-    })
-
-    it('buildStart で assertDeployBuildEnv を確かめる', () => {
-      const runBuildStart = (env: Record<string, string>) => {
-        const { buildStart } = assertDeployBuildEnvPlugin(env)
-        if (typeof buildStart !== 'function') {
-          throw new Error('buildStart が関数ではありません')
-        }
-        // buildStart は this（プラグインの文脈）を使わない。
-        return buildStart.call({} as never, {} as never)
-      }
-
-      expect(() => runBuildStart({ CLOUDFLARE_ENV: 'production' })).toThrow(/SITE_URL/)
-      expect(() => runBuildStart({ CLOUDFLARE_ENV: 'production', SITE_URL })).not.toThrow()
-    })
-  })
-
   describe('NO_INDEX', () => {
-    it('staging のデプロイで空なら true にする', () => {
+    it('staging（CLOUDFLARE_ENV=development）で空なら true にする', () => {
       expect(resolveBuildEnv({ CLOUDFLARE_ENV: 'development', SITE_URL }).NO_INDEX).toBe('true')
     })
 
-    it('staging のデプロイでも、明示した false はそのまま使う', () => {
+    it('staging（CLOUDFLARE_ENV=development）でも、明示した false はそのまま使う', () => {
       expect(resolveBuildEnv({ CLOUDFLARE_ENV: 'development', SITE_URL, NO_INDEX: 'false' }).NO_INDEX).toBe('false')
     })
 
-    it('本番とデプロイしないビルドでは空のまま', () => {
+    it('本番（CLOUDFLARE_ENV=production）とデプロイ先なしでは空のまま', () => {
       expect(resolveBuildEnv({ CLOUDFLARE_ENV: 'production', SITE_URL }).NO_INDEX).toBe('')
       expect(resolveBuildEnv({}).NO_INDEX).toBe('')
     })
@@ -106,5 +70,41 @@ describe('resolveBuildEnv', () => {
       expect(env.NODE_ENV).toBe('development')
       expect(env.SITE_NAME).toBe(DEFAULT_SITE_NAME)
     })
+  })
+})
+
+describe('assertDeployBuildEnv', () => {
+  it.each(['development', 'production'])('デプロイ先（%s）があり SITE_URL が空なら例外を投げる', (target) => {
+    expect(() => assertDeployBuildEnv({ CLOUDFLARE_ENV: target })).toThrow(/SITE_URL/)
+    expect(() => assertDeployBuildEnv({ CLOUDFLARE_ENV: target, SITE_URL: '  ' })).toThrow(/SITE_URL/)
+  })
+
+  it('デプロイ先があり SITE_URL があれば通す', () => {
+    expect(() => assertDeployBuildEnv({ CLOUDFLARE_ENV: 'production', SITE_URL })).not.toThrow()
+  })
+
+  it('デプロイ先がなければ、SITE_URL が空でも通す', () => {
+    expect(() => assertDeployBuildEnv({})).not.toThrow()
+    expect(() => assertDeployBuildEnv({ CLOUDFLARE_ENV: '  ' })).not.toThrow()
+  })
+})
+
+describe('assertDeployBuildEnvPlugin', () => {
+  it('vite build のときだけ使われる', () => {
+    expect(assertDeployBuildEnvPlugin({}).apply).toBe('build')
+  })
+
+  it('buildStart で assertDeployBuildEnv を確かめる', () => {
+    const runBuildStart = (env: Record<string, string>) => {
+      const { buildStart } = assertDeployBuildEnvPlugin(env)
+      if (typeof buildStart !== 'function') {
+        throw new Error('buildStart が関数ではありません')
+      }
+      // buildStart は this（プラグインの文脈）を使わない。
+      return buildStart.call({} as never, {} as never)
+    }
+
+    expect(() => runBuildStart({ CLOUDFLARE_ENV: 'production' })).toThrow(/SITE_URL/)
+    expect(() => runBuildStart({ CLOUDFLARE_ENV: 'production', SITE_URL })).not.toThrow()
   })
 })
