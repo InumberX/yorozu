@@ -58,11 +58,6 @@ export const inputSelect_select = style({
       transition: getTransition([{ property: 'border-color' }]),
 
       selectors: {
-        '&:focus-visible': {
-          outline: `2px solid ${cssVariables.color.border.accent.hex}`,
-          outlineOffset: 3,
-        },
-
         '&[aria-invalid="true"]': {
           borderColor: cssVariables.color.border.error.hex,
         },

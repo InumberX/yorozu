@@ -111,11 +111,6 @@ export const convertPanel_reset = style({
       transition: getTransition([{ property: 'color' }]),
 
       selectors: {
-        '&:focus-visible': {
-          outline: `2px solid ${cssVariables.color.border.accent.hex}`,
-          outlineOffset: 3,
-        },
-
         '&:disabled': {
           cursor: 'not-allowed',
           opacity: cssVariables.opacity.disabled,
