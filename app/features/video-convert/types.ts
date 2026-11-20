@@ -40,7 +40,7 @@ export type VideoConvertErrorCode =
 
 // 音声を映像だけにした理由
 export type VideoConvertWarningCode =
-  // このブラウザで音声を読み出せない
+  // 音声を読み出せない（このブラウザが対応していない、または Mediabunny がコーデックを判別できない）
   | 'AUDIO_UNDECODABLE'
   // このブラウザで音声を書き出せない
   | 'AUDIO_UNENCODABLE'

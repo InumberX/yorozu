@@ -7,7 +7,7 @@
     },
     "general": {
       "title": "Something went wrong",
-      "lead": "The page could not be displayed. Please wait a moment and try again.",
+      "lead": "The page could not be displayed. Reload the page, or wait a moment and try again.",
       "back": "Back to home"
     }
   },

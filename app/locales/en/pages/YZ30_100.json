@@ -56,7 +56,7 @@
       "CONVERT_FAILED": "failed during conversion"
     },
     "warnings": {
-      "AUDIO_UNDECODABLE": "This browser cannot read the audio, so only the video was kept.",
+      "AUDIO_UNDECODABLE": "The audio could not be read, so only the video was kept.",
       "AUDIO_UNENCODABLE": "This browser cannot export the audio, so only the video was kept."
     }
   },

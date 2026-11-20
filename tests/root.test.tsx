@@ -58,7 +58,7 @@ describe('root', () => {
       const result = renderErrorBoundary('/image', serverErrorLoader)
       expect(await result.findByRole('heading', { level: 1 })).toHaveTextContent('問題が発生しました')
       expect(
-        result.getByText('ページを表示できませんでした。時間をおいて、もう一度お試しください。')
+        result.getByText('ページを表示できませんでした。ページを再読み込みするか、時間をおいてもう一度お試しください。')
       ).toBeInTheDocument()
       await waitFor(() => expect(document.title).toMatch(/^問題が発生しました \| /))
       expect(result.getByRole('link', { name: 'トップへ戻る' })).toHaveAttribute('href', '/')
@@ -67,7 +67,7 @@ describe('root', () => {
     test('例外は /en 配下なら英語で出し、例外の中身は出さない', async () => {
       const result = renderErrorBoundary('/en/image', thrownErrorLoader)
       expect(await result.findByRole('heading', { level: 1 })).toHaveTextContent('Something went wrong')
-      expect(result.getByText(/Please wait a moment and try again\./)).toBeInTheDocument()
+      expect(result.getByText(/Reload the page, or wait a moment and try again\./)).toBeInTheDocument()
       expect(result.queryByText(/boom/)).not.toBeInTheDocument()
       await waitFor(() => expect(document.title).toMatch(/^Something went wrong \| /))
       expect(result.getByRole('link', { name: 'Back to home' })).toHaveAttribute('href', '/en')

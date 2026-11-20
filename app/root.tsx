@@ -172,7 +172,9 @@ export function ErrorBoundary() {
   const backTo = lang === LANG.EN ? '/en' : '/'
 
   // 404 とそれ以外で文言を分ける。404 以外（読み込みの失敗、描画中の例外など）は原因を利用者に出さず、
-  // 「問題が発生しました」と、時間をおいて試す案内だけを出す。
+  // 「問題が発生しました」と、再読み込みか時間をおいて試す案内だけを出す。
+  // ssr: false のため、ここに来るのはほぼブラウザ側の例外（デプロイ後に古い JS を読めない、描画中の不具合など）で、
+  // 待つより再読み込みで直ることが多い。
   const key = isNotFound ? 'error.notFound' : 'error.general'
   const title = t(`${key}.title`, { lng: lang })
   const lead = t(`${key}.lead`, { lng: lang })
